@@ -36,11 +36,13 @@
             Lokasi: Jl. Pendidikan No. 17, Pekanbaru
         </p>
 
-        <h2>Tata Cara Peminjaman</h2>
-        <ol type="1">
-            <li>Pilih buku pada katalog</li>
-            <li>Tunjukkan kartu anggota ke petugas</li>
-        </ol>
+        <aside id="aturan">
+            <h2>Tata Cara Peminjaman</h2>
+            <ol type="1">
+                <li>Pilih buku pada katalog</li>
+                <li>Tunjukkan kartu anggota ke petugas</li>
+            </ol>
+        </aside>
 
         <!-- Link Menuju Katalog Digital -->
         <p>
@@ -80,6 +82,8 @@
                 <input type="text" id="nama" name="anggota" placeholder="Nama Anda" required><br><br>
                 <label>Jenis Anggota:</label><br>
                 <input type="radio" id="mhs" name="jenis" value="mahasiswa" checked>
+                <label for="mhs">Mahasiswa</label><br>
+                <input type="radio" id="umum" name="jenis" value="umum">
                 <label for="umum">Umum</label><br><br>
                 <label for="pinjam">Maks Pinjam:</label><br>
                 <input type="number" id="pinjam" name="maks_pinjam" min="1" max="5"><br><br>
@@ -88,6 +92,7 @@
                 <input type="submit" value="Daftar Anggota">
             </form>
         </section>
+
     </main>
     <footer>
         <p>Perpustakaan Digital &copy; 2026</p>
