@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital</title>
+</head>
+
+<body>
+    <header>
+        <h1>Perpustakaan Digital</h1>
+        <!-- Menampilkan Foto Sampul Perpustakaan -->
+        <img src="perpustakaan.webp" alt="Foto Perpustakaan", width="400">
+        <blockquote>
+            <em>"Buku adalah jendela dunia, dan perpustakaanlah pintunya..."</em>
+        </blockquote>
+        <nav>
+            <ul>
+                <li><a href="#layanan">Layanan</a></li>
+                <li><a href="#koleksi">Koleksi</a></li>
+                <li><a href="#anggota">Anggota</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="layanan">
+            <h2>Jam Layanan</h2>
+            <p>
+                Buka: <strong>Pukul 08.00 - 16.00</strong>
+                (Tutup pada <strong>hari Sabtu</strong>)
+                <br>
+                Lokasi: Jl. Pendidikan No.17, Pekanbaru
+            </p>
+
+            <!-- Ordered List: tata cara peminjaman buku -->
+            <h2>Tata Cara Peminjaman</h2>
+            <ol>
+                <li>Pilih buku pada katalog</li>
+                <li>Tunjukkan kartu anggota ke petugas</li>
+            </ol>
+
+            <!-- Link Menuju Katalog Digital -->
+            <p>
+                Katalog: <a href="https://www.perpusnas.go.id">Buka Katalog Digital</a>
+            </p>
+        </section>
+
+        <!-- Daftar Koleksi Buku -->
+        <section id="koleksi">
+            <h2>Daftar Koleksi Buku</h2>
+            <table border="1">
+                <tr>
+                    <th>Kode</th>
+                    <th>Judul Buku</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>PW-001</td>
+                    <td>Dasar Pemrograman Web</td>
+                    <td>Tersedia</td>
+                </tr>
+                <tr>
+                    <td>PW-002</td>
+                    <td>Jaringan Komputer</td>
+                    <td>Dipinjam</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="anggota">
+            <form action="">
+                Nama Lengkap: <br>
+                <input type="text">
+                <br> <br> Maks Pinjam: <br>
+                <input type="text">
+                <br> <br> Catatan: <br>
+                <textarea name="" id="" cols="20" rows="5"></textarea>
+                <p><button>Daftar Anggota</button></p>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>Perpustakaan Digital &copy; 2026</p>
+    </footer>
+</body>
+</html>
