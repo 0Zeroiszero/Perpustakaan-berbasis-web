@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital</title>
+</head>
+
+<body>
+    <header>
+        <h1>Selamat datang di Perpustakaan Digital</h1>
+        <h2>Halo ini adalah landing page <br></h2>
+    </header>
+
+    <main>
+        <!---  Section 1 -->
+        <section id="dapus">
+            <p>Daftar Isi</p>
+            <em>Berfungsi sebagai <strong>navigasi web</strong> </em>
+            <br>
+            <ol type="I">
+                <a href="#jadwal">
+                    <li>Jadwal acara</li>
+                </a>
+                <a href="#booking">
+                    <li>Booking acara</li>
+                </a>
+                <a href="#jadwal">
+                    <li>Jadwal acara</li>
+                </a>
+                <a href="#apalah">
+                    <li>Aturan Perpustakaan</li>
+                </a>
+            </ol>
+        </section>
+
+        <!---  Section 2 -->
+        <section id="jadwal">
+            <br>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Acara</th>
+                        <th>Lokasi</th>
+                        <th>Dresscode</th>
+                        <th>Pembawa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12 Agustus 2026, 09:00 WIB</td>
+                        <td>Pembukaan Perpustakaan Digital</td>
+                        <td>Hall depan perpus</td>
+                        <td>Baju hitam putih</td>
+                        <td>Mr. Xin</td>
+                    </tr>
+                    <tr>
+                        <td>13 Agustus 2026, 09:00 WIB</td>
+                        <td>Seminar Keterampilan Digital</td>
+                        <td>Ballroom</td>
+                        <td>Baju bebas</td>
+                        <td>Mr. Tin</td>
+                    </tr>
+                    <tr>
+                        <td>23 Agustus 2026, 09:00 WIB</td>
+                        <td>Seminar Penggunaan AI</td>
+                        <td>Ballroom</td>
+                        <td>Baju bebas</td>
+                        <td>Mr. Lan</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <br>
+
+        <!---  Section 3 -->
+        <section id="booking">
+            <form action="/v1/booking-service" method="POST">
+                <h2>Booking Di Sini</h2>
+                <label for="nama">Nama Lengkap:</label><br>
+                <input type="text" id="nama" name="anggota" placeholder="Nama Anda" required><br><br>
+
+                <label for="book">Jadwal Booking:</label><br>
+                <input type="datetime-local" id="bk" name="book" min="2026-08-29" max="2026-12-31" required>
+
+                <br>
+                <br>
+                <label for="nama-acara">Nama Acara:</label><br>
+                <input type="text" id="nama-acara" name="nama_acara" placeholder="Nama Acara" required><br><br>
+
+                <label for="lokasi">Lokasi:</label><br>
+                <input type="text" id="lokasi" name="lokasi" placeholder="Lokasi acara" required><br><br>
+
+                <label for="dc">Dresscode:</label><br>
+                <input type="text" id="dc" name="dc" placeholder="Dresscode acara" required><br><br>
+
+                <label for="mc">Pembawa:</label><br>
+                <input type="text" id="mc" name="mc" placeholder="Nama pembawa acara" required><br><br>
+
+                <label for="catatan">Catatan:</label><br>
+                <textarea id="catatan" name="catatan" rows="3" cols="30"></textarea><br><br>
+
+                <input type="submit" value="Konfirmasi Booking">
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Copyright by Fandi 2026</p>
+    </footer>
+</body>
+
+</html>
