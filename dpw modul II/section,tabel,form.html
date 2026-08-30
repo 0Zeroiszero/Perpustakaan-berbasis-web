@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital</title>
+</head>
+
+<body>
+    <header>
+        <h1>Perpustakaan Digital</h1>
+        <!-- Menampilkan Foto Sampul Perpustakaan -->
+        <img src="foto.jpg" alt="Foto Perpustakaan" width="400">
+        <blockquote cite="https://example.com/quotes">
+            <p>
+                <em>"Buku adalah jendela dunia, dan
+                    perpustakaanlah pintunya..."</em>
+            </p>
+        </blockquote>
+        <nav>
+            <ul>
+                <li><a href="#layanan">Layanan</a></li>
+                <li><a href="#koleksi">Koleksi</a></li>
+                <li><a href="#anggota">Anggota</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Ordered List: tata cara peminjaman buku -->
+        <h2>Jam Layanan</h2>
+        <p>
+            Buka: <strong>Pukul 08.00 - 16.00</strong>
+            (Tutup pada <strong>hari Sabtu</strong>)<br>
+            Lokasi: Jl. Pendidikan No. 17, Pekanbaru
+        </p>
+
+        <h2>Tata Cara Peminjaman</h2>
+        <ol type="1">
+            <li>Pilih buku pada katalog</li>
+            <li>Tunjukkan kartu anggota ke petugas</li>
+        </ol>
+
+        <!-- Link Menuju Katalog Digital -->
+        <p>
+            Katalog:
+            <a href="https://www.perpusnas.go.id" target="_blank">Buka Katalog Digital</a>
+        </p>
+        <!-- section sambutan, layanan, aside -->
+        <section id="koleksi">
+            <h2>Daftar Koleksi</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Kode</th>
+                        <th>Judul Buku</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PW-001</td>
+                        <td>Dasar Pemrograman Web</td>
+                        <td>Tersedia</td>
+                    </tr>
+                    <tr>
+                        <td>PW-002</td>
+                        <td>Jaringan Komputer</td>
+                        <td>Dipinjam</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="anggota">
+            <h2>Pendaftaran Anggota Baru</h2>
+            <form action="/daftar-anggota" method="POST">
+                <label for="nama">Nama Lengkap:</label><br>
+                <input type="text" id="nama" name="anggota" placeholder="Nama Anda" required><br><br>
+                <label>Jenis Anggota:</label><br>
+                <input type="radio" id="mhs" name="jenis" value="mahasiswa" checked>
+                <label for="umum">Mahasiswa</label><br>
+                <input type="radio" id="mhs" name="jenis" value="mahasiswa" checked>
+                <label for="umum">Umum</label><br><br>
+                <label for="pinjam">Maks Pinjam:</label><br>
+                <input type="number" id="pinjam" name="maks_pinjam" min="1" max="5"><br><br>
+                <label for="catatan">Catatan:</label><br>
+                <textarea id="catatan" name="catatan" rows="3" cols="30"></textarea><br><br>
+                <input type="submit" value="Daftar Anggota">
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>Perpustakaan Digital &copy; 2026</p>
+    </footer>
+</body>
+
+</html>
