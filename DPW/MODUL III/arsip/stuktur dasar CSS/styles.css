@@ -1,0 +1,30 @@
+@import url('base_url');
+
+:root {
+    
+}
+
+body {
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: navy;
+  text-align: center;
+}
+
+.kotak {
+  background-color: white;
+  border: 1px solid black;
+  padding: 20px;
+}
+
+#logo {
+  width: 150px;
+  height: auto;
+}
+
+.kotak, #logo {
+  margin-bottom: 10px;
+}

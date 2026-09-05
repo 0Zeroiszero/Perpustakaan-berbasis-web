@@ -1,0 +1,15 @@
+#judul-utama {
+  color: #1e3a8a;
+}
+
+.badge {
+  background-color: #e2e8f0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.badge-success {
+  background-color: #22c55e;
+  color: #ffffff;
+}
