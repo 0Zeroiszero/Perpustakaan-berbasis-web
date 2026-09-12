@@ -1,0 +1,51 @@
+body{
+    font-family: sans-serif;
+}
+
+#id-h1{
+    background-color: yellow;
+}
+
+.span1{
+    color: orange;
+}
+
+.badge-sukses{
+    background-color: green;
+}
+
+.badge{
+    background-color: gray;
+}
+
+.class-h1{
+    color: #0f172a;
+}
+
+.class-p{
+    color: #475569;
+}
+
+.card{
+    width: 300px;
+    padding: 20px;
+    border: 1px solid  #e2e8f0;
+    margin: 20px auto;
+    background-color: rgb(210, 78, 78);
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+}
+
+.class-ul{
+    display: flex;
+    gap: 20px;
+}
+
+.li{
+    
+}
