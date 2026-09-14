@@ -1,0 +1,47 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+}
+
+body {
+  font-family: arial, sans-serif;
+  background-color: #f0f4f8; }
+
+.daftar-produk {
+  display: flex; justify-content: center;
+  gap: 24px; padding: 40px 24px; }
+
+.kartu-produk {
+  width: 260px; background-color: #ffffff;
+  border-radius: 12px; padding: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.kartu-produk img {
+  width: 100%; border-radius: 8px; }
+
+.kartu-produk h2 {
+  font-size: 18px; color: #0f172a;
+  margin: 12px 0 4px; }
+
+.kartu-produk p {
+  font-size: 14px; color: #475569;
+  line-height: 1.5; }
+
+.aksi {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 12px; }
+
+.harga {
+  background-color: #e2e8f0; color: #0f172a;
+  padding: 4px 10px; border-radius: 999px;
+  font-weight: bold; font-size: 13px; }
+
+.aksi button {
+  border: none; background-color: #2563eb;
+  color: #ffffff; padding: 8px 16px;
+  border-radius: 8px; cursor: pointer;
+  transition: 0.3s; }
+
+.aksi button:hover {
+  background-color: #1e40af; }
