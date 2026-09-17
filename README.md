@@ -1,4 +1,4 @@
-<img src="assets/thumbnail.png" alt="Thumbnail Perpustakaan Berbasis Web" style="width: 100%;">
+<img src="thumbnail/thumbnail.png" alt="Thumbnail Perpustakaan Berbasis Web" style="width: 100%;">
 
 # Tentang Proyek
 TBA.
