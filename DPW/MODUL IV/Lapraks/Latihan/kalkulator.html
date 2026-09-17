@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Kalkulator Sederhana</title>
+  <style>
+    body { font-family: arial, sans-serif;
+      padding: 36px 44px; }
+    h1 { color: #0f172a; font-size: 26px; }
+    p { color: #475569; font-size: 15px;
+      line-height: 1.6; }
+    button { background-color: #2563eb;
+      color: #ffffff; border: none;
+      border-radius: 6px; padding: 9px 18px;
+      font-size: 15px; cursor: pointer; }
+    input { padding: 8px 10px; font-size: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px; }
+    .card {
+      width: 280px; margin: 40px auto;
+      padding: 20px;
+      border: 2px solid #2563eb;
+      border-radius: 8px;
+    }
+    .card h2 { margin: 0 0 14px;
+      color: #2563eb; font-size: 18px; }
+    input, button { width: 100%;
+      padding: 8px; margin-bottom: 8px;
+      box-sizing: border-box; }
+    #hasil { font-weight: bold;
+      color: #1e3a8a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Kalkulator Sederhana</h2>
+    <input type="number" id="angka1"
+      value="12" />
+    <input type="number" id="angka2"
+      value="8" />
+    <button onclick="hitung('+')">Tambah
+      (+)</button>
+    <button onclick="hitung('-')">Kurang
+      (-)</button>
+    <button onclick="hitung('*')">Kali
+      (*)</button>
+    <button onclick="hitung('/')">Bagi
+      (/)</button>
+    <p id="hasil">Hasil akan tampil di
+      sini.</p>
+  </div>
+  <script src="kalkulator.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Demo Event Handling</title>
+  <style>
+    body { font-family: arial, sans-serif;
+      padding: 36px 44px; }
+    h1 { color: #0f172a; font-size: 26px; }
+    p { color: #475569; font-size: 15px;
+      line-height: 1.6; }
+    button { background-color: #2563eb;
+      color: #ffffff; border: none;
+      border-radius: 6px; padding: 9px 18px;
+      font-size: 15px; cursor: pointer; }
+    input { padding: 8px 10px; font-size: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px; }
+    label { display: block; font-size: 14px;
+      color: #0f172a; margin: 12px 0 4px; }
+    #jam { font-size: 30px; font-weight: bold;
+      color: #1e3a8a; }
+    button { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Jam Layanan Perpustakaan</h1>
+  <p id="jam">00:00:00</p>
+  <form onsubmit="return cekAnggota()">
+    <label>Nomor Anggota</label>
+    <input type="text" id="noAnggota" />
+    <button type="submit">Cek
+      Keanggotaan</button>
+    <p id="status"></p>
+  </form>
+  <script src="script.js"></script>
+</body>
+</html>

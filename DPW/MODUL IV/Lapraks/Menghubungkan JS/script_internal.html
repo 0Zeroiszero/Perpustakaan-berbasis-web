@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Demo Script Internal</title>
+  <style>
+    body { font-family: arial, sans-serif;
+      padding: 36px 44px; }
+    h1 { color: #0f172a; font-size: 26px; }
+    p { color: #475569; font-size: 15px;
+      line-height: 1.6; }
+    button { background-color: #2563eb;
+      color: #ffffff; border: none;
+      border-radius: 6px; padding: 9px 18px;
+      font-size: 15px; cursor: pointer; }
+    input { padding: 8px 10px; font-size: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px; }
+  </style>
+</head>
+<body onload="sapa()">
+  <h1 id="sambutan">Judul Awal</h1>
+  <p>Heading di atas diganti otomatis oleh
+    script internal saat halaman selesai
+    dimuat.</p>
+  <script>
+    function sapa() {
+      let judul = document.getElementById(
+        "sambutan");
+      judul.textContent =
+        "Selamat datang kembali di Perpustakaan Digital";
+    }
+  </script>
+</body>
+</html>
