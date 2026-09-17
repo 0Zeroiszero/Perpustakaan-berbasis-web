@@ -1,0 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+}
