@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anggota - PerpustakaanKu</title>
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">📚 PerpustakaanKu</div>
+        <nav>
+          <a class="nav-link" href="index.html">🏠 Dashboard</a
+          ><a class="nav-link" href="buku.html">📖 Data Buku</a
+          ><a class="nav-link active" href="anggota.html">👥 Anggota</a
+          ><a class="nav-link" href="peminjaman.html">📥 Peminjaman</a
+          ><a class="nav-link" href="pengembalian.html">📤 Pengembalian</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <a class="nav-link" href="login.html">🚪 Keluar</a>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <button class="menu-btn" id="menuBtn">☰</button>
+          <div>
+            <p class="eyebrow">MANAJEMEN</p>
+            <h1>Data Anggota</h1>
+          </div>
+          <div class="profile">IK <span>Irfan Kurniawan</span></div>
+        </header>
+        <section class="content">
+          <div class="section-heading">
+            <p class="muted">Daftar anggota terdaftar.</p>
+            <button class="btn primary" onclick="openMemberModal()">
+              ＋ Tambah Anggota
+            </button>
+          </div>
+          <div class="card">
+            <div class="toolbar">
+              <input
+                id="memberSearch"
+                class="input"
+                placeholder="🔍 Cari nama atau email..."
+                oninput="renderMembers()"
+              />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>No. HP</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="memberTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="modal" id="memberModal">
+      <div class="modal-box">
+        <div class="section-heading">
+          <h2 id="memberModalTitle">Tambah Anggota</h2>
+          <button class="close" onclick="closeModal('memberModal')">×</button>
+        </div>
+        <form id="memberForm" onsubmit="saveMember(event)">
+          <input type="hidden" id="memberId" /><label
+            >Nama<input class="input" id="memberName" required /></label
+          ><label
+            >Email<input
+              class="input"
+              id="memberEmail"
+              type="email"
+              required /></label
+          ><label
+            >No. HP<input class="input" id="memberPhone" required
+          /></label>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn secondary"
+              onclick="closeModal('memberModal')"
+            >
+              Batal</button
+            ><button class="btn primary">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="assets/app.js"></script>
+    <script>
+      renderMembers();
+    </script>
+  </body>
+</html>

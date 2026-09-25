@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengembalian - PerpustakaanKu</title>
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">📚 PerpustakaanKu</div>
+        <nav>
+          <a class="nav-link" href="index.html">🏠 Dashboard</a
+          ><a class="nav-link" href="buku.html">📖 Data Buku</a
+          ><a class="nav-link" href="anggota.html">👥 Anggota</a
+          ><a class="nav-link" href="peminjaman.html">📥 Peminjaman</a
+          ><a class="nav-link active" href="pengembalian.html"
+            >📤 Pengembalian</a
+          >
+        </nav>
+        <div class="sidebar-bottom">
+          <a class="nav-link" href="login.html">🚪 Keluar</a>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <button class="menu-btn" id="menuBtn">☰</button>
+          <div>
+            <p class="eyebrow">TRANSAKSI</p>
+            <h1>Pengembalian</h1>
+          </div>
+          <div class="profile">IK <span>Irfan Kurniawan</span></div>
+        </header>
+        <section class="content">
+          <div class="card">
+            <div class="section-heading"><h2>Daftar Peminjaman Aktif</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Anggota</th>
+                    <th>Buku</th>
+                    <th>Jatuh Tempo</th>
+                    <th>Denda</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="returnTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="assets/app.js"></script>
+    <script>
+      renderReturns();
+    </script>
+  </body>
+</html>
