@@ -113,12 +113,17 @@ function filterKategori(kategori, btn) {
 
 function updateJumlah(j) { document.getElementById("jumlahBuku").textContent = j + " Buku"; }
 
-function showToast(judul) {
-    document.getElementById("toastMsg").textContent = `Buku "${judul}" dipilih untuk dipinjam.`;
+function showToast(judul, customMessage) {
+    const msgEl = document.getElementById("toastMsg");
+    msgEl.textContent = customMessage
+        ? customMessage
+        : `Buku "${judul}" dipilih untuk dipinjam.`;
+
     const el = document.getElementById("toastPinjam");
     const t = new bootstrap.Toast(el, { delay: 3000 });
     t.show();
 }
+
 
 function pinjamBuku(judul) { showToast(judul); }
 
@@ -127,6 +132,10 @@ function pinjamDariModal() {
     const m = bootstrap.Modal.getInstance(modalEl);
     if (m) m.hide();
     showToast(bukuTerpilih);
+}
+
+function tambahKeRak(judul) {
+    showToast(judul, `Buku "${judul}" berhasil ditambahkan ke rak buku!`);
 }
 
 const searchInputEl = document.getElementById("searchInput");
