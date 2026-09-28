@@ -77,6 +77,6 @@ Panel khusus admin untuk mengelola sistem PustakaDigital, mencakup:
 ## Future Release
 
 Fitur-fitur yang direncanakan untuk rilis mendatang:
-- Peminjaman buku secara online
 - Integrasi dengan reader
 - Integrasi backend
+- Optimalisasi UI dan UX
