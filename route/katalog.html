@@ -13,23 +13,9 @@
 </head>
 
 <body>
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
-        <div id="toastPinjam" class="toast border-0" role="alert"
-            style="background:var(--gelap); color:white; border-radius:12px">
-            <div class="d-flex align-items-center">
-                <div class="toast-body d-flex align-items-center gap-2">
-                    <span
-                        style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
-                    </span>
-                    <span id="toastMsg">Buku dipilih</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
-    </div>
+
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-white catalog-navbar">
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top">
         <div class="container py-2">
             <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
                 <span class="logo">P</span> PustakaDigital
@@ -40,7 +26,7 @@
                 <a href="#searchInput" class="catalog-mobile-search" aria-label="Cari buku">
                     <i class="bi bi-search"></i>
                 </a>
-                <button class="navbar-toggler catalog-toggler" type="button" data-bs-toggle="collapse"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#catalogNavbarMenu" aria-controls="catalogNavbarMenu" aria-expanded="false"
                     aria-label="Buka menu">
                     <span class="navbar-toggler-icon"></span>
@@ -50,16 +36,16 @@
             <div class="collapse navbar-collapse" id="catalogNavbarMenu">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
                     <li class="nav-item">
-                        <a class="nav-link catalog-nav-link" href="../index.html">Beranda</a>
+                        <a class="nav-link" href="../index.html">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link catalog-nav-link active" href="katalog.html">Katalog Buku</a>
+                        <a class="nav-link active" href="katalog.html" aria-current="page">Katalog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link catalog-nav-link" href="dashboard-user.html">Dashboard</a>
+                        <a class="nav-link" href="dashboard-user.html">Dashboard</a>
                     </li>
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <a href="login.html" class="btn btn-ungu w-100">Masuk</a>
+                    <li class="nav-item ms-lg-2">
+                        <a href="login.html" class="btn btn-ungu">Masuk</a>
                     </li>
                 </ul>
             </div>
@@ -97,7 +83,7 @@
                         Cari</button>
                 </div>
             </div>
-            <!-- CATEGORY BUTTON dari file kedua  -->
+            <!-- CATEGORY BUTTON -->
             <div class="mt-3 d-flex flex-wrap">
                 <button class="category-btn active" onclick="filterKategori('Semua', this)">Semua</button>
                 <button class="category-btn" onclick="filterKategori('Pengembangan Diri', this)">Pengembangan
@@ -174,8 +160,7 @@
                         <div class="d-grid gap-2 mt-3">
                             <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1"></i>
-                                Tidak
-                                Tersedia</button>
+                                Tidak Tersedia</button>
                         </div>
                     </div>
                 </div>
@@ -238,6 +223,22 @@
         </div>
     </div>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+        <div id="toastPinjam" class="toast border-0" role="alert"
+            style="background:var(--gelap); color:white; border-radius:12px">
+            <div class="d-flex align-items-center">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <span
+                        style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
+                        <i class="bi bi-check-lg"></i>
+                    </span>
+                    <span id="toastMsg">Buku dipilih</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="site-footer">
         <div class="container">
@@ -270,7 +271,7 @@
             </div>
             <div class="footer-bottom">
                 <span>© Dibuat oleh Kelompok 5 menggunakan Bootstrap.</span>
-                </span><span>Dibuat untuk kebutuhan pembelajaran.</span>
+                <span>Dibuat untuk kebutuhan pembelajaran.</span>
             </div>
         </div>
     </footer>
