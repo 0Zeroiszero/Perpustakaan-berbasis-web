@@ -3,7 +3,7 @@
 # Anggota Kelompok
 <div align="center">
 
-<img src="assets/svg/spotify/spotify_k.svg" alt="Anggota Kelompok - Spotify K" style="width: 100%;">
+<img src="assets/svg/spotify/spotify__.svg" alt="Anggota Kelompok - Spotify K" style="width: 100%;">
 
 </div>
 
