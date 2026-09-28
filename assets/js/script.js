@@ -4,11 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
         login.addEventListener("submit", function (e) {
             e.preventDefault();
             const role = document.getElementById("role").value;
-            if (role === "admin") {
-                window.location.href = "dashboard-admin.html";
-            } else {
-                window.location.href = "dashboard-user.html";
-            }
+            window.location.href = (role === "admin") ? "dashboard-admin.html" : "dashboard-user.html";
         });
     }
 
@@ -16,16 +12,67 @@ document.addEventListener("DOMContentLoaded", function () {
     if (search) {
         search.addEventListener("submit", function (e) {
             e.preventDefault();
-
             window.location.href = "katalog.html";
         });
     }
 
+    // ============================
+    // SIDEBAR TOGGLE + BACKDROP
+    // (Tutup hanya saat klik di luar sidebar)
+    // ============================
     const menu = document.getElementById("mobileMenu");
     const sidebar = document.getElementById("sidebar");
+
     if (menu && sidebar) {
-        menu.addEventListener("click", function () {
-            sidebar.classList.toggle("show");
+        // Buat backdrop otomatis kalau belum ada
+        let backdrop = document.getElementById("sidebarBackdrop");
+        if (!backdrop) {
+            backdrop = document.createElement("div");
+            backdrop.id = "sidebarBackdrop";
+            backdrop.className = "sidebar-backdrop";
+            document.body.appendChild(backdrop);
+        }
+
+        function openSidebar() {
+            sidebar.classList.add("show");
+            backdrop.classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove("show");
+            backdrop.classList.remove("show");
+            document.body.style.overflow = "";
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.contains("show") ? closeSidebar() : openSidebar();
+        }
+
+        // Tombol hamburger → buka/tutup
+        menu.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        // Klik backdrop (di luar sidebar) → tutup
+        backdrop.addEventListener("click", closeSidebar);
+
+        // Klik link di dalam sidebar → auto close (mobile)
+        sidebar.querySelectorAll(".nav-link, a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                if (window.innerWidth < 992) closeSidebar();
+            });
+        });
+
+        // ESC → tutup
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && sidebar.classList.contains("show")) closeSidebar();
+        });
+
+        // Resize ke desktop → reset
+        window.addEventListener("resize", function () {
+            if (window.innerWidth >= 992) closeSidebar();
         });
     }
 
@@ -49,6 +96,7 @@ function cariBuku() {
     updateJumlah(jumlah);
     document.getElementById("tidakDitemukan").classList.toggle("d-none", jumlah !== 0);
 }
+
 function filterKategori(kategori, btn) {
     document.querySelectorAll(".category-btn").forEach(x => x.classList.remove("active"));
     btn.classList.add("active");
@@ -64,27 +112,31 @@ function filterKategori(kategori, btn) {
 }
 
 function updateJumlah(j) { document.getElementById("jumlahBuku").textContent = j + " Buku"; }
-function showToast(judul){
-  document.getElementById("toastMsg").textContent = `Buku "${judul}" dipilih untuk dipinjam.`;
-  const el = document.getElementById("toastPinjam");
-  const t = new bootstrap.Toast(el, {delay:3000});
-  t.show();
+
+function showToast(judul) {
+    document.getElementById("toastMsg").textContent = `Buku "${judul}" dipilih untuk dipinjam.`;
+    const el = document.getElementById("toastPinjam");
+    const t = new bootstrap.Toast(el, { delay: 3000 });
+    t.show();
 }
 
-function pinjamBuku(judul){ 
-  showToast(judul); 
+function pinjamBuku(judul) { showToast(judul); }
+
+function pinjamDariModal() {
+    const modalEl = document.getElementById("modalDetail");
+    const m = bootstrap.Modal.getInstance(modalEl);
+    if (m) m.hide();
+    showToast(bukuTerpilih);
 }
 
-function pinjamDariModal(){
-  const modalEl = document.getElementById("modalDetail");
-  const m = bootstrap.Modal.getInstance(modalEl);
-  if(m) m.hide();
-  showToast(bukuTerpilih);
+const searchInputEl = document.getElementById("searchInput");
+if (searchInputEl) {
+    searchInputEl.addEventListener("keypress", e => { if (e.key === "Enter") cariBuku(); });
 }
-document.getElementById("searchInput").addEventListener("keypress", e => { if (e.key === "Enter") cariBuku(); });
 
 function sortBuku() {
     const grid = document.getElementById("bookGrid");
+    if (!grid) return;
     const items = Array.from(document.querySelectorAll(".book-item"));
     const mode = document.getElementById("sortSelect").value;
     items.sort((a, b) => {
