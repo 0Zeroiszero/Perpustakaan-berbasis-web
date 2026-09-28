@@ -13,6 +13,9 @@
     --merah-muda: #FEE2E2;
 }
 
+/* ================================
+   BASE
+   ================================ */
 * { box-sizing: border-box; }
 
 body {
@@ -54,7 +57,6 @@ a { text-decoration: none; }
     font-weight: 800;
 }
 
-/* Nav link styling (konsisten di semua halaman) */
 .navbar .nav-link {
     color: var(--gelap);
     font-weight: 600;
@@ -68,13 +70,11 @@ a { text-decoration: none; }
     background: var(--ungu-muda);
 }
 
-/* Nav link AKTIF */
 .navbar .nav-link.active {
     color: var(--ungu) !important;
     background: var(--ungu-muda);
 }
 
-/* Tombol Masuk di navbar (khusus non-catalog) */
 .navbar:not(.catalog-navbar) .btn-ungu {
     padding: .55rem 1.4rem;
     font-weight: 700;
@@ -130,6 +130,22 @@ a { text-decoration: none; }
 .bg-ungu-muda { background: var(--ungu-muda) !important; }
 .bg-biru-muda { background: var(--biru-muda) !important; }
 .page-title { font-weight: 800; color: var(--gelap); }
+.info-label { color: var(--abu); font-size: .9rem; }
+.rating { color: #F59E0B; }
+
+/* ================================
+   FORMS
+   ================================ */
+.form-control,
+.form-select {
+    border-radius: 10px;
+    padding: .7rem .9rem;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ungu);
+    box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
+}
 
 /* ================================
    CARD CLEAN
@@ -229,7 +245,50 @@ a { text-decoration: none; }
     object-fit: cover;
 }
 .book-card .card-body { padding: 18px; }
-.rating { color: #F59E0B; }
+
+/* ================================
+   DETAIL COVER (merged — versi gambar)
+   ================================ */
+.detail-cover {
+    height: auto;
+    border-radius: 18px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    color: var(--ungu);
+}
+.detail-cover img {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(30, 27, 75, .15);
+    display: block;
+}
+
+/* ================================
+   LOGIN
+   ================================ */
+.login-page {
+    min-height: 100vh;
+    background: linear-gradient(
+        135deg,
+        var(--ungu-muda),
+        #fff 55%,
+        var(--merah-muda)
+    );
+}
+.login-card {
+    max-width: 440px;
+    margin: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 34px;
+    box-shadow: 0 20px 55px rgba(30, 27, 75, .12);
+}
 
 /* ================================
    SIDEBAR & DASHBOARD
@@ -292,53 +351,55 @@ a { text-decoration: none; }
     padding: 20px;
 }
 
-/* ================================
-   LOGIN & DETAIL
-   ================================ */
-.login-page {
-    min-height: 100vh;
-    background: linear-gradient(
-        135deg,
-        var(--ungu-muda),
-        #fff 55%,
-        var(--merah-muda)
-    );
+/* Sidebar backdrop (untuk mobile) */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 27, 75, .5);
+    backdrop-filter: blur(2px);
+    z-index: 1025;
+    opacity: 0;
+    transition: opacity .25s ease;
 }
-.login-card {
-    max-width: 440px;
-    margin: auto;
-    background: #fff;
-    border-radius: 20px;
-    padding: 34px;
-    box-shadow: 0 20px 55px rgba(30, 27, 75, .12);
-}
-.detail-cover {
-    height: 420px;
-    border-radius: 18px;
-    background: linear-gradient(145deg, var(--ungu-muda), var(--biru-muda));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ungu);
-    font-size: 6rem;
-}
-.info-label {
-    color: var(--abu);
-    font-size: .9rem;
+.sidebar-backdrop.show {
+    display: block;
+    opacity: 1;
 }
 
 /* ================================
-   FORMS
+   CATALOG NAVBAR
    ================================ */
-.form-control,
-.form-select {
+.catalog-navbar .catalog-toggler {
+    border: 1px solid #E5E7EB;
     border-radius: 10px;
-    padding: .7rem .9rem;
+    width: 40px;
+    height: 40px;
+    padding: 7px;
 }
-.form-control:focus,
-.form-select:focus {
-    border-color: var(--ungu);
+.catalog-navbar .catalog-toggler:focus {
     box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
+}
+.catalog-navbar .catalog-mobile-search {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gelap);
+    background: var(--ungu-muda);
+    text-decoration: none;
+}
+.catalog-navbar .catalog-mobile-search:hover { color: var(--ungu); }
+.catalog-navbar .catalog-nav-link {
+    border-radius: 9px;
+    padding: 10px 12px;
+}
+.catalog-navbar .catalog-nav-link.active {
+    color: var(--ungu);
+    background: var(--ungu-muda);
+    font-weight: 600;
 }
 
 /* ================================
@@ -419,66 +480,13 @@ a { text-decoration: none; }
 }
 
 /* ================================
-   CATALOG NAVBAR (khusus halaman katalog)
-   ================================ */
-.catalog-navbar .catalog-toggler {
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
-    width: 40px;
-    height: 40px;
-    padding: 7px;
-}
-.catalog-navbar .catalog-toggler:focus {
-    box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
-}
-.catalog-navbar .catalog-mobile-search {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gelap);
-    background: var(--ungu-muda);
-    text-decoration: none;
-}
-.catalog-navbar .catalog-mobile-search:hover { color: var(--ungu); }
-.catalog-navbar .catalog-nav-link {
-    border-radius: 9px;
-    padding: 10px 12px;
-}
-.catalog-navbar .catalog-nav-link.active {
-    color: var(--ungu);
-    background: var(--ungu-muda);
-    font-weight: 600;
-}
-
-.sidebar-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(30, 27, 75, .5);
-    backdrop-filter: blur(2px);
-    z-index: 1025;
-    opacity: 0;
-    transition: opacity .25s ease;
-}
-
-.sidebar-backdrop.show {
-    display: block;
-    opacity: 1;
-}
-
-@media (min-width: 992px) {
-    .sidebar-backdrop { display: none !important; }
-}
-
-/* ================================
    RESPONSIVE
    ================================ */
 .mobile-menu { display: none; }
 
+/* ---- Tablet & Mobile (≤991px) ---- */
 @media (max-width: 991px) {
+    /* Sidebar */
     .sidebar {
         transform: translateX(-100%);
         transition: .2s;
@@ -487,10 +495,18 @@ a { text-decoration: none; }
     .main-with-sidebar { margin-left: 0; }
     .mobile-menu { display: inline-flex; }
     .hero { padding: 55px 0; }
+
+    /* Catalog navbar */
+    .catalog-navbar .navbar-collapse {
+        padding: 10px 0 6px;
+        border-top: 1px solid #F0F0F0;
+        margin-top: 10px;
+    }
+    .catalog-navbar .catalog-nav-link { padding: 10px 12px; }
+    .catalog-navbar .catalog-nav-link.active { background: var(--ungu-muda); }
 }
 
-/* Mobile fix khusus navbar non-catalog (index, login, dll)
-   Scoped dengan :not(.catalog-navbar) agar halaman katalog tidak berubah */
+/* ---- Navbar non-catalog (≤991.98px) ---- */
 @media (max-width: 991.98px) {
     .navbar:not(.catalog-navbar) .navbar-collapse {
         background: #fff;
@@ -520,19 +536,13 @@ a { text-decoration: none; }
     }
 }
 
-/* Catalog navbar responsive */
+/* ---- Desktop (≥992px) ---- */
 @media (min-width: 992px) {
+    .sidebar-backdrop { display: none !important; }
     .catalog-navbar .catalog-mobile-search { display: none; }
 }
-@media (max-width: 991px) {
-    .catalog-navbar .navbar-collapse {
-        padding: 10px 0 6px;
-        border-top: 1px solid #F0F0F0;
-        margin-top: 10px;
-    }
-    .catalog-navbar .catalog-nav-link { padding: 10px 12px; }
-    .catalog-navbar .catalog-nav-link.active { background: var(--ungu-muda); }
-}
+
+/* ---- Extra small (≤576px) ---- */
 @media (max-width: 576px) {
     .site-footer {
         margin-top: 50px;
