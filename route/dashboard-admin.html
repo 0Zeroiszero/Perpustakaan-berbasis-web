@@ -70,8 +70,9 @@
                     <h2 class="page-title">Dashboard Admin</h2>
                     <p class="text-secondary mb-0">Ringkasan data perpustakaan.</p>
                 </div>
-                <button class="btn btn-ungu">
-                    <i class="bi bi-plus-lg me-1"></i>Tambah Buku
+                <button class="btn btn-ungu" type="button" data-bs-toggle="modal" data-bs-target="#modalBuku" onclick="bukaFormTambah()">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Tambah Buku
                 </button>
             </div>
 
@@ -124,29 +125,53 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><b>Atomic Habits</b></td>
-                                <td>James Clear</td>
-                                <td>Pengembangan Diri</td>
-                                <td>12</td>
-                                <td><span class="badge bg-success-subtle text-success">Tersedia</span></td>
-                                <td><button class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></button></td>
+                            <tr data-id="atomic-habits">
+                                <td class="book-title"><b>Atomic Habits</b></td>
+                                <td class="book-author">James Clear</td>
+                                <td class="book-category">Pengembangan Diri</td>
+                                <td class="book-stock">12</td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success status-badge">
+                                        Tersedia
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-light btn-edit-buku" type="button" title="Edit buku" onclick="editBuku(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td><b>Clean Code</b></td>
-                                <td>Robert C. Martin</td>
-                                <td>Teknologi</td>
-                                <td>7</td>
-                                <td><span class="badge bg-success-subtle text-success">Tersedia</span></td>
-                                <td><button class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></button></td>
+                            <tr data-id="clean-code">
+                                <td class="book-title"><b>Clean Code</b></td>
+                                <td class="book-author">Robert C. Martin</td>
+                                <td class="book-category">Teknologi</td>
+                                <td class="book-stock">7</td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success status-badge">
+                                        Tersedia
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-light btn-edit-buku" type="button" title="Edit buku" onclick="editBuku(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td><b>Bumi Manusia</b></td>
-                                <td>Pramoedya Ananta Toer</td>
-                                <td>Novel</td>
-                                <td>0</td>
-                                <td><span class="badge bg-danger-subtle text-danger">Habis</span></td>
-                                <td><button class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></button></td>
+                            <tr data-id="bumi-manusia">
+                                <td class="book-title"><b>Bumi Manusia</b></td>
+                                <td class="book-author">Pramoedya Ananta Toer</td>
+                                <td class="book-category">Novel</td>
+                                <td class="book-stock">0</td>
+                                <td>
+                                    <span class="badge bg-danger-subtle text-danger status-badge">
+                                        Habis
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-light btn-edit-buku" type="button" title="Edit buku" onclick="editBuku(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -155,7 +180,84 @@
         </main>
     </div>
 
+    <!-- MODAL TAMBAH / EDIT BUKU -->
+    <div class="modal fade" id="modalBuku" tabindex="-1" aria-labelledby="modalBukuLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius:16px;overflow:hidden">
+                <form id="bookForm">
+                    <div class="modal-header border-0">
+                        <div>
+                            <h5 class="modal-title fw-bold" id="modalBukuLabel">Tambah Buku</h5>
+                            <small class="text-secondary">Isi data buku yang akan dikelola di perpustakaan.</small>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body pt-0">
+                        <div class="mb-3">
+                            <label for="judulBuku" class="form-label fw-semibold">Judul Buku</label>
+                            <input type="text" class="form-control" id="judulBuku" placeholder="Contoh: Atomic Habits" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="penulisBuku" class="form-label fw-semibold">Penulis</label>
+                            <input type="text" class="form-control" id="penulisBuku" placeholder="Nama penulis" required>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                <label for="kategoriBuku" class="form-label fw-semibold">Kategori</label>
+                                <select class="form-select" id="kategoriBuku" required>
+                                    <option value="">Pilih kategori</option>
+                                    <option>Pengembangan Diri</option>
+                                    <option>Teknologi</option>
+                                    <option>Novel</option>
+                                    <option>Sejarah</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="stokBuku" class="form-label fw-semibold">Stok</label>
+                                <input type="number" class="form-control" id="stokBuku" min="0" value="1" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-ungu">
+                            <i class="bi bi-check-lg me-1"></i> Simpan Buku
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-5 col-md-6">
+                    <a href="../index.html" class="footer-brand"><span class="footer-logo">P</span><span>PustakaDigital</span></a>
+                    <p class="footer-description mt-3 mb-0">Perpustakaan digital untuk menemukan, membaca, dan mengelola koleksi buku dengan mudah.</p>
+                </div>
+                <div class="col-6 col-lg-3 col-md-3">
+                    <h6 class="footer-title">Navigasi</h6>
+                    <a href="../index.html" class="footer-link">Beranda</a>
+                    <a href="katalog.html" class="footer-link">Katalog Buku</a>
+                    <a href="dashboard-user.html" class="footer-link">Dashboard</a>
+                </div>
+                <div class="col-6 col-lg-4 col-md-3">
+                    <h6 class="footer-title">Informasi</h6>
+                    <span class="footer-info"><i class="bi bi-clock me-2"></i>Senin–Jumat, 08.00–16.00</span>
+                    <span class="footer-info"><i class="bi bi-envelope me-2"></i>info@pustakadigital.id</span>
+                    <div class="footer-social mt-3">
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom"><span>© 2026 PustakaDigital. All rights reserved.</span><span>Dibuat untuk kebutuhan pembelajaran.</span></div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
 </body>
-
 </html>

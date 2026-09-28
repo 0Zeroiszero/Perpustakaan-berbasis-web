@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (search) {
         search.addEventListener("submit", function (e) {
             e.preventDefault();
+
             window.location.href = "katalog.html";
         });
     }
@@ -119,19 +120,19 @@ function showToast(judul, customMessage) {
         ? customMessage
         : `Buku "${judul}" dipilih untuk dipinjam.`;
 
-    const el = document.getElementById("toastPinjam");
+  const el = document.getElementById("toastPinjam");
     const t = new bootstrap.Toast(el, { delay: 3000 });
-    t.show();
+  t.show();
 }
 
 
 function pinjamBuku(judul) { showToast(judul); }
 
 function pinjamDariModal() {
-    const modalEl = document.getElementById("modalDetail");
-    const m = bootstrap.Modal.getInstance(modalEl);
+  const modalEl = document.getElementById("modalDetail");
+  const m = bootstrap.Modal.getInstance(modalEl);
     if (m) m.hide();
-    showToast(bukuTerpilih);
+  showToast(bukuTerpilih);
 }
 
 function tambahKeRak(judul) {
@@ -154,4 +155,112 @@ function sortBuku() {
         return 0;
     });
     items.forEach(i => grid.appendChild(i));
+}
+
+/* ================================
+   DASHBOARD ADMIN - TAMBAH & EDIT BUKU
+   ================================ */
+let barisBukuDiedit = null;
+
+function bukaFormTambah() {
+    barisBukuDiedit = null;
+    const form = document.getElementById("bookForm");
+    if (!form) return;
+
+    form.reset();
+    document.getElementById("stokBuku").value = 1;
+    document.getElementById("modalBukuLabel").textContent = "Tambah Buku";
+}
+
+function editBuku(button) {
+    const row = button.closest("tr");
+    if (!row) return;
+
+    barisBukuDiedit = row;
+    document.getElementById("judulBuku").value = row.querySelector(".book-title").textContent.trim();
+    document.getElementById("penulisBuku").value = row.querySelector(".book-author").textContent.trim();
+    document.getElementById("kategoriBuku").value = row.querySelector(".book-category").textContent.trim();
+    document.getElementById("stokBuku").value = row.querySelector(".book-stock").textContent.trim();
+    document.getElementById("modalBukuLabel").textContent = "Edit Buku";
+
+    const modalEl = document.getElementById("modalBuku");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+}
+
+function buatStatus(stok) {
+    if (stok > 0) {
+        return `<span class="badge bg-success-subtle text-success status-badge">Tersedia</span>`;
+    }
+    return `<span class="badge bg-danger-subtle text-danger status-badge">Habis</span>`;
+}
+
+function buatIdBuku(judul) {
+    return judul.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function buatBarisBuku(judul, penulis, kategori, stok) {
+    const row = document.createElement("tr");
+    row.dataset.id = buatIdBuku(judul);
+    row.innerHTML = `
+        <td class="book-title"><b>${escapeHtml(judul)}</b></td>
+        <td class="book-author">${escapeHtml(penulis)}</td>
+        <td class="book-category">${escapeHtml(kategori)}</td>
+        <td class="book-stock">${stok}</td>
+        <td>${buatStatus(stok)}</td>
+        <td>
+            <button class="btn btn-sm btn-light btn-edit-buku" type="button" title="Edit buku" onclick="editBuku(this)">
+                <i class="bi bi-pencil"></i>
+            </button>
+        </td>
+    `;
+    return row;
+}
+
+function escapeHtml(value) {
+    const div = document.createElement("div");
+    div.textContent = value;
+    return div.innerHTML;
+}
+
+function updateTotalBuku(tambah = 0) {
+    const stat = document.querySelector(".stat-number");
+    if (!stat || !tambah) return;
+
+    const angka = parseInt(stat.textContent.replace(/\D/g, ""), 10) || 0;
+    stat.textContent = (angka + tambah).toLocaleString("id-ID");
+}
+
+const bookForm = document.getElementById("bookForm");
+if (bookForm) {
+    bookForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const judul = document.getElementById("judulBuku").value.trim();
+        const penulis = document.getElementById("penulisBuku").value.trim();
+        const kategori = document.getElementById("kategoriBuku").value;
+        const stok = Math.max(0, parseInt(document.getElementById("stokBuku").value, 10) || 0);
+
+        if (!judul || !penulis || !kategori) return;
+
+        if (barisBukuDiedit) {
+            barisBukuDiedit.querySelector(".book-title").innerHTML = `<b>${escapeHtml(judul)}</b>`;
+            barisBukuDiedit.querySelector(".book-author").textContent = penulis;
+            barisBukuDiedit.querySelector(".book-category").textContent = kategori;
+            barisBukuDiedit.querySelector(".book-stock").textContent = stok;
+            barisBukuDiedit.querySelector(".status-badge").outerHTML = buatStatus(stok);
+            barisBukuDiedit.dataset.id = buatIdBuku(judul);
+        } else {
+            const tbody = document.querySelector(".table-card tbody");
+            if (!tbody) return;
+            tbody.appendChild(buatBarisBuku(judul, penulis, kategori, stok));
+            updateTotalBuku(1);
+        }
+
+        const modalEl = document.getElementById("modalBuku");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+        bookForm.reset();
+        barisBukuDiedit = null;
+    });
 }
