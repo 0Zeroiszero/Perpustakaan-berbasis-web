@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Struktur Dasar Tailwind</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+  <div class="max-w-4xl mx-auto p-4">
+    <h2 class="text-2xl font-semibold mb-4">Katalog Buku</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="p-4 border border-gray-200 rounded-xl">
+        <h3 class="font-semibold">Dasar Pemrograman Web</h3>
+        <p class="text-sm text-gray-600 mt-1">Pengantar HTML dan CSS.</p>
+        <button type="button" class="mt-3 px-3 py-1.5 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600">Lihat Detail</button>
+      </div>
+      <div class="p-4 border border-gray-200 rounded-xl">
+        <h3 class="font-semibold">Basis Data</h3>
+        <p class="text-sm text-gray-600 mt-1">Perancangan dan normalisasi tabel.</p>
+        <button type="button" class="mt-3 px-3 py-1.5 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600">Lihat Detail</button>
+      </div>
+      <div class="p-4 border border-gray-200 rounded-xl">
+        <h3 class="font-semibold">Jaringan Komputer</h3>
+        <p class="text-sm text-gray-600 mt-1">Konsep protokol dan lapisan jaringan.</p>
+        <button type="button" class="mt-3 px-3 py-1.5 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600">Lihat Detail</button>
+      </div>
+    </div>
+    <div class="mt-4 flex items-center gap-2">
+      <span class="px-2 py-1 rounded bg-gray-100 text-xs">HTML</span>
+      <span class="px-2 py-1 rounded bg-gray-100 text-xs">CSS</span>
+    </div>
+  </div>
+</body>
+</html>
