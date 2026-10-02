@@ -1,76 +1,55 @@
-/* ============================================================
-   kelola-pengguna.js
-   Kode khusus untuk halaman kelola-pengguna.html
+/* Halaman kelola-pengguna.html. Data pengguna cuma ada di tabel, ilang kalo di-refresh */
 
-   Semua data pengguna hanya tinggal di tabel HTML (DOM).
-   Tidak pakai localStorage — data akan hilang saat halaman
-   dimuat ulang.
-   ============================================================ */
-
-/* ---------- Buka modal untuk menambah pengguna ---------- */
+// Munculin pop-up form kosong buat nambah pengguna baru
 function bukaTambah() {
-    // Lepas tanda "sedang diedit" dari baris mana pun (kalau ada)
     hapusTandaEdit();
 
-    // Kosongkan form dan ganti judul modal
     document.getElementById("inputNama").value = "";
     document.getElementById("inputEmail").value = "";
     document.getElementById("inputRole").value = "User";
     document.getElementById("inputStatus").value = "Aktif";
     document.getElementById("modalTitle").textContent = "Tambah Pengguna";
 
-    // Buka modal
     new bootstrap.Modal(document.getElementById("modalPengguna")).show();
 }
 
-/* ---------- Buka modal untuk mengedit pengguna ---------- */
-// tombol = tombol pensil yang diklik
+// Munculin pop-up yang udah keisi data pengguna lama, biar bisa diubah
 function editPengguna(tombol) {
-    // Cari baris (<tr>) tempat tombol berada
     const baris = tombol.closest("tr");
 
-    // Lepas tanda edit dari baris lain (kalau ada)
     hapusTandaEdit();
 
-    // Isi form dengan data dari kolom-kolom baris
     document.getElementById("inputNama").value = baris.querySelector(".kolom-nama b").textContent;
     document.getElementById("inputEmail").value = baris.querySelector(".kolom-email").textContent;
     document.getElementById("inputRole").value = baris.querySelector(".kolom-role").textContent;
     document.getElementById("inputStatus").value = baris.querySelector(".kolom-status").textContent;
 
-    // Tandai baris ini sebagai baris yang sedang diedit
     baris.setAttribute("data-editing", "ya");
 
-    // Ganti judul modal, lalu buka modal
     document.getElementById("modalTitle").textContent = "Edit Pengguna";
     new bootstrap.Modal(document.getElementById("modalPengguna")).show();
 }
 
-/* ---------- Simpan pengguna (tombol Simpan di modal) ---------- */
+// Simpan isi form: kalau lagi mode edit, barisnya diubah; kalau bukan, nambah baris baru
 function simpanPengguna() {
-    // Baca semua isi form
     const nama = document.getElementById("inputNama").value.trim();
     const email = document.getElementById("inputEmail").value.trim();
     const role = document.getElementById("inputRole").value;
     const status = document.getElementById("inputStatus").value;
 
-    // Cari baris yang sedang diedit (kalau ada)
     const tabel = document.getElementById("tabelPengguna");
     const barisEdit = tabel.querySelector("tr[data-editing]");
 
     if (barisEdit) {
-        // ----- UBAH baris yang sudah ada -----
         barisEdit.querySelector(".kolom-nama b").textContent = nama;
         barisEdit.querySelector(".kolom-email").textContent = email;
         barisEdit.querySelector(".kolom-role").innerHTML = badgeRole(role);
         barisEdit.querySelector(".kolom-status").innerHTML = badgeStatus(status);
 
-        // Lepas tanda edit
         barisEdit.removeAttribute("data-editing");
 
         tampilkanToast("Pengguna \"" + nama + "\" berhasil diubah.");
     } else {
-        // ----- TAMBAH baris baru ke tabel -----
         const tr = document.createElement("tr");
         tr.className = "baris-pengguna";
         tr.innerHTML =
@@ -95,31 +74,27 @@ function simpanPengguna() {
         tampilkanToast("Pengguna \"" + nama + "\" berhasil ditambahkan.");
     }
 
-    // Tutup modal, lalu hitung ulang jumlah pengguna
     bootstrap.Modal.getInstance(document.getElementById("modalPengguna")).hide();
     cariPengguna();
 }
 
-/* ---------- Hapus pengguna (tombol sampah) ---------- */
+// Hapus pengguna dari tabel, terus hitung ulang jumlah dan kasih notifikasi
 function hapusPengguna(tombol) {
-    // Cari baris tempat tombol berada, lalu hapus baris itu
     const baris = tombol.closest("tr");
     const nama = baris.querySelector(".kolom-nama b").textContent;
     baris.remove();
 
-    // Hitung ulang jumlah + tampilkan pesan
     cariPengguna();
     tampilkanToast("Pengguna \"" + nama + "\" dihapus dari tabel.");
 }
 
-/* ---------- Pencarian pengguna di halaman ini ---------- */
+// Cari pengguna di tabel, yang teksnya cocok sama kata kunci doang yang nampil
 function cariPengguna() {
     const kata = document.getElementById("cariPengguna").value.toLowerCase();
     const baris = document.querySelectorAll("#tabelPengguna .baris-pengguna");
 
     let tampil = 0;
     baris.forEach(function (b) {
-        // Tampilkan baris kalau teksnya mengandung kata kunci
         if (b.textContent.toLowerCase().includes(kata)) {
             b.classList.remove("d-none");
             tampil++;
@@ -128,16 +103,12 @@ function cariPengguna() {
         }
     });
 
-    // Perbarui badge jumlah pengguna
     document.getElementById("jumlahPengguna").textContent = tampil + " Pengguna";
 
-    // Tampilkan pesan kosong kalau tidak ada yang cocok
     document.getElementById("penggunaKosong").classList.toggle("d-none", tampil !== 0);
 }
 
-/* ---------- Helper (fungsi pembantu) ---------- */
-
-// Lepas tanda data-editing dari semua baris
+// Bersihin penanda baris yang lagi diklik buat diedit
 function hapusTandaEdit() {
     const lama = document.querySelectorAll("#tabelPengguna tr[data-editing]");
     lama.forEach(function (b) {
@@ -145,7 +116,7 @@ function hapusTandaEdit() {
     });
 }
 
-// Tentukan badge role
+// Bikin label berwarna biru buat Admin dan ungu buat User
 function badgeRole(role) {
     if (role === "Admin") {
         return '<span class="badge bg-biru-muda text-biru">Admin</span>';
@@ -153,7 +124,7 @@ function badgeRole(role) {
     return '<span class="badge bg-ungu-muda text-ungu">User</span>';
 }
 
-// Tentukan badge status
+// Bikin label hijau buat yang Aktif dan abu-abu buat Nonaktif
 function badgeStatus(status) {
     if (status === "Aktif") {
         return '<span class="badge bg-success-subtle text-success">Aktif</span>';
@@ -161,8 +132,8 @@ function badgeStatus(status) {
     return '<span class="badge bg-secondary">Nonaktif</span>';
 }
 
-// Tampilkan toast pesan singkat
+// Munculin notifikasi singkat di pojok bawah
 function tampilkanToast(pesan) {
     document.getElementById("toastPenggunaMsg").textContent = pesan;
     bootstrap.Toast.getOrCreateInstance(document.getElementById("toastPengguna"), { delay: 2500 }).show();
-}
+}

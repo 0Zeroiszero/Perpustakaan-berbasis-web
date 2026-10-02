@@ -1,12 +1,7 @@
-/* ============================================================
-   katalog.css — kode khusus katalog.html
-   Bagian bersama (navbar, footer, book-card, dll) ada di root.css
-   ============================================================ */
+/* Halaman katalog — bagian bersama ada di root.css */
 @import "root.css";
 
-/* ================================
-   BUTTONS
-   ================================ */
+/* BUTTONS */
 .btn-pinjam {
     background: var(--biru);
     border-color: var(--biru);
@@ -19,9 +14,7 @@
     color: #fff;
 }
 
-/* ================================
-   CATEGORY PILLS
-   ================================ */
+/* CATEGORY PILLS */
 .category-btn {
     border: 1px solid var(--ungu);
     color: var(--ungu);
@@ -38,10 +31,7 @@
     color: #fff;
 }
 
-/* ===============================
-   SEARCH ICON (navbar)
-   Tampil di mobile dan desktop
-   ================================ */
+/* SEARCH ICON */
 .catalog-search-icon {
     display: inline-flex;
     align-items: center;
@@ -58,39 +48,37 @@
     color: var(--ungu);
 }
 
-/* Kolom search tidak tertutup navbar sticky saat lompat dari ikon */
+/* Kolom search di bawah navbar sticky */
 #searchInput {
     scroll-margin-top: 84px;
 }
 
-/* ===============================
-   GRID BUKU — semua kartu sama tinggi
-   ================================ */
-/* Kartu jadi kolom fleksibel penuh */
+/* GRID BUKU */
+/* Kartu jadi kolom fleksibel */
 #bookGrid .book-card {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
-/* Area konten mengisi sisa tinggi kartu */
+/* Isi kartu setinggi mungkin */
 #bookGrid .book-card > .p-3 {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
-/* Tombol selalu di bawah → posisi sejajar di semua kartu */
+/* Tombol rata bawah */
 #bookGrid .book-card .d-grid {
     margin-top: auto;
     padding-top: .75rem;
 }
-/* Judul & penulis maksimal 1 baris (elipsis) */
+/* Judul & penulis 1 baris */
 #bookGrid .book-card h5,
 #bookGrid .book-card .p-3 > p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-/* Badge bisa jadi 2 baris di layar sangat kecil — seragamkan tingginya */
+/* Badge seragam di layar kecil */
 @media (max-width: 575.98px) {
     #bookGrid .book-card .badges {
         min-height: 3.5rem;

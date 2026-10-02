@@ -1,9 +1,2 @@
-/* ============================================================
-   daftar.css — kode khusus daftar.html (halaman Daftar)
-
-   Halaman ini memakai class bersama yang sama dengan halaman
-   login (login-page, login-card, navbar, form, footer, dll)
-   yang sudah tersedia di root.css —
-   jadi file ini hanya perlu mengimpor root.css.
-   ============================================================ */
+/* Halaman daftar — hanya mengimpor root.css */
 @import "root.css";

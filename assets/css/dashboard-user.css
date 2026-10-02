@@ -1,13 +1,7 @@
-/* ============================================================
-   dashboard-user.css — kode khusus dashboard-user.html
-   Bagian bersama (sidebar, stat, table-card, dll) ada di root.css
-   ============================================================ */
+/* Halaman dashboard user — bagian bersama ada di root.css */
 @import "root.css";
 
-/* ================================
-   STAT ICON
-   (ikon di sudut kartu statistik)
-   ================================ */
+/* STAT ICON */
 .stat-icon {
     width: 45px;
     height: 45px;

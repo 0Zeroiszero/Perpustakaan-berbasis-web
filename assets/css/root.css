@@ -1,12 +1,6 @@
-/* ============================================================
-   root.css — BAGIAN BERSAMA (dipakai 2 halaman atau lebih)
-   File ini diimpor oleh CSS masing-masing halaman:
-   @import "root.css";
-   ============================================================ */
+/* root.css — bagian bersama, diimpor tiap halaman */
 
-/* ================================
-   ROOT VARIABLES
-   ================================ */
+/* ROOT VARIABLES */
 :root {
     --ungu: #7C3AED;
     --ungu-muda: #EDE9FE;
@@ -19,9 +13,7 @@
     --merah-muda: #FEE2E2;
 }
 
-/* ================================
-   BASE
-   ================================ */
+/* BASE */
 * { box-sizing: border-box; }
 
 body {
@@ -32,9 +24,7 @@ body {
 
 a { text-decoration: none; }
 
-/* ================================
-   NAVBAR (index, login, daftar, katalog)
-   ================================ */
+/* NAVBAR */
 .navbar {
     background: #fff;
     padding: .5rem 0;
@@ -87,9 +77,7 @@ a { text-decoration: none; }
     border-radius: 10px;
 }
 
-/* ================================
-   BUTTONS
-   ================================ */
+/* BUTTONS */
 .btn-ungu {
     background: var(--ungu);
     border-color: var(--ungu);
@@ -116,9 +104,7 @@ a { text-decoration: none; }
     color: #fff;
 }
 
-/* ================================
-   UTILITIES
-   ================================ */
+/* UTILITIES */
 .text-ungu { color: var(--ungu) !important; }
 .text-biru { color: var(--biru) !important; }
 .bg-ungu-muda { background: var(--ungu-muda) !important; }
@@ -126,9 +112,7 @@ a { text-decoration: none; }
 .page-title { font-weight: 800; color: var(--gelap); }
 .rating { color: #F59E0B; }
 
-/* ================================
-   FORMS
-   ================================ */
+/* FORMS */
 .form-control,
 .form-select {
     border-radius: 10px;
@@ -140,9 +124,7 @@ a { text-decoration: none; }
     box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
 }
 
-/* ================================
-   CARD CLEAN
-   ================================ */
+/* CARD CLEAN */
 .card-clean {
     border: 1px solid #eee;
     border-radius: 16px;
@@ -150,9 +132,7 @@ a { text-decoration: none; }
     box-shadow: 0 5px 20px rgba(30, 27, 75, .05);
 }
 
-/* ================================
-   BOOK CARD (katalog, rak-saya)
-   ================================ */
+/* BOOK CARD */
 .book-card {
     height: 100%;
     overflow: hidden;
@@ -182,9 +162,7 @@ a { text-decoration: none; }
 }
 .book-card .card-body { padding: 18px; }
 
-/* ================================
-   LOGIN (login, daftar)
-   ================================ */
+/* LOGIN */
 .login-page {
     min-height: 100vh;
     background: linear-gradient(
@@ -203,11 +181,7 @@ a { text-decoration: none; }
     box-shadow: 0 20px 55px rgba(30, 27, 75, .12);
 }
 
-/* ================================
-   SIDEBAR & DASHBOARD
-   (dashboard-admin, dashboard-user, kelola-buku,
-    kelola-pengguna, rak-saya)
-   ================================ */
+/* SIDEBAR & DASHBOARD */
 .sidebar {
     width: 250px;
     position: fixed;
@@ -256,7 +230,7 @@ a { text-decoration: none; }
     padding: 20px;
 }
 
-/* Sidebar backdrop (untuk mobile, dibuat oleh script.js) */
+/* Backdrop sidebar mobile */
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -272,9 +246,7 @@ a { text-decoration: none; }
     opacity: 1;
 }
 
-/* ================================
-   SITE FOOTER (index, login, daftar, katalog)
-   ================================ */
+/* SITE FOOTER */
 .site-footer {
     margin-top: 70px;
     padding: 48px 0 0;
@@ -349,12 +321,10 @@ a { text-decoration: none; }
     font-size: .85rem;
 }
 
-/* ================================
-   RESPONSIVE
-   ================================ */
+/* RESPONSIVE */
 .mobile-menu { display: none; }
 
-/* ---- Tablet & Mobile (≤991px): sidebar ---- */
+/* Tablet & mobile (≤991px) */
 @media (max-width: 991px) {
     .sidebar {
         transform: translateX(-100%);
@@ -365,7 +335,7 @@ a { text-decoration: none; }
     .mobile-menu { display: inline-flex; }
 }
 
-/* ---- Navbar (≤991.98px) ---- */
+/* Navbar (≤991.98px) */
 @media (max-width: 991.98px) {
     .navbar .navbar-collapse {
         background: #fff;
@@ -395,12 +365,12 @@ a { text-decoration: none; }
     }
 }
 
-/* ---- Desktop (≥992px) ---- */
+/* Desktop (≥992px) */
 @media (min-width: 992px) {
     .sidebar-backdrop { display: none !important; }
 }
 
-/* ---- Extra small (≤576px) ---- */
+/* Extra small (≤576px) */
 @media (max-width: 576px) {
     .site-footer {
         margin-top: 50px;

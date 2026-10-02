@@ -1,12 +1,7 @@
-/* ============================================================
-   detail-buku.css — kode khusus detail-buku.html
-   Bagian bersama (navbar, footer, tombol, rating, dll) ada di root.css
-   ============================================================ */
+/* Halaman detail buku — bagian bersama ada di root.css */
 @import "root.css";
 
-/* ================================
-   DETAIL COVER
-   ================================ */
+/* DETAIL COVER */
 .detail-cover {
     height: auto;
     border-radius: 18px;
@@ -27,9 +22,7 @@
     display: block;
 }
 
-/* ================================
-   INFO LABEL
-   ================================ */
+/* INFO LABEL */
 .info-label {
     color: var(--abu);
     font-size: .9rem;

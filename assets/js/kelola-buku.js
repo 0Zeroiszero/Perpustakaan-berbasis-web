@@ -1,35 +1,21 @@
-/* ============================================================
-   kelola-buku.js
-   Kode khusus untuk halaman kelola-buku.html
+/* Halaman kelola-buku.html. Data buku cuma ada di tabel, ilang kalo di-refresh */
 
-   Semua data buku hanya tinggal di tabel HTML (DOM).
-   Tidak pakai localStorage — data akan hilang saat halaman
-   dimuat ulang.
-   ============================================================ */
-
-/* ---------- Buka modal untuk menambah buku baru ---------- */
+// Munculin pop-up form kosong buat nambah buku baru
 function bukaModalTambah() {
-    // Lepas tanda "sedang diedit" dari baris mana pun (kalau ada)
     hapusTandaEdit();
 
-    // Kosongkan form dan ganti judul modal
     document.getElementById("formBuku").reset();
     document.getElementById("modalBukuTitle").textContent = "Tambah Buku";
 
-    // Buka modal
     new bootstrap.Modal(document.getElementById("modalBuku")).show();
 }
 
-/* ---------- Buka modal untuk mengedit buku ---------- */
-// tombol = tombol pensil yang diklik
+// Munculin pop-up yang udah keisi data buku lama, biar bisa diubah
 function editBuku(tombol) {
-    // Cari baris (<tr>) tempat tombol berada
     const baris = tombol.closest("tr");
 
-    // Lepas tanda edit dari baris lain (kalau ada)
     hapusTandaEdit();
 
-    // Isi form dengan data dari kolom-kolom baris
     document.getElementById("inputJudul").value = baris.querySelector(".kolom-judul b").textContent;
     document.getElementById("inputPenulis").value = baris.querySelector(".kolom-penulis").textContent;
     document.getElementById("inputKategori").value = baris.querySelector(".kolom-kategori").textContent;
@@ -39,19 +25,16 @@ function editBuku(tombol) {
     document.getElementById("inputStok").value = baris.querySelector(".kolom-stok").textContent;
     document.getElementById("inputSinopsis").value = baris.dataset.sinopsis || "";
 
-    // Tandai baris ini sebagai baris yang sedang diedit
     baris.setAttribute("data-editing", "ya");
 
-    // Ganti judul modal, lalu buka modal
     document.getElementById("modalBukuTitle").textContent = "Edit Buku";
     new bootstrap.Modal(document.getElementById("modalBuku")).show();
 }
 
-/* ---------- Simpan buku (tombol Simpan di modal) ---------- */
+// Simpan isi form: kalau lagi mode edit, barisnya diubah; kalau bukan, nambah baris baru
 function simpanBuku(event) {
-    event.preventDefault(); // hentikan reload halaman
+    event.preventDefault();
 
-    // Baca semua isi form
     const judul = document.getElementById("inputJudul").value.trim();
     const penulis = document.getElementById("inputPenulis").value.trim();
     const kategori = document.getElementById("inputKategori").value;
@@ -61,12 +44,10 @@ function simpanBuku(event) {
     const stok = parseInt(document.getElementById("inputStok").value, 10) || 0;
     const sinopsis = document.getElementById("inputSinopsis").value.trim();
 
-    // Cari baris yang sedang diedit (kalau ada)
     const tabel = document.getElementById("tabelBukuAdmin");
     const barisEdit = tabel.querySelector("tr[data-editing]");
 
     if (barisEdit) {
-        // ----- UBAH baris yang sudah ada -----
         barisEdit.querySelector(".kolom-judul b").textContent = judul;
         barisEdit.querySelector(".kolom-judul div").textContent = sinopsis;
         barisEdit.querySelector(".kolom-judul div").setAttribute("title", sinopsis);
@@ -79,12 +60,10 @@ function simpanBuku(event) {
         barisEdit.querySelector(".kolom-status").innerHTML = statusBuku(stok);
         barisEdit.dataset.sinopsis = sinopsis;
 
-        // Lepas tanda edit
         barisEdit.removeAttribute("data-editing");
 
         tampilkanToast("Buku \"" + judul + "\" berhasil diubah.");
     } else {
-        // ----- TAMBAH baris baru ke tabel -----
         const tr = document.createElement("tr");
         tr.className = "baris-buku";
         tr.dataset.sinopsis = sinopsis;
@@ -111,32 +90,28 @@ function simpanBuku(event) {
         tampilkanToast("Buku \"" + judul + "\" berhasil ditambahkan.");
     }
 
-    // Tutup modal, kosongkan form, lalu hitung ulang jumlah buku
     bootstrap.Modal.getInstance(document.getElementById("modalBuku")).hide();
     document.getElementById("formBuku").reset();
     cariBukuAdmin();
 }
 
-/* ---------- Hapus buku (tombol sampah) ---------- */
+// Hapus buku dari tabel, terus hitung ulang jumlah dan kasih notifikasi
 function hapusBuku(tombol) {
-    // Cari baris tempat tombol berada, lalu hapus baris itu
     const baris = tombol.closest("tr");
     const judul = baris.querySelector(".kolom-judul b").textContent;
     baris.remove();
 
-    // Hitung ulang jumlah + tampilkan pesan
     cariBukuAdmin();
     tampilkanToast("Buku \"" + judul + "\" dihapus dari tabel.");
 }
 
-/* ---------- Pencarian buku di halaman ini ---------- */
+// Cari buku di tabel, yang teksnya cocok sama kata kunci doang yang nampil
 function cariBukuAdmin() {
     const kata = document.getElementById("cariBukuAdmin").value.toLowerCase();
     const baris = document.querySelectorAll("#tabelBukuAdmin .baris-buku");
 
     let tampil = 0;
     baris.forEach(function (b) {
-        // Tampilkan baris kalau teksnya mengandung kata kunci
         if (b.textContent.toLowerCase().includes(kata)) {
             b.classList.remove("d-none");
             tampil++;
@@ -145,16 +120,12 @@ function cariBukuAdmin() {
         }
     });
 
-    // Perbarui badge jumlah buku
     document.getElementById("jumlahBukuAdmin").textContent = tampil + " Buku";
 
-    // Tampilkan pesan kosong kalau tidak ada yang cocok
     document.getElementById("tabelBukuKosong").classList.toggle("d-none", tampil !== 0);
 }
 
-/* ---------- Helper (fungsi pembantu) ---------- */
-
-// Lepas tanda data-editing dari semua baris
+// Bersihin penanda baris yang lagi diklik buat diedit
 function hapusTandaEdit() {
     const lama = document.querySelectorAll("#tabelBukuAdmin tr[data-editing]");
     lama.forEach(function (b) {
@@ -162,7 +133,7 @@ function hapusTandaEdit() {
     });
 }
 
-// Tentukan badge status dari jumlah stok
+// Bikin label hijau "Tersedia" atau merah "Habis" sesuai jumlah stok
 function statusBuku(stok) {
     if (stok > 0) {
         return '<span class="badge bg-success-subtle text-success">Tersedia</span>';
@@ -170,8 +141,8 @@ function statusBuku(stok) {
     return '<span class="badge bg-danger-subtle text-danger">Habis</span>';
 }
 
-// Tampilkan toast pesan singkat
+// Munculin notifikasi singkat di pojok bawah
 function tampilkanToast(pesan) {
     document.getElementById("toastAdminMsg").textContent = pesan;
     bootstrap.Toast.getOrCreateInstance(document.getElementById("toastAdmin"), { delay: 2500 }).show();
-}
+}
