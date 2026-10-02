@@ -1,0 +1,59 @@
+/* ============================================================
+   index.css — kode khusus index.html (halaman Beranda)
+   Bagian bersama (navbar, footer, tombol, dll) ada di root.css
+   ============================================================ */
+@import "root.css";
+
+/* ================================
+   HERO
+   ================================ */
+.hero {
+    padding: 80px 0;
+    background: #fff;
+}
+.hero h1 {
+    font-size: clamp(2.6rem, 5vw, 4.5rem);
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+.hero h1 span { color: var(--ungu); }
+.hero p {
+    color: var(--abu);
+    font-size: 1.08rem;
+    line-height: 1.7;
+}
+
+/* ================================
+   BADGE SOFT
+   ================================ */
+.badge-soft {
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+/* ================================
+   SEARCH BOX
+   ================================ */
+.search-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(30, 27, 75, .07);
+}
+.search-box input {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+/* ---- Tablet & Mobile (≤991px) ---- */
+@media (max-width: 991px) {
+    .hero { padding: 55px 0; }
+}

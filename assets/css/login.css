@@ -1,0 +1,9 @@
+/* ============================================================
+   login.css — kode khusus login.html (halaman Masuk)
+
+   Halaman ini hanya memakai class bersama
+   (login-page, login-card, navbar, form, footer, dll)
+   yang sudah tersedia di root.css —
+   jadi file ini hanya perlu mengimpor root.css.
+   ============================================================ */
+@import "root.css";
