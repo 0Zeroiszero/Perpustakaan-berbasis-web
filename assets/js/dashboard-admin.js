@@ -22,7 +22,7 @@ function editBuku(tombol) {
     document.getElementById("inputPenerbit").value = baris.querySelector(".kolom-penerbit").textContent;
     document.getElementById("inputTahun").value = baris.querySelector(".kolom-tahun").textContent;
     document.getElementById("inputHalaman").value = baris.querySelector(".kolom-halaman").textContent;
-    document.getElementById("inputStok").value = baris.querySelector(".kolom-stok").textContent;
+    document.getElementById("inputFormat").value = baris.querySelector(".kolom-format").textContent;
     document.getElementById("inputSinopsis").value = baris.dataset.sinopsis || "";
 
     baris.setAttribute("data-editing", "ya");
@@ -41,7 +41,7 @@ function simpanBuku(event) {
     const penerbit = document.getElementById("inputPenerbit").value.trim();
     const tahun = document.getElementById("inputTahun").value;
     const halaman = document.getElementById("inputHalaman").value;
-    const stok = parseInt(document.getElementById("inputStok").value, 10) || 0;
+    const format = document.getElementById("inputFormat").value;
     const sinopsis = document.getElementById("inputSinopsis").value.trim();
 
     const tabel = document.getElementById("tabelBukuAdmin");
@@ -56,8 +56,8 @@ function simpanBuku(event) {
         barisEdit.querySelector(".kolom-penerbit").textContent = penerbit;
         barisEdit.querySelector(".kolom-tahun").textContent = tahun;
         barisEdit.querySelector(".kolom-halaman").textContent = halaman;
-        barisEdit.querySelector(".kolom-stok").textContent = stok;
-        barisEdit.querySelector(".kolom-status").innerHTML = statusBuku(stok);
+        barisEdit.querySelector(".kolom-format").textContent = format;
+        barisEdit.querySelector(".kolom-status").innerHTML = statusBuku(format);
         barisEdit.dataset.sinopsis = sinopsis;
 
         barisEdit.removeAttribute("data-editing");
@@ -79,8 +79,8 @@ function simpanBuku(event) {
             '<td class="kolom-penerbit">' + esc(penerbit) + '</td>' +
             '<td class="kolom-tahun">' + esc(tahun) + '</td>' +
             '<td class="kolom-halaman">' + esc(halaman) + '</td>' +
-            '<td class="kolom-stok">' + stok + '</td>' +
-            '<td class="kolom-status">' + statusBuku(stok) + '</td>' +
+            '<td class="kolom-format">' + esc(format) + '</td>' +
+            '<td class="kolom-status">' + statusBuku(format) + '</td>' +
             '<td class="text-nowrap">' +
                 '<button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button> ' +
                 '<button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>' +
@@ -133,16 +133,16 @@ function hapusTandaEdit() {
     });
 }
 
-// Bikin label hijau "Tersedia" atau merah "Habis" sesuai jumlah stok
-function statusBuku(stok) {
-    if (stok > 0) {
+// Bikin label status akses digital berdasarkan ketersediaan file
+function statusBuku(format) {
+    if (format) {
         return '<span class="badge bg-success-subtle text-success">Tersedia</span>';
     }
-    return '<span class="badge bg-danger-subtle text-danger">Habis</span>';
+    return '<span class="badge bg-danger-subtle text-danger">Belum Tersedia</span>';
 }
 
 // Munculin notifikasi singkat di pojok bawah
 function tampilkanToast(pesan) {
     document.getElementById("toastAdminMsg").textContent = pesan;
     bootstrap.Toast.getOrCreateInstance(document.getElementById("toastAdmin"), { delay: 2500 }).show();
-}
+}
