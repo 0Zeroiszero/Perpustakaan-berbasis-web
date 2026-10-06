@@ -63,7 +63,7 @@ Halaman detail buku yang menampilkan:
 - Rating buku
 - Deskripsi singkat
 - Informasi penerbit, tahun terbit, dan jumlah halaman
-- Aksi: **Tambah ke Rak** dan **Baca Buku**
+- Aksi: **Pinjam** dan **Baca Buku**
 
 ### 🛠️ Dashboard Admin
 Panel khusus admin untuk mengelola sistem PustakaDigital, mencakup:
