@@ -62,7 +62,7 @@ function simpanPengguna() {
             '<td class="kolom-email">' + esc(email) + '</td>' +
             '<td class="kolom-role">' + badgeRole(role) + '</td>' +
             '<td class="kolom-status">' + badgeStatus(status) + '</td>' +
-            '<td class="kolom-dipinjam">0 Buku</td>' +
+            '<td class="kolom-dibaca">0 Buku</td>' +
             '<td>' +
                 '<div class="d-flex gap-2">' +
                     '<button type="button" class="btn btn-sm btn-light" title="Ubah" onclick="editPengguna(this)"><i class="bi bi-pencil"></i></button>' +
@@ -136,4 +136,4 @@ function badgeStatus(status) {
 function tampilkanToast(pesan) {
     document.getElementById("toastPenggunaMsg").textContent = pesan;
     bootstrap.Toast.getOrCreateInstance(document.getElementById("toastPengguna"), { delay: 2500 }).show();
-}
+}

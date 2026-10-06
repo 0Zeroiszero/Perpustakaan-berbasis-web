@@ -99,7 +99,7 @@
                                 <th>Penerbit</th>
                                 <th>Tahun</th>
                                 <th>Halaman</th>
-                                <th>Stok</th>
+                                <th>Format</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -121,7 +121,7 @@
                                 <td class="kolom-penerbit">Avery</td>
                                 <td class="kolom-tahun">2018</td>
                                 <td class="kolom-halaman">320</td>
-                                <td class="kolom-stok">12</td>
+                                <td class="kolom-format">PDF</td>
                                 <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
                                     <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
@@ -144,7 +144,7 @@
                                 <td class="kolom-penerbit">Prentice Hall</td>
                                 <td class="kolom-tahun">2008</td>
                                 <td class="kolom-halaman">464</td>
-                                <td class="kolom-stok">7</td>
+                                <td class="kolom-format">PDF</td>
                                 <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
                                     <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
@@ -167,8 +167,8 @@
                                 <td class="kolom-penerbit">Hasta Mitra</td>
                                 <td class="kolom-tahun">1980</td>
                                 <td class="kolom-halaman">535</td>
-                                <td class="kolom-stok">0</td>
-                                <td class="kolom-status"><span class="badge bg-danger-subtle text-danger">Habis</span></td>
+                                <td class="kolom-format">PDF</td>
+                                <td class="kolom-status"><span class="badge bg-danger-subtle text-danger">Belum Tersedia</span></td>
                                 <td class="text-nowrap">
                                     <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
                                     <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
@@ -220,8 +220,11 @@
                                 </select>
                             </div>
                             <div class="col-5">
-                                <label class="form-label fw-semibold">Stok</label>
-                                <input id="inputStok" type="number" min="0" class="form-control" value="1" required>
+                                <label class="form-label fw-semibold">Format E-book</label>
+                                <select id="inputFormat" class="form-select" required>
+                                    <option value="PDF" selected>PDF</option>
+                                    <option value="EPUB">EPUB</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row g-3 mt-0">
