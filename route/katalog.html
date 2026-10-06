@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237C3AED'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='800' font-size='58' fill='white'%3EP%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/katalog.css">
 </head>
 
 <body>
@@ -21,12 +21,12 @@
                 <span class="logo">P</span> PustakaDigital
             </a>
 
-            <!-- Aksi ringkas untuk mobile -->
-            <div class="ms-auto d-flex align-items-center gap-2 d-lg-none">
-                <a href="#searchInput" class="catalog-mobile-search" aria-label="Cari buku">
+            <!-- Ikon search (mobile + desktop) -->
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="#searchInput" class="catalog-search-icon" aria-label="Cari buku">
                     <i class="bi bi-search"></i>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#catalogNavbarMenu" aria-controls="catalogNavbarMenu" aria-expanded="false"
                     aria-label="Buka menu">
                     <span class="navbar-toggler-icon"></span>
@@ -101,16 +101,18 @@
 
         <!-- GRID BUKU -->
         <div class="row g-4" id="bookGrid">
-            <!-- 1 -->
-            <div class="col-md-6 col-lg-3 book-item" data-search="atomic habits james clear pengembangan diri"
+            <!-- Buku 1 -->
+            <div class="col-6 col-lg-3 book-item" data-search="atomic habits james clear pengembangan diri"
                 data-kategori="Pengembangan Diri" data-judul="Atomic Habits" data-rating="4.8">
                 <div class="book-card">
                     <div class="book-cover">
                         <img src="../assets/image/Atomic habits.jpg" alt="Atomic Habits">
                     </div>
                     <div class="p-3">
-                        <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
-                        <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        <div class="badges">
+                            <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
+                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        </div>
                         <h5 class="fw-bold mt-2 mb-1">Atomic Habits</h5>
                         <p class="text-secondary small mb-1">James Clear</p>
                         <div class="rating small">★★★★★ <span class="text-secondary">4.8</span></div>
@@ -122,16 +124,18 @@
                     </div>
                 </div>
             </div>
-            <!-- 2 -->
-            <div class="col-md-6 col-lg-3 book-item" data-search="clean code robert martin teknologi"
+            <!-- Buku 2 -->
+            <div class="col-6 col-lg-3 book-item" data-search="clean code robert martin teknologi"
                 data-kategori="Teknologi" data-judul="Clean Code" data-rating="4.7">
                 <div class="book-card">
                     <div class="book-cover bg-biru-muda">
                         <img src="../assets/image/clean code.jpeg" alt="Clean Code">
                     </div>
                     <div class="p-3">
-                        <span class="badge bg-biru-muda text-biru">Teknologi</span>
-                        <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        <div class="badges">
+                            <span class="badge bg-biru-muda text-biru">Teknologi</span>
+                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        </div>
                         <h5 class="fw-bold mt-2 mb-1">Clean Code</h5>
                         <p class="text-secondary small mb-1">Robert C. Martin</p>
                         <div class="rating small">★★★★★ <span class="text-secondary">4.7</span></div>
@@ -144,16 +148,18 @@
                     </div>
                 </div>
             </div>
-            <!-- 3 -->
-            <div class="col-md-6 col-lg-3 book-item" data-search="bumi manusia pramoedya novel" data-kategori="Novel"
+            <!-- Buku 3 -->
+            <div class="col-6 col-lg-3 book-item" data-search="bumi manusia pramoedya novel" data-kategori="Novel"
                 data-judul="Bumi Manusia" data-rating="4.9">
                 <div class="book-card">
                     <div class="book-cover" style="background:var(--merah-muda)">
                         <img src="../assets/image/bumi manusia.jpg" alt="Bumi Manusia">
                     </div>
                     <div class="p-3">
-                        <span class="badge bg-danger-subtle text-danger">Novel</span>
-                        <span class="badge bg-danger-subtle text-danger ms-1">Dipinjam</span>
+                        <div class="badges">
+                            <span class="badge bg-danger-subtle text-danger">Novel</span>
+                            <span class="badge bg-danger-subtle text-danger ms-1">Dipinjam</span>
+                        </div>
                         <h5 class="fw-bold mt-2 mb-1">Bumi Manusia</h5>
                         <p class="text-secondary small mb-1">Pramoedya Ananta Toer</p>
                         <div class="rating small">★★★★★ <span class="text-secondary">4.9</span></div>
@@ -165,16 +171,18 @@
                     </div>
                 </div>
             </div>
-            <!-- 4 -->
-            <div class="col-md-6 col-lg-3 book-item" data-search="sejarah dunia pembelajaran" data-kategori="Sejarah"
+            <!-- Buku 4 -->
+            <div class="col-6 col-lg-3 book-item" data-search="sejarah dunia pembelajaran" data-kategori="Sejarah"
                 data-judul="Sejarah Dunia" data-rating="4.5">
                 <div class="book-card">
                     <div class="book-cover bg-biru-muda">
                         <img src="../assets/image/sejarah dunia.jpg" alt="Sejarah Dunia">
                     </div>
                     <div class="p-3">
-                        <span class="badge bg-biru-muda text-biru">Sejarah</span>
-                        <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        <div class="badges">
+                            <span class="badge bg-biru-muda text-biru">Sejarah</span>
+                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+                        </div>
                         <h5 class="fw-bold mt-2 mb-1">Sejarah Dunia</h5>
                         <p class="text-secondary small mb-1">Edisi Pembelajaran</p>
                         <div class="rating small">★★★★☆ <span class="text-secondary">4.5</span></div>
@@ -198,30 +206,6 @@
             </div>
         </div>
     </main>
-
-    <!-- Modal Detail Simpel -->
-    <div class="modal fade" id="modalDetail" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius:16px">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="detailJudul">Judul Buku</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="mb-3"
-                        style="height:180px;background:linear-gradient(135deg,var(--ungu-muda),var(--biru-muda));border-radius:12px;display:flex;align-items:center;justify-content:center">
-                        <i class="bi bi-book-half" style="font-size:60px;color:var(--ungu)"></i>
-                    </div>
-                    <p class="text-secondary small">Klik Pinjam untuk lanjut ke halaman peminjaman.</p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
-                    <button class="btn btn-pinjam" onclick="pinjamDariModal()"><i class="bi bi-bookmark-plus me-1"></i>
-                        Pinjam</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
         <div id="toastPinjam" class="toast border-0" role="alert"

@@ -1,0 +1,29 @@
+/* Halaman detail buku — bagian bersama ada di root.css */
+@import "root.css";
+
+/* DETAIL COVER */
+.detail-cover {
+    height: auto;
+    border-radius: 18px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    color: var(--ungu);
+}
+.detail-cover img {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(30, 27, 75, .15);
+    display: block;
+}
+
+/* INFO LABEL */
+.info-label {
+    color: var(--abu);
+    font-size: .9rem;
+}
