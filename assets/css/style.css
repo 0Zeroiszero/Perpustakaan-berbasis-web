@@ -1,6 +1,6 @@
-/* root.css — bagian bersama, diimpor tiap halaman */
-
-/* ROOT VARIABLES */
+/* ================================
+   ROOT VARIABLES
+   ================================ */
 :root {
     --ungu: #7C3AED;
     --ungu-muda: #EDE9FE;
@@ -13,7 +13,9 @@
     --merah-muda: #FEE2E2;
 }
 
-/* BASE */
+/* ================================
+   BASE
+   ================================ */
 * { box-sizing: border-box; }
 
 body {
@@ -24,7 +26,9 @@ body {
 
 a { text-decoration: none; }
 
-/* NAVBAR */
+/* ================================
+   NAVBAR
+   ================================ */
 .navbar {
     background: #fff;
     padding: .5rem 0;
@@ -71,13 +75,15 @@ a { text-decoration: none; }
     background: var(--ungu-muda);
 }
 
-.navbar .btn-ungu {
+.navbar:not(.catalog-navbar) .btn-ungu {
     padding: .55rem 1.4rem;
     font-weight: 700;
     border-radius: 10px;
 }
 
-/* BUTTONS */
+/* ================================
+   BUTTONS
+   ================================ */
 .btn-ungu {
     background: var(--ungu);
     border-color: var(--ungu);
@@ -104,15 +110,32 @@ a { text-decoration: none; }
     color: #fff;
 }
 
-/* UTILITIES */
+.btn-pinjam {
+    background: var(--biru);
+    border-color: var(--biru);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+}
+.btn-pinjam:hover {
+    background: #0284C7;
+    color: #fff;
+}
+
+/* ================================
+   UTILITIES
+   ================================ */
 .text-ungu { color: var(--ungu) !important; }
 .text-biru { color: var(--biru) !important; }
 .bg-ungu-muda { background: var(--ungu-muda) !important; }
 .bg-biru-muda { background: var(--biru-muda) !important; }
 .page-title { font-weight: 800; color: var(--gelap); }
+.info-label { color: var(--abu); font-size: .9rem; }
 .rating { color: #F59E0B; }
 
-/* FORMS */
+/* ================================
+   FORMS
+   ================================ */
 .form-control,
 .form-select {
     border-radius: 10px;
@@ -124,7 +147,9 @@ a { text-decoration: none; }
     box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
 }
 
-/* CARD CLEAN */
+/* ================================
+   CARD CLEAN
+   ================================ */
 .card-clean {
     border: 1px solid #eee;
     border-radius: 16px;
@@ -132,7 +157,66 @@ a { text-decoration: none; }
     box-shadow: 0 5px 20px rgba(30, 27, 75, .05);
 }
 
-/* BOOK CARD */
+/* ================================
+   HERO
+   ================================ */
+.hero {
+    padding: 80px 0;
+    background: #fff;
+}
+.hero h1 {
+    font-size: clamp(2.6rem, 5vw, 4.5rem);
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+.hero h1 span { color: var(--ungu); }
+.hero p {
+    color: var(--abu);
+    font-size: 1.08rem;
+    line-height: 1.7;
+}
+.badge-soft {
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-weight: 600;
+}
+.search-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(30, 27, 75, .07);
+}
+.search-box input {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ================================
+   CATEGORY PILLS
+   ================================ */
+.category-btn {
+    border: 1px solid var(--ungu);
+    color: var(--ungu);
+    background: #fff;
+    border-radius: 50px;
+    padding: 7px 18px;
+    margin: 4px;
+    transition: .2s;
+    font-weight: 600;
+}
+.category-btn:hover,
+.category-btn.active {
+    background: var(--ungu);
+    color: #fff;
+}
+
+/* ================================
+   BOOK CARD
+   ================================ */
 .book-card {
     height: 100%;
     overflow: hidden;
@@ -162,7 +246,32 @@ a { text-decoration: none; }
 }
 .book-card .card-body { padding: 18px; }
 
-/* LOGIN */
+/* ================================
+   DETAIL COVER (merged — versi gambar)
+   ================================ */
+.detail-cover {
+    height: auto;
+    border-radius: 18px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    color: var(--ungu);
+}
+.detail-cover img {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(30, 27, 75, .15);
+    display: block;
+}
+
+/* ================================
+   LOGIN
+   ================================ */
 .login-page {
     min-height: 100vh;
     background: linear-gradient(
@@ -181,7 +290,9 @@ a { text-decoration: none; }
     box-shadow: 0 20px 55px rgba(30, 27, 75, .12);
 }
 
-/* SIDEBAR & DASHBOARD */
+/* ================================
+   SIDEBAR & DASHBOARD
+   ================================ */
 .sidebar {
     width: 250px;
     position: fixed;
@@ -219,6 +330,16 @@ a { text-decoration: none; }
     background: #fff;
     padding: 20px;
 }
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .stat-number {
     font-size: 1.8rem;
     font-weight: 800;
@@ -230,7 +351,7 @@ a { text-decoration: none; }
     padding: 20px;
 }
 
-/* Backdrop sidebar mobile */
+/* Sidebar backdrop (untuk mobile) */
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -246,7 +367,44 @@ a { text-decoration: none; }
     opacity: 1;
 }
 
-/* SITE FOOTER */
+/* ================================
+   CATALOG NAVBAR
+   ================================ */
+.catalog-navbar .catalog-toggler {
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    padding: 7px;
+}
+.catalog-navbar .catalog-toggler:focus {
+    box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .12);
+}
+.catalog-navbar .catalog-mobile-search {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gelap);
+    background: var(--ungu-muda);
+    text-decoration: none;
+}
+.catalog-navbar .catalog-mobile-search:hover { color: var(--ungu); }
+.catalog-navbar .catalog-nav-link {
+    border-radius: 9px;
+    padding: 10px 12px;
+}
+.catalog-navbar .catalog-nav-link.active {
+    color: var(--ungu);
+    background: var(--ungu-muda);
+    font-weight: 600;
+}
+
+/* ================================
+   SITE FOOTER
+   ================================ */
 .site-footer {
     margin-top: 70px;
     padding: 48px 0 0;
@@ -321,11 +479,14 @@ a { text-decoration: none; }
     font-size: .85rem;
 }
 
-/* RESPONSIVE */
+/* ================================
+   RESPONSIVE
+   ================================ */
 .mobile-menu { display: none; }
 
-/* Tablet & mobile (≤991px) */
+/* ---- Tablet & Mobile (≤991px) ---- */
 @media (max-width: 991px) {
+    /* Sidebar */
     .sidebar {
         transform: translateX(-100%);
         transition: .2s;
@@ -333,11 +494,21 @@ a { text-decoration: none; }
     .sidebar.show { transform: translateX(0); }
     .main-with-sidebar { margin-left: 0; }
     .mobile-menu { display: inline-flex; }
+    .hero { padding: 55px 0; }
+
+    /* Catalog navbar */
+    .catalog-navbar .navbar-collapse {
+        padding: 10px 0 6px;
+        border-top: 1px solid #F0F0F0;
+        margin-top: 10px;
+    }
+    .catalog-navbar .catalog-nav-link { padding: 10px 12px; }
+    .catalog-navbar .catalog-nav-link.active { background: var(--ungu-muda); }
 }
 
-/* Navbar (≤991.98px) */
+/* ---- Navbar non-catalog (≤991.98px) ---- */
 @media (max-width: 991.98px) {
-    .navbar .navbar-collapse {
+    .navbar:not(.catalog-navbar) .navbar-collapse {
         background: #fff;
         border-radius: 14px;
         margin-top: .75rem;
@@ -345,32 +516,33 @@ a { text-decoration: none; }
         box-shadow: 0 10px 30px rgba(30, 27, 75, .08);
         border: 1px solid #eee;
     }
-    .navbar .nav-link {
+    .navbar:not(.catalog-navbar) .nav-link {
         padding: .7rem 1rem;
         margin-bottom: 2px;
     }
-    .navbar .nav-item:last-child {
+    .navbar:not(.catalog-navbar) .nav-item:last-child {
         margin-top: .5rem;
     }
-    .navbar .btn-ungu {
+    .navbar:not(.catalog-navbar) .btn-ungu {
         width: 100%;
         padding: .7rem;
     }
-    .navbar .navbar-toggler {
+    .navbar:not(.catalog-navbar) .navbar-toggler {
         border: none;
         padding: .35rem .5rem;
     }
-    .navbar .navbar-toggler:focus {
+    .navbar:not(.catalog-navbar) .navbar-toggler:focus {
         box-shadow: none;
     }
 }
 
-/* Desktop (≥992px) */
+/* ---- Desktop (≥992px) ---- */
 @media (min-width: 992px) {
     .sidebar-backdrop { display: none !important; }
+    .catalog-navbar .catalog-mobile-search { display: none; }
 }
 
-/* Extra small (≤576px) */
+/* ---- Extra small (≤576px) ---- */
 @media (max-width: 576px) {
     .site-footer {
         margin-top: 50px;

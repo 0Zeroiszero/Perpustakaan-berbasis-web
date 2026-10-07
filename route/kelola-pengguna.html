@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237C3AED'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='800' font-size='58' fill='white'%3EP%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../assets/css/kelola-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -66,53 +66,51 @@
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Sedang Dibaca</th>
+                                <th>Buku Dipinjam</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tabelPengguna">
-
-                            <!-- Baris 1 (dummy) -->
-                            <tr class="baris-pengguna">
-                                <td class="kolom-nama">
+                            <tr class="baris-pengguna" data-nama="Najwa Khairunnisa" data-email="najwa@gmail.com">
+                                <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="rounded-circle bg-ungu-muda text-ungu d-flex align-items-center justify-content-center"
                                             style="width:38px;height:38px"><i class="bi bi-person"></i></div><b>Najwa
                                             Khairunnisa</b>
                                     </div>
                                 </td>
-                                <td class="kolom-email">najwa@gmail.com</td>
-                                <td class="kolom-role"><span class="badge bg-ungu-muda text-ungu">User</span></td>
-                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Aktif</span></td>
-                                <td class="kolom-dibaca">3 Buku</td>
+                                <td>najwa@gmail.com</td>
+                                <td><span class="badge bg-ungu-muda text-ungu">User</span></td>
+                                <td><span class="badge bg-success-subtle text-success">Aktif</span></td>
+                                <td>3 Buku</td>
                                 <td>
                                     <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-light" title="Ubah" onclick="editPengguna(this)"><i
-                                                class="bi bi-pencil"></i></button>
-                                        <button type="button" class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusPengguna(this)"><i
+                                        <button type="button" class="btn btn-sm btn-light" onclick="bukaEdit(this)"
+                                            data-nama="Najwa Khairunnisa" data-email="najwa@gmail.com" data-role="User"
+                                            data-status="Aktif"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="btn btn-sm btn-light text-danger"><i
                                                 class="bi bi-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- Baris 2 (dummy) -->
-                            <tr class="baris-pengguna">
-                                <td class="kolom-nama">
+                            <tr class="baris-pengguna" data-nama="Ji Chang-wook" data-email="jichang@gmail.com">
+                                <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="rounded-circle bg-ungu-muda text-ungu d-flex align-items-center justify-content-center"
                                             style="width:38px;height:38px"><i class="bi bi-person"></i></div><b>Ji
                                             Chang-wook</b>
                                     </div>
                                 </td>
-                                <td class="kolom-email">jichang@gmail.com</td>
-                                <td class="kolom-role"><span class="badge bg-ungu-muda text-ungu">User</span></td>
-                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Aktif</span></td>
-                                <td class="kolom-dibaca">2 Buku</td>
+                                <td>jichang@gmail.com</td>
+                                <td><span class="badge bg-ungu-muda text-ungu">User</span></td>
+                                <td><span class="badge bg-success-subtle text-success">Aktif</span></td>
+                                <td>2 Buku</td>
                                 <td>
                                     <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-light" title="Ubah" onclick="editPengguna(this)"><i
-                                                class="bi bi-pencil"></i></button>
-                                        <button type="button" class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusPengguna(this)"><i
+                                        <button type="button" class="btn btn-sm btn-light" onclick="bukaEdit(this)"
+                                            data-nama="Ji Chang-wook" data-email="jichang@gmail.com" data-role="User"
+                                            data-status="Aktif"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="btn btn-sm btn-light text-danger"><i
                                                 class="bi bi-trash"></i></button>
                                     </div>
                                 </td>
@@ -129,7 +127,7 @@
         </main>
     </div>
 
-    <!-- MODAL TAMBAH / EDIT -->
+    <!-- POPUP MODAL - UNTUK TAMBAH & EDIT, SCROLL VERTIKAL -->
     <div class="modal fade" id="modalPengguna" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content" style="border-radius:16px; max-height:90vh; overflow-y:auto; overflow-x:hidden">
@@ -157,31 +155,55 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-ungu" onclick="simpanPengguna()">Simpan</button>
+                    <button type="button" class="btn btn-ungu" data-bs-dismiss="modal">Simpan</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
-        <div id="toastPengguna" class="toast border-0" role="alert"
-            style="background:var(--gelap); color:white; border-radius:12px">
-            <div class="d-flex align-items-center">
-                <div class="toast-body d-flex align-items-center gap-2">
-                    <span
-                        style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
-                    </span>
-                    <span id="toastPenggunaMsg">Berhasil disimpan</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/kelola-pengguna.js"></script>
+    <script>
+        function bukaTambah() {
+            document.getElementById('modalTitle').textContent = 'Tambah Pengguna';
+            document.getElementById('inputNama').value = '';
+            document.getElementById('inputEmail').value = '';
+            document.getElementById('inputRole').value = 'User';
+            document.getElementById('inputStatus').value = 'Aktif';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPengguna')).show();
+        }
+
+        function bukaEdit(btn) {
+            document.getElementById('modalTitle').textContent = 'Edit Pengguna';
+            document.getElementById('inputNama').value = btn.dataset.nama;
+            document.getElementById('inputEmail').value = btn.dataset.email;
+            document.getElementById('inputRole').value = btn.dataset.role;
+            document.getElementById('inputStatus').value = btn.dataset.status;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPengguna')).show();
+        }
+
+        // ===== SEARCH BAR =====
+        function cariPengguna() {
+            var kw = document.getElementById("cariPengguna").value.toLowerCase().trim();
+            var rows = document.querySelectorAll(".baris-pengguna");
+            var tampil = 0;
+
+            rows.forEach(function (row) {
+                var nama = (row.dataset.nama || "").toLowerCase();
+                var email = (row.dataset.email || "").toLowerCase();
+
+                if (nama.indexOf(kw) !== -1 || email.indexOf(kw) !== -1) {
+                    row.classList.remove("d-none");
+                    tampil++;
+                } else {
+                    row.classList.add("d-none");
+                }
+            });
+
+            document.getElementById("jumlahPengguna").textContent = tampil + " Pengguna";
+            document.getElementById("penggunaKosong").classList.toggle("d-none", tampil !== 0);
+        }
+    </script>
 </body>
 
 </html>

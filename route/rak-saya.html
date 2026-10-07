@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237C3AED'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='800' font-size='58' fill='white'%3EP%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../assets/css/rak-saya.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -67,74 +67,7 @@
                 <span id="jumlahRak" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2">3 Buku</span>
             </div>
 
-            <div class="row g-4" id="rakGrid">
-
-                <!-- Kartu 1 (dummy) -->
-                <div class="col-md-6 col-lg-4 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover">
-                            <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
-                            <h5 class="fw-bold mt-2 mb-1">Atomic Habits</h5>
-                            <p class="text-secondary small mb-2">James Clear</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:72%;background:var(--ungu);"></div>
-                            </div>
-                            <p class="small text-secondary mb-3">72% selesai dibaca</p>
-                            <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kartu 2 (dummy) -->
-                <div class="col-md-6 col-lg-4 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover bg-biru-muda">
-                            <i class="bi bi-code-slash" style="font-size:3rem;color:var(--biru)"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-biru-muda text-biru">Teknologi</span>
-                            <h5 class="fw-bold mt-2 mb-1">Clean Code</h5>
-                            <p class="text-secondary small mb-2">Robert C. Martin</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:45%;background:var(--biru);"></div>
-                            </div>
-                            <p class="small text-secondary mb-3">45% selesai dibaca</p>
-                            <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kartu 3 (dummy) -->
-                <div class="col-md-6 col-lg-4 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover" style="background:var(--merah-muda)">
-                            <i class="bi bi-journal-text" style="font-size:3rem;color:var(--merah)"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-danger-subtle text-danger">Novel</span>
-                            <h5 class="fw-bold mt-2 mb-1">Bumi Manusia</h5>
-                            <p class="text-secondary small mb-2">Pramoedya Ananta Toer</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:100%;background:var(--merah);"></div>
-                            </div>
-                            <p class="small text-secondary mb-3">Selesai dibaca</p>
-                            <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-arrow-repeat me-1"></i>Baca Ulang</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="row g-4" id="rakGrid"></div>
 
             <div id="rakKosong" class="text-center py-5 d-none">
                 <div class="card-clean p-5">
@@ -167,7 +100,77 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/rak-saya.js"></script>
+
+    <script>
+        (function () {
+            var KEY = "pustaka_rak_v1";
+            var awal = [
+                { judul: "Atomic Habits", penulis: "James Clear", kategori: "Pengembangan Diri", progres: 72 },
+                { judul: "Clean Code", penulis: "Robert C. Martin", kategori: "Teknologi", progres: 45 },
+                { judul: "Bumi Manusia", penulis: "Pramoedya Ananta Toer", kategori: "Novel", progres: 100 }
+            ];
+            var tema = {
+                "Pengembangan Diri": { cover: "book-cover", coverStyle: "", ikon: "bi-book", warna: "var(--ungu)", badge: "bg-ungu-muda text-ungu" },
+                "Teknologi": { cover: "book-cover bg-biru-muda", coverStyle: "", ikon: "bi-code-slash", warna: "var(--biru)", badge: "bg-biru-muda text-biru" },
+                "Novel": { cover: "book-cover", coverStyle: "background:var(--merah-muda)", ikon: "bi-journal-text", warna: "var(--merah)", badge: "bg-danger-subtle text-danger" }
+            };
+            var temaDefault = tema["Pengembangan Diri"];
+
+            var rak = muat();
+
+            function muat() {
+                try {
+                    var d = JSON.parse(localStorage.getItem(KEY));
+                    if (Array.isArray(d)) return d;
+                } catch (e) { }
+                return awal.slice();
+            }
+            function simpan() {
+                try { localStorage.setItem(KEY, JSON.stringify(rak)); }
+                catch (e) { console.error("Gagal menyimpan:", e); }
+            }
+            function esc(t) { var d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+
+            function render() {
+                var grid = document.getElementById("rakGrid");
+                var html = "";
+                rak.forEach(function (b, i) {
+                    var t = tema[b.kategori] || temaDefault;
+                    var selesai = b.progres >= 100;
+                    html += '<div class="col-md-6 col-lg-4 buku-rak"><div class="book-card">' +
+                        '<div class="' + t.cover + '"' + (t.coverStyle ? ' style="' + t.coverStyle + '"' : '') + '>' +
+                        '<i class="bi ' + t.ikon + '" style="font-size:3rem;color:' + t.warna + '"></i></div>' +
+                        '<div class="p-3">' +
+                        '<span class="badge ' + t.badge + '">' + esc(b.kategori || "") + '</span>' +
+                        '<h5 class="fw-bold mt-2 mb-1">' + esc(b.judul) + '</h5>' +
+                        '<p class="text-secondary small mb-2">' + esc(b.penulis || "") + '</p>' +
+                        '<div class="progress mb-1" style="height:7px;"><div class="progress-bar" style="width:' + (b.progres || 0) + '%;background:' + t.warna + ';"></div></div>' +
+                        '<p class="small text-secondary mb-3">' + (selesai ? "Selesai dibaca" : (b.progres || 0) + "% selesai dibaca") + '</p>' +
+                        '<div class="d-grid gap-2">' +
+                        '<a href="detail-buku.html" class="btn btn-ungu"><i class="bi ' + (selesai ? "bi-arrow-repeat" : "bi-book-half") + ' me-1"></i>' + (selesai ? "Baca Ulang" : "Lanjut Baca") + '</a>' +
+                        '<button class="btn btn-light border" onclick="hapusDariRak(' + i + ')"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>' +
+                        '</div></div></div></div>';
+                });
+                grid.innerHTML = html;
+                document.getElementById("jumlahRak").textContent = rak.length + " Buku";
+                document.getElementById("rakKosong").classList.toggle("d-none", rak.length !== 0);
+            }
+
+            window.hapusDariRak = function (i) {
+                var b = rak[i];
+                if (!b) return;
+                if (!confirm('Hapus "' + b.judul + '" dari Rak Saya?')) return;
+                rak.splice(i, 1);
+                simpan();
+                render();
+                var el = document.getElementById("toastRak");
+                document.getElementById("toastRakMsg").textContent = 'Buku "' + b.judul + '" dihapus dari rak.';
+                bootstrap.Toast.getOrCreateInstance(el, { delay: 2500 }).show();
+            };
+
+            render();
+        })();
+    </script>
 </body>
 
 </html>
