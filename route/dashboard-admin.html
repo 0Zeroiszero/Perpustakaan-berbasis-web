@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%237C3AED'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' font-family='Space Grotesk, sans-serif' font-weight='700' font-size='32' fill='white'%3EP%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard-admin.css">
 </head>
 
 <body>
@@ -44,8 +44,7 @@
                     <h2 class="page-title">Dashboard Admin</h2>
                     <p class="text-secondary mb-0">Pantau seluruh aktivitas PustakaDigital.</p>
                 </div>
-                <button class="btn btn-ungu" data-bs-toggle="modal" data-bs-target="#modalBuku"
-                    onclick="bukaModalTambah()">
+                <button class="btn btn-ungu" onclick="bukaModalTambah()">
                     <i class="bi bi-plus-lg me-1"></i>Tambah Buku
                 </button>
             </div>
@@ -75,11 +74,11 @@
                 <div class="col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-center mb-2"><span
-                                class="text-secondary">Buku Dipinjam</span><span
+                                class="text-secondary">Sedang Dibaca</span><span
                                 class="d-inline-flex align-items-center justify-content-center rounded-3 bg-ungu-muda text-ungu"
-                                style="width:40px;height:40px"><i class="bi bi-journal-arrow-up"></i></span></div>
+                                style="width:40px;height:40px"><i class="bi bi-book-half"></i></span></div>
                         <div class="stat-number">486</div>
-                        <div class="small text-secondary">Aktif dipinjam</div>
+                        <div class="small text-secondary">Aktif dibaca</div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-xl-3">
@@ -130,16 +129,16 @@
                                 <th>Penerbit</th>
                                 <th>Tahun</th>
                                 <th>Halaman</th>
-                                <th>Stok</th>
+                                <th>Format</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tabelBukuAdmin">
 
-                            <!-- Baris 1 -->
-                            <tr class="baris-buku" data-judul="Atomic Habits" data-penulis="James Clear">
-                                <td>
+                            <!-- Baris 1 (dummy) -->
+                            <tr class="baris-buku" data-sinopsis="Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan baik dan menghasilkan perubahan besar dalam hidup.">
+                                <td class="kolom-judul">
                                     <b>Atomic Habits</b>
                                     <div class="small text-secondary text-truncate" style="max-width:260px"
                                         title="Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan baik dan menghasilkan perubahan besar dalam hidup.">
@@ -147,24 +146,22 @@
                                         baik dan menghasilkan perubahan besar dalam hidup.
                                     </div>
                                 </td>
-                                <td>James Clear</td>
-                                <td>Pengembangan Diri</td>
-                                <td>Avery</td>
-                                <td>2018</td>
-                                <td>320</td>
-                                <td>12</td>
-                                <td><span class="badge bg-success-subtle text-success">Tersedia</span></td>
+                                <td class="kolom-penulis">James Clear</td>
+                                <td class="kolom-kategori">Pengembangan Diri</td>
+                                <td class="kolom-penerbit">Avery</td>
+                                <td class="kolom-tahun">2018</td>
+                                <td class="kolom-halaman">320</td>
+                                <td class="kolom-format">PDF</td>
+                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light"
-                                        onclick="editBuku('Atomic Habits','James Clear','Pengembangan Diri','Avery',2018,320,12,'Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan baik dan menghasilkan perubahan besar dalam hidup.')">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
 
-                            <!-- Baris 2 -->
-                            <tr class="baris-buku" data-judul="Clean Code" data-penulis="Robert C. Martin">
-                                <td>
+                            <!-- Baris 2 (dummy) -->
+                            <tr class="baris-buku" data-sinopsis="Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh seluruh tim pengembang.">
+                                <td class="kolom-judul">
                                     <b>Clean Code</b>
                                     <div class="small text-secondary text-truncate" style="max-width:260px"
                                         title="Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh seluruh tim pengembang.">
@@ -172,24 +169,22 @@
                                         seluruh tim pengembang.
                                     </div>
                                 </td>
-                                <td>Robert C. Martin</td>
-                                <td>Teknologi</td>
-                                <td>Prentice Hall</td>
-                                <td>2008</td>
-                                <td>464</td>
-                                <td>7</td>
-                                <td><span class="badge bg-success-subtle text-success">Tersedia</span></td>
+                                <td class="kolom-penulis">Robert C. Martin</td>
+                                <td class="kolom-kategori">Teknologi</td>
+                                <td class="kolom-penerbit">Prentice Hall</td>
+                                <td class="kolom-tahun">2008</td>
+                                <td class="kolom-halaman">464</td>
+                                <td class="kolom-format">PDF</td>
+                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light"
-                                        onclick="editBuku('Clean Code','Robert C. Martin','Teknologi','Prentice Hall',2008,464,7,'Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh seluruh tim pengembang.')">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
 
-                            <!-- Baris 3 -->
-                            <tr class="baris-buku" data-judul="Bumi Manusia" data-penulis="Pramoedya Ananta Toer">
-                                <td>
+                            <!-- Baris 3 (dummy) -->
+                            <tr class="baris-buku" data-sinopsis="Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan cinta, keadilan, dan jati diri bangsanya.">
+                                <td class="kolom-judul">
                                     <b>Bumi Manusia</b>
                                     <div class="small text-secondary text-truncate" style="max-width:260px"
                                         title="Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan cinta, keadilan, dan jati diri bangsanya.">
@@ -197,18 +192,16 @@
                                         cinta, keadilan, dan jati diri bangsanya.
                                     </div>
                                 </td>
-                                <td>Pramoedya Ananta Toer</td>
-                                <td>Novel</td>
-                                <td>Hasta Mitra</td>
-                                <td>1980</td>
-                                <td>535</td>
-                                <td>0</td>
-                                <td><span class="badge bg-danger-subtle text-danger">Habis</span></td>
+                                <td class="kolom-penulis">Pramoedya Ananta Toer</td>
+                                <td class="kolom-kategori">Novel</td>
+                                <td class="kolom-penerbit">Hasta Mitra</td>
+                                <td class="kolom-tahun">1980</td>
+                                <td class="kolom-halaman">535</td>
+                                <td class="kolom-format">PDF</td>
+                                <td class="kolom-status"><span class="badge bg-danger-subtle text-danger">Belum Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light"
-                                        onclick="editBuku('Bumi Manusia','Pramoedya Ananta Toer','Novel','Hasta Mitra',1980,535,0,'Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan cinta, keadilan, dan jati diri bangsanya.')">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -216,7 +209,7 @@
                 </div>
 
                 <!-- EMPTY STATE -->
-                <div id="bukuKosong" class="text-center py-4 d-none">
+                <div id="tabelBukuKosong" class="text-center py-4 d-none">
                     <i class="bi bi-inbox" style="font-size:2.5rem;color:var(--abu)"></i>
                     <p class="text-secondary mt-2 mb-0">Tidak ada buku yang cocok.</p>
                 </div>
@@ -224,7 +217,7 @@
         </main>
     </div>
 
-    <!-- ================= MODAL TAMBAH / EDIT BUKU ================= -->
+    <!-- MODAL TAMBAH / EDIT BUKU -->
     <div class="modal fade" id="modalBuku" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content" style="border-radius:16px; max-height:90vh; overflow-y:auto; overflow-x:hidden">
@@ -234,6 +227,10 @@
                 </div>
                 <form id="formBuku" onsubmit="simpanBuku(event)">
                     <div class="modal-body" style="overflow-y:auto; overflow-x:hidden;">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold"><i class="bi bi-upload me-1"></i>Upload buku, skripsi, novel atau bacaan</label>
+                            <input id="inputBerkas" type="file" class="form-control">
+                        </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Judul</label>
                             <input id="inputJudul" type="text" class="form-control" placeholder="Judul buku" required>
@@ -254,8 +251,11 @@
                                 </select>
                             </div>
                             <div class="col-5">
-                                <label class="form-label fw-semibold">Stok</label>
-                                <input id="inputStok" type="number" min="0" class="form-control" value="1" required>
+                                <label class="form-label fw-semibold">Format E-book</label>
+                                <select id="inputFormat" class="form-select" required>
+                                    <option value="PDF" selected>PDF</option>
+                                    <option value="EPUB">EPUB</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row g-3 mt-0">
@@ -309,69 +309,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
-
-    <!-- ================= SCRIPT UI (tidak mengubah data) ================= -->
-    <script>
-        // Buka modal untuk tambah buku (form kosong)
-        window.bukaModalTambah = function () {
-            document.getElementById("modalBukuTitle").textContent = "Tambah Buku";
-            document.getElementById("formBuku").reset();
-            document.getElementById("inputStok").value = 1;
-        };
-
-        // Buka modal untuk edit buku (form terisi data dari baris yang diklik)
-        window.editBuku = function (judul, penulis, kategori, penerbit, tahun, halaman, stok, sinopsis) {
-            document.getElementById("modalBukuTitle").textContent = "Edit Buku";
-            document.getElementById("inputJudul").value = judul;
-            document.getElementById("inputPenulis").value = penulis;
-            document.getElementById("inputKategori").value = kategori;
-            document.getElementById("inputPenerbit").value = penerbit;
-            document.getElementById("inputTahun").value = tahun;
-            document.getElementById("inputHalaman").value = halaman;
-            document.getElementById("inputStok").value = stok;
-            document.getElementById("inputSinopsis").value = sinopsis;
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("modalBuku")).show();
-        };
-
-        // Simpan — hanya tampilkan toast & tutup modal (tanpa ubah data)
-        window.simpanBuku = function (e) {
-            e.preventDefault();
-            var judul = document.getElementById("inputJudul").value.trim();
-            var title = document.getElementById("modalBukuTitle").textContent;
-
-            var msg = title === "Edit Buku"
-                ? 'Buku "' + judul + '" berhasil diperbarui.'
-                : 'Buku "' + judul + '" berhasil ditambahkan.';
-
-            var el = document.getElementById("toastAdmin");
-            document.getElementById("toastAdminMsg").textContent = msg;
-            bootstrap.Toast.getOrCreateInstance(el, { delay: 2500 }).show();
-
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("modalBuku")).hide();
-        };
-
-        // ===== SEARCH BAR =====
-        window.cariBukuAdmin = function () {
-            var kw = document.getElementById("cariBukuAdmin").value.toLowerCase().trim();
-            var rows = document.querySelectorAll(".baris-buku");
-            var tampil = 0;
-
-            rows.forEach(function (row) {
-                var judul = (row.dataset.judul || "").toLowerCase();
-                var penulis = (row.dataset.penulis || "").toLowerCase();
-
-                if (judul.indexOf(kw) !== -1 || penulis.indexOf(kw) !== -1) {
-                    row.classList.remove("d-none");
-                    tampil++;
-                } else {
-                    row.classList.add("d-none");
-                }
-            });
-
-            document.getElementById("jumlahBukuAdmin").textContent = tampil + " Buku";
-            document.getElementById("bukuKosong").classList.toggle("d-none", tampil !== 0);
-        };
-    </script>
+    <script src="../assets/js/dashboard-admin.js"></script>
 </body>
 
 </html>
