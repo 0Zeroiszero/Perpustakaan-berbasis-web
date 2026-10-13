@@ -55,7 +55,7 @@ function simpanPengguna() {
         tr.innerHTML =
             '<td class="kolom-nama">' +
                 '<div class="d-flex align-items-center gap-2">' +
-                    '<div class="rounded-circle bg-ungu-muda text-ungu d-flex align-items-center justify-content-center" style="width:38px;height:38px"><i class="bi bi-person"></i></div>' +
+                    '<div class="rounded-circle bg-ungu-muda text-ungu d-flex align-items-center justify-content-center" style="width:38px;height:38px"><i class="bi bi-person" aria-hidden="true"></i></div>' +
                     '<b>' + esc(nama) + '</b>' +
                 '</div>' +
             '</td>' +
@@ -65,8 +65,8 @@ function simpanPengguna() {
             '<td class="kolom-dibaca">0 Buku</td>' +
             '<td>' +
                 '<div class="d-flex gap-2">' +
-                    '<button type="button" class="btn btn-sm btn-light" title="Ubah" onclick="editPengguna(this)"><i class="bi bi-pencil"></i></button>' +
-                    '<button type="button" class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusPengguna(this)"><i class="bi bi-trash"></i></button>' +
+                    '<button type="button" class="btn btn-sm btn-light" title="Ubah" onclick="editPengguna(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+                    '<button type="button" class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusPengguna(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>' +
                 '</div>' +
             '</td>';
         tabel.appendChild(tr);
