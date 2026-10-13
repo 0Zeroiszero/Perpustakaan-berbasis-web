@@ -95,14 +95,18 @@ function simpanBuku(event) {
     cariBukuAdmin();
 }
 
-// Hapus buku dari tabel, terus hitung ulang jumlah dan kasih notifikasi
+// Hapus buku dari tabel, harus lewat modal konfirmasi dulu
 function hapusBuku(tombol) {
     const baris = tombol.closest("tr");
     const judul = baris.querySelector(".kolom-judul b").textContent;
-    baris.remove();
 
-    cariBukuAdmin();
-    tampilkanToast("Buku \"" + judul + "\" dihapus dari tabel.");
+    konfirmasiHapus(judul, "buku").then(function (ya) {
+        if (!ya) return;
+
+        baris.remove();
+        cariBukuAdmin();
+        tampilkanToast("Buku \"" + judul + "\" dihapus dari tabel.");
+    });
 }
 
 // Cari buku di tabel, yang teksnya cocok sama kata kunci doang yang nampil

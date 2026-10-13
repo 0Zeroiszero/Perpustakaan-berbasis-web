@@ -16,15 +16,16 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg border-bottom">
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top">
         <div class="container py-2">
             <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
                 <span class="logo">P</span>
                 PustakaDigital
             </a>
-            <a href="katalog.html" class="btn btn-light ms-auto">
-                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>
-                Kembali ke Katalog
+            <!-- Tombol hanya ikon, jadi butuh aria-label supaya tetap terbaca screen reader -->
+            <a href="katalog.html" class="btn btn-ungu-outline btn-kembali ms-auto" aria-label="Kembali ke Katalog"
+                title="Kembali ke Katalog">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </a>
         </div>
     </nav>
@@ -57,51 +58,76 @@
                     kebiasaan baik dan menghasilkan perubahan besar
                     dalam kehidupan.
                 </p>
-                <div class="row g-3 my-3">
-                    <div class="col-6 col-md-4">
-                        <div class="card-clean p-3">
-                            <div class="info-label">
-                                Penerbit
-                            </div>
-                            <b>Avery</b>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <div class="card-clean p-3">
-                            <div class="info-label">
-                                Tahun
-                            </div>
-                            <b>2018</b>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <div class="card-clean p-3">
-                            <div class="info-label">
-                                Halaman
-                            </div>
-                            <b>320</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex gap-2 mt-4">
-                    <button class="btn btn-ungu px-4" onclick="pinjamBuku('Atomic Habits')">
+                <div class="d-grid gap-2 d-sm-flex mt-4">
+                    <!-- Buka file PDF di tab baru -->
+                    <a href="../assets/book/atomic-habits.pdf" target="_blank" rel="noopener" class="btn btn-baca px-4">
+                        <i class="bi bi-book-half me-1" aria-hidden="true"></i>
+                        Baca Buku
+                    </a>
+                    <button type="button" class="btn btn-pinjam px-4" onclick="pinjamBuku('Atomic Habits')">
                         <i class="bi bi-bookmark-plus me-1" aria-hidden="true"></i>
                         Simpan ke Rak
                     </button>
-                    <!-- Buka file PDF di tab baru -->
-                    <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-outline-secondary px-4">
-                        <i class="bi bi-book me-1" aria-hidden="true"></i>
-                        Baca Buku
-                    </a>
                 </div>
             </div>
         </div>
-        <section class="mt-5">
+        <!-- INFO: kolomnya sama dengan tabel di kelola-buku.html (judul & kategori sudah tampil di atas) -->
+        <section class="mt-4 mt-md-5">
             <div class="card-clean p-4">
-                <h4 class="fw-bold">
+                <h2 class="h4 fw-bold mb-3">
                     Informasi Buku
-                </h4>
-                <p class="text-secondary mb-0">
+                </h2>
+                <dl class="row row-cols-2 row-cols-md-3 g-3 mb-0">
+                    <div class="col">
+                        <dt class="info-label">
+                            Penulis
+                        </dt>
+                        <dd class="mb-0 fw-semibold">
+                            James Clear
+                        </dd>
+                    </div>
+                    <div class="col">
+                        <dt class="info-label">
+                            Penerbit
+                        </dt>
+                        <dd class="mb-0 fw-semibold">
+                            Avery
+                        </dd>
+                    </div>
+                    <div class="col">
+                        <dt class="info-label">
+                            Tahun
+                        </dt>
+                        <dd class="mb-0 fw-semibold">
+                            2018
+                        </dd>
+                    </div>
+                    <div class="col">
+                        <dt class="info-label">
+                            Halaman
+                        </dt>
+                        <dd class="mb-0 fw-semibold">
+                            320
+                        </dd>
+                    </div>
+                    <div class="col">
+                        <dt class="info-label">
+                            Format
+                        </dt>
+                        <dd class="mb-0 fw-semibold">
+                            PDF
+                        </dd>
+                    </div>
+                    <div class="col">
+                        <dt class="info-label">
+                            Status
+                        </dt>
+                        <dd class="mb-0">
+                            <span class="badge bg-success-subtle">Tersedia</span>
+                        </dd>
+                    </div>
+                </dl>
+                <p class="text-secondary mt-4 mb-0">
                     Buku tersedia dalam koleksi digital PustakaDigital.
                     Pengguna dapat menyimpan buku ke Rak Saya dan
                     mengaksesnya melalui dashboard.
@@ -138,13 +164,12 @@
                         koleksi buku dengan mudah.</p>
                 </div>
                 <div class="col-6 col-lg-3 col-md-3">
-                    <h6 class="footer-title">Navigasi</h6>
+                    <h2 class="footer-title h6">Navigasi</h2>
                     <a href="../index.html" class="footer-link">Beranda</a>
                     <a href="katalog.html" class="footer-link">Katalog Buku</a>
-                    <a href="dashboard-user.html" class="footer-link">Dashboard</a>
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
-                    <h6 class="footer-title">Informasi</h6>
+                    <h2 class="footer-title h6">Informasi</h2>
                     <span class="footer-info"><i class="bi bi-envelope me-2" aria-hidden="true"></i>info@pustakadigital.id</span>
                     <div class="footer-social mt-3">
                         <a href="#" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>

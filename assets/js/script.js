@@ -128,12 +128,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    document.querySelectorAll('a[href="#searchInput"]').forEach(function (icon) {
-        icon.addEventListener("click", function () {
-            const target = document.getElementById("searchInput");
-            if (target) { target.focus(); }
+    // Panel cari katalog hidup di modal: fokuskan kolomnya begitu kebuka (autofocus HTML
+    // tidak dipakai karena tidak berefek di modal Bootstrap)
+    const modalCari = document.getElementById("modalCari");
+    if (modalCari) {
+        modalCari.addEventListener("shown.bs.modal", function () {
+            document.getElementById("searchInput").focus();
         });
-    });
+    }
 });
 
 // Cari buku di katalog, yang judul/penulisnya cocok doang yang nampil
@@ -185,6 +187,72 @@ function showToast(judul, customMessage) {
 
 // Dipanggil waktu tombol Pinjam diklik, inti cuma nampilin notifikasi
 function pinjamBuku(judul) { showToast(judul); }
+
+// KONFIRMASI HAPUS — modal tunggal dipakai bersama semua halaman.
+// WAJIB dipakai sebelum menghapus apa pun yang nggak bisa dibatalkan.
+// Pakai: konfirmasiHapus("Atomic Habits", "buku").then(function (ya) { if (ya) { ...hapus... } });
+let modalKonfirmasi = null;
+let elKonfirmasi = null;
+let jawabKonfirmasi = null;
+
+function konfirmasiHapus(nama, jenis) {
+    if (!modalKonfirmasi) {
+        elKonfirmasi = buatModalKonfirmasi();
+        modalKonfirmasi = new bootstrap.Modal(elKonfirmasi);
+    }
+
+    elKonfirmasi.querySelector(".konfirmasi-judul").textContent = "Hapus " + jenis + "?";
+    elKonfirmasi.querySelector(".konfirmasi-nama").textContent = nama;
+    modalKonfirmasi.show();
+
+    return new Promise(function (resolve) { jawabKonfirmasi = resolve; });
+}
+
+function buatModalKonfirmasi() {
+    const el = document.createElement("div");
+    el.className = "modal fade";
+    el.id = "modalKonfirmasiHapus";
+    el.tabIndex = -1;
+    el.setAttribute("aria-labelledby", "konfirmasiHapusJudul");
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML =
+        '<div class="modal-dialog modal-dialog-centered">' +
+            '<div class="modal-content" style="border-radius:var(--radius-lg)">' +
+                '<div class="modal-header border-0 pb-0">' +
+                    '<h2 class="modal-title h5 fw-bold" id="konfirmasiHapusJudul">' +
+                        '<i class="bi bi-exclamation-triangle text-danger me-2" aria-hidden="true"></i>' +
+                        '<span class="konfirmasi-judul"></span>' +
+                    '</h2>' +
+                    '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>' +
+                '</div>' +
+                '<div class="modal-body">' +
+                    '<p class="mb-1">Item berikut akan dihapus dan <b>tidak bisa dibatalkan</b>:</p>' +
+                    '<p class="mb-0 fw-semibold konfirmasi-nama"></p>' +
+                '</div>' +
+                '<div class="modal-footer border-0 pt-0">' +
+                    '<button type="button" class="btn btn-light border konfirmasi-batal" data-bs-dismiss="modal">Batal</button>' +
+                    '<button type="button" class="btn btn-hapus konfirmasi-ya">Ya, Hapus</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    document.body.appendChild(el);
+
+    // "Ya" menjawab dulu lalu modal ditutup; Esc atau klik di luar dianggap Batal
+    el.querySelector(".konfirmasi-ya").addEventListener("click", function () {
+        tutupKonfirmasi(true);
+        bootstrap.Modal.getInstance(el).hide();
+    });
+    el.addEventListener("hidden.bs.modal", function () { tutupKonfirmasi(false); });
+    // Fokus default ke "Batal" supayakeyboard/tekan Enter tidak jatuh ke aksi merusak
+    el.addEventListener("shown.bs.modal", function () { el.querySelector(".konfirmasi-batal").focus(); });
+    return el;
+}
+
+function tutupKonfirmasi(jawab) {
+    const fn = jawabKonfirmasi;
+    jawabKonfirmasi = null;
+    if (fn) fn(jawab);
+}
 
 // Urutin buku sesuai pilihan: judul A-Z atau rating paling tinggi
 function sortBuku() {

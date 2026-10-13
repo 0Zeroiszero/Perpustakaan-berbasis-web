@@ -1,2 +1,27 @@
-/* Halaman rak-saya — hanya mengimpor root.css */
+/* Halaman rak-saya.html — hanya mengimpor root.css */
 @import "root.css";
+
+/* TOOLBAR RAK — nempel tepat di bawah navbar/topbar dashboard, jadi user ga perlu scroll
+   ke atas buat nyari/urutkan.utinggi topbar selalu 81px (p-3 + isi), z-index di bawah topbar */
+.rak-toolbar {
+    position: sticky;
+    top: 81px;
+    z-index: 1010;
+    margin-inline: -.75rem;
+    padding: .5rem .75rem;
+    background: var(--bg);
+}
+
+/* Di layar kecil topbar ikut jadi lebih rapat, toolbar tetap nempel pas di bawahnya */
+@media (max-width: 575.98px) {
+    .rak-toolbar {
+        margin-inline: -.5rem;
+        padding: .5rem;
+    }
+}
+
+/* Kontrol di dalam toolbar bikin tinggi baris tetap seragam */
+.rak-toolbar .input-group,
+.rak-toolbar .form-select {
+    min-height: 44px;
+}

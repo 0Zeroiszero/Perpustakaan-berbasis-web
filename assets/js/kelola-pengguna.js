@@ -78,14 +78,18 @@ function simpanPengguna() {
     cariPengguna();
 }
 
-// Hapus pengguna dari tabel, terus hitung ulang jumlah dan kasih notifikasi
+// Hapus pengguna dari tabel, harus lewat modal konfirmasi dulu
 function hapusPengguna(tombol) {
     const baris = tombol.closest("tr");
     const nama = baris.querySelector(".kolom-nama b").textContent;
-    baris.remove();
 
-    cariPengguna();
-    tampilkanToast("Pengguna \"" + nama + "\" dihapus dari tabel.");
+    konfirmasiHapus(nama, "pengguna").then(function (ya) {
+        if (!ya) return;
+
+        baris.remove();
+        cariPengguna();
+        tampilkanToast("Pengguna \"" + nama + "\" dihapus dari tabel.");
+    });
 }
 
 // Cari pengguna di tabel, yang teksnya cocok sama kata kunci doang yang nampil
