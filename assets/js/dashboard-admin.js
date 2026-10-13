@@ -82,8 +82,8 @@ function simpanBuku(event) {
             '<td class="kolom-format">' + esc(format) + '</td>' +
             '<td class="kolom-status">' + statusBuku(format) + '</td>' +
             '<td class="text-nowrap">' +
-                '<button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button> ' +
-                '<button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>' +
+                '<button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button> ' +
+                '<button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>' +
             '</td>';
         tabel.appendChild(tr);
 

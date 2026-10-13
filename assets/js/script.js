@@ -27,7 +27,28 @@ document.addEventListener("DOMContentLoaded", function () {
     if (search) {
         search.addEventListener("submit", function (e) {
             e.preventDefault();
-            window.location.href = "route/katalog.html";
+            const kata = search.querySelector("input").value.trim();
+            window.location.href = "route/katalog.html" + (kata ? "?q=" + encodeURIComponent(kata) : "");
+        });
+    }
+
+    const register = document.getElementById("registerForm");
+    if (register) {
+        const pass = document.getElementById("password");
+        const konfirmasi = document.getElementById("passwordConfirm");
+
+        konfirmasi.addEventListener("input", function () {
+            konfirmasi.classList.remove("is-invalid");
+        });
+
+        register.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (pass.value !== konfirmasi.value) {
+                konfirmasi.classList.add("is-invalid");
+                konfirmasi.focus();
+                return;
+            }
+            window.location.href = "dashboard-user.html";
         });
     }
 
@@ -89,9 +110,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const searchInputEl = document.getElementById("searchInput");
     if (searchInputEl) {
-        searchInputEl.addEventListener("keypress", function (e) {
+        searchInputEl.addEventListener("keydown", function (e) {
             if (e.key === "Enter") cariBuku();
         });
+
+        // Terapkan pencarian/filter yang dikirim dari beranda
+        const params = new URLSearchParams(window.location.search);
+        const kategori = params.get("kategori");
+        const kata = params.get("q");
+        if (kategori) {
+            const btn = Array.prototype.find.call(document.querySelectorAll(".category-btn"),
+                function (b) { return b.textContent.trim() === kategori; });
+            if (btn) filterKategori(kategori, btn);
+        } else if (kata) {
+            searchInputEl.value = kata;
+            cariBuku();
+        }
     }
 
     document.querySelectorAll('a[href="#searchInput"]').forEach(function (icon) {
@@ -117,8 +151,12 @@ function cariBuku() {
 
 // Saring buku sesuai kategori yang diklik, terus hitung ulang jumlahnya
 function filterKategori(kategori, btn) {
-    document.querySelectorAll(".category-btn").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".category-btn").forEach(function (x) {
+        x.classList.remove("active");
+        x.setAttribute("aria-pressed", "false");
+    });
     btn.classList.add("active");
+    btn.setAttribute("aria-pressed", "true");
     const books = document.querySelectorAll(".book-item");
     let jumlah = 0;
     books.forEach(b => {
@@ -138,7 +176,7 @@ function showToast(judul, customMessage) {
     const msgEl = document.getElementById("toastMsg");
     msgEl.textContent = customMessage
         ? customMessage
-        : `Buku "${judul}" dipilih untuk dipinjam.`;
+        : `Buku "${judul}" disimpan ke rak.`;
 
     const el = document.getElementById("toastPinjam");
     const t = new bootstrap.Toast(el, { delay: 3000 });
