@@ -219,10 +219,10 @@ function buatModalKonfirmasi() {
         '<div class="modal-dialog modal-dialog-centered">' +
             '<div class="modal-content" style="border-radius:var(--radius-lg)">' +
                 '<div class="modal-header border-0 pb-0">' +
-                    '<h5 class="modal-title h5 fw-bold" id="konfirmasiHapusJudul">' +
+                    '<h2 class="modal-title h5 fw-bold" id="konfirmasiHapusJudul">' +
                         '<i class="bi bi-exclamation-triangle text-danger me-2" aria-hidden="true"></i>' +
                         '<span class="konfirmasi-judul"></span>' +
-                    '</h5>' +
+                    '</h2>' +
                     '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>' +
                 '</div>' +
                 '<div class="modal-body">' +

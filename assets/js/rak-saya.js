@@ -3,7 +3,7 @@
 // Hapus buku dari rak, harus lewat modal konfirmasi dulu
 function hapusRak(tombol) {
     const kartu = tombol.closest(".buku-rak");
-    const judul = kartu.querySelector("h5").textContent;
+    const judul = kartu.querySelector("h2").textContent;
 
     konfirmasiHapus(judul, "buku dari rak").then(function (ya) {
         if (!ya) return;
@@ -19,4 +19,4 @@ function hapusRak(tombol) {
         document.getElementById("toastRakMsg").textContent = "Buku \"" + judul + "\" dihapus dari rak.";
         bootstrap.Toast.getOrCreateInstance(document.getElementById("toastRak"), { delay: 2500 }).show();
     });
-}
+}
