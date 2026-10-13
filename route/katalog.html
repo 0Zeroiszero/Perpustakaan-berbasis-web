@@ -24,11 +24,12 @@
                 <span class="logo">P</span> PustakaDigital
             </a>
 
-            <!-- Ikon search (mobile + desktop) -->
+            <!-- Ikon search (mobile + desktop): membuka panel cari & filter dalam modal -->
             <div class="ms-auto d-flex align-items-center gap-2">
-                <a href="#searchInput" class="catalog-search-icon" aria-label="Cari buku">
+                <button type="button" class="catalog-search-icon" data-bs-toggle="modal" data-bs-target="#modalCari"
+                    aria-label="Cari buku" title="Cari buku">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                </a>
+                </button>
                 <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#catalogNavbarMenu" aria-controls="catalogNavbarMenu" aria-expanded="false"
                     aria-label="Buka menu">
@@ -62,44 +63,8 @@
             <p class="text-secondary mb-0">Cari, filter, lalu simpan dan baca koleksinya secara digital.</p>
         </div>
 
-        <!-- SEARCH + FILTER GABUNGAN -->
-        <div class="card-clean p-3 mb-4">
-            <div class="row g-2 align-items-center">
-                <div class="col-lg-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><i
-                                class="bi bi-search text-secondary" aria-hidden="true"></i></span>
-                        <input id="searchInput" type="search" class="form-control border-start-0"
-                            placeholder="Cari judul, penulis... (misal: Atomic, Pramoedya)"
-                            aria-label="Cari judul atau penulis">
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <select id="sortSelect" class="form-select" onchange="sortBuku()" aria-label="Urutkan koleksi">
-                        <option value="terbaru">Terbaru</option>
-                        <option value="az">Judul A-Z</option>
-                        <option value="rating">Rating Tertinggi</option>
-                    </select>
-                </div>
-                <div class="col-md-3 col-6">
-                    <button type="button" class="btn btn-cari w-100" onclick="cariBuku()"><i class="bi bi-search me-1" aria-hidden="true"></i>
-                        Cari</button>
-                </div>
-            </div>
-            <!-- CATEGORY BUTTON -->
-            <div class="mt-3 d-flex flex-wrap" role="group" aria-label="Filter kategori">
-                <button type="button" class="category-btn active" aria-pressed="true"
-                    onclick="filterKategori('Semua', this)">Semua</button>
-                <button type="button" class="category-btn" aria-pressed="false"
-                    onclick="filterKategori('Pengembangan Diri', this)">Pengembangan Diri</button>
-                <button type="button" class="category-btn" aria-pressed="false"
-                    onclick="filterKategori('Teknologi', this)">Teknologi</button>
-                <button type="button" class="category-btn" aria-pressed="false"
-                    onclick="filterKategori('Novel', this)">Novel</button>
-                <button type="button" class="category-btn" aria-pressed="false"
-                    onclick="filterKategori('Sejarah', this)">Sejarah</button>
-            </div>
-        </div>
+        <!-- CATATAN: blok SEARCH + FILTER GABUNGAN dipindah ke modal #modalCari (lihat bawah),
+             supaya tetap bisa dicari tanpa harus scroll naik ke bagian atas halaman -->
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0">Koleksi Buku</h5>
@@ -108,7 +73,7 @@
         </div>
 
         <!-- GRID BUKU -->
-        <div class="row g-4" id="bookGrid">
+        <div class="row g-4 grid-buku" id="bookGrid">
             <!-- Buku 1 -->
             <div class="col-6 col-lg-3 book-item" data-search="atomic habits james clear pengembangan diri"
                 data-kategori="Pengembangan Diri" data-judul="Atomic Habits" data-rating="4.8">
@@ -157,7 +122,7 @@
                 </div>
             </div>
             <!-- Buku 3 -->
-            <div class="col-6 col-lg-3 book-item" data-search="bumi manusia pramoedya novel" data-kategori="Novel"
+            <div class="col-6 col-lg-3 book-item tidak-tersedia" data-search="bumi manusia pramoedya novel" data-kategori="Novel"
                 data-judul="Bumi Manusia" data-rating="4.9">
                 <div class="book-card">
                     <div class="book-cover" style="background:var(--merah-muda)">
@@ -172,7 +137,7 @@
                         <p class="text-secondary small mb-1">Pramoedya Ananta Toer</p>
                         <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.9</span></div>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
+                            <a href="detail-buku.html" class="btn btn-outline-secondary">Lihat Detail</a>
                             <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
                                 Belum Tersedia</button>
                         </div>
@@ -215,6 +180,51 @@
         </div>
     </main>
 
+    <!-- SEARCH + FILTER GABUNGAN (dipindah ke modal, dibuka dari ikon cari di navbar) -->
+    <div class="modal fade" id="modalCari" tabindex="-1" aria-labelledby="modalCariJudul" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius:var(--radius-lg)">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title h5 fw-bold" id="modalCariJudul">Cari &amp; filter buku</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12 col-md">
+                            <label class="visually-hidden" for="searchInput">Cari judul atau penulis</label>
+                            <input id="searchInput" type="search" class="form-control"
+                                placeholder="Cari judul, penulis... (misal: Atomic, Pramoedya)">
+                        </div>
+                        <div class="col-12 col-md-auto">
+                            <label class="visually-hidden" for="sortSelect">Urutkan koleksi</label>
+                            <select id="sortSelect" class="form-select" onchange="sortBuku()">
+                                <option value="terbaru">Terbaru</option>
+                                <option value="az">Judul A-Z</option>
+                                <option value="rating">Rating Tertinggi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="small text-secondary mb-0 mt-2">
+                        Tekan Enter di kolom pencarian untuk mulai mencari.
+                    </p>
+                    <!-- CATEGORY BUTTON -->
+                    <div class="mt-3 d-flex flex-wrap gap-2" role="group" aria-label="Filter kategori">
+                        <button type="button" class="category-btn active" aria-pressed="true"
+                            onclick="filterKategori('Semua', this)">Semua</button>
+                        <button type="button" class="category-btn" aria-pressed="false"
+                            onclick="filterKategori('Pengembangan Diri', this)">Pengembangan Diri</button>
+                        <button type="button" class="category-btn" aria-pressed="false"
+                            onclick="filterKategori('Teknologi', this)">Teknologi</button>
+                        <button type="button" class="category-btn" aria-pressed="false"
+                            onclick="filterKategori('Novel', this)">Novel</button>
+                        <button type="button" class="category-btn" aria-pressed="false"
+                            onclick="filterKategori('Sejarah', this)">Sejarah</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
         <div id="toastPinjam" class="toast border-0" role="alert"
             style="background:var(--gelap); color:white; border-radius:12px">
@@ -249,7 +259,6 @@
                     <h6 class="footer-title">Navigasi</h6>
                     <a href="../index.html" class="footer-link">Beranda</a>
                     <a href="katalog.html" class="footer-link">Katalog Buku</a>
-                    <a href="dashboard-user.html" class="footer-link">Dashboard</a>
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
                     <h6 class="footer-title">Informasi</h6>
