@@ -1,39 +1,6 @@
 /* Halaman katalog — bagian bersama ada di root.css */
 @import "root.css";
 
-/* BUTTONS */
-.btn-pinjam {
-    background: var(--biru-tua);
-    border-color: var(--biru-tua);
-    color: #fff;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-}
-.btn-pinjam:hover {
-    background: #075985;
-    color: #fff;
-}
-
-/* CATEGORY PILLS */
-.category-btn {
-    border: 1px solid var(--ungu);
-    color: var(--ungu);
-    background: #fff;
-    border-radius: var(--radius-pill);
-    padding: 7px 18px;
-    margin: 4px;
-    font-weight: 600;
-    transition: background-color var(--transition), color var(--transition), transform .1s ease;
-}
-.category-btn:hover,
-.category-btn.active {
-    background: var(--ungu);
-    color: #fff;
-}
-.category-btn:active {
-    transform: translateY(1px);
-}
-
 /* SEARCH ICON */
 .catalog-search-icon {
     display: inline-flex;
@@ -41,6 +8,9 @@
     justify-content: center;
     width: 38px;
     height: 38px;
+    flex: 0 0 38px;
+    border: 0;
+    background: transparent;
     border-radius: var(--radius-sm);
     color: var(--ungu);
     text-decoration: none;
@@ -52,41 +22,32 @@
     color: var(--ungu);
 }
 
-/* Kolom search di bawah navbar sticky */
-#searchInput {
-    scroll-margin-top: 84px;
+/* Kolom search kini hidup di modal (#modalCari), jadi tidak ada lagi anchor scroll */
+
+/* GRID BUKU — aturan shared ada di root.css (kelas .grid-buku) */
+
+/* BUKU BELUM TERSEDIA — hanya latar kartu yang digelapkan, sampul tetap berwarna */
+#bookGrid .book-item.tidak-tersedia .book-card {
+    background: var(--surface-mati);
+    border-color: #D6D6E0;
+}
+/* Bintang rating dikalibrasi ulang: #B45309 hanya 4.19:1 di latar yang diredupkan */
+#bookGrid .book-item.tidak-tersedia .rating {
+    color: #8F4E0A;
+}
+/* Sampul diredupkan dengan warna kartu yang sama (bukan grayscale) */
+#bookGrid .book-item.tidak-tersedia .book-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--surface-mati);
+    opacity: .62;
+}
+/* Tombol nonaktif bawaan (btn-light) ikut tenggelam di latar lebih gelap */
+#bookGrid .book-item.tidak-tersedia .book-card .btn-light {
+    background: #fff;
 }
 
-/* GRID BUKU */
-/* Kartu jadi kolom fleksibel */
-#bookGrid .book-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-/* Sampul ikut rasio buku dan menyesuaikan lebar kolom, bukan tinggi tetap */
-#bookGrid .book-cover {
-    height: auto;
-    aspect-ratio: 3 / 4;
-}
-/* Isi kartu setinggi mungkin */
-#bookGrid .book-card > .p-3 {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-/* Tombol rata bawah */
-#bookGrid .book-card .d-grid {
-    margin-top: auto;
-    padding-top: .75rem;
-}
-/* Judul & penulis 1 baris */
-#bookGrid .book-card h5,
-#bookGrid .book-card .p-3 > p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 /* Badge seragam di layar kecil */
 @media (max-width: 575.98px) {
     #bookGrid .book-card .badges {

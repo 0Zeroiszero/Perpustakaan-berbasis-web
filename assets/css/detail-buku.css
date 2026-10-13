@@ -27,3 +27,11 @@
     color: var(--abu);
     font-size: .9rem;
 }
+
+/* TOMBOL KEMBALI — ikon saja, tapi target sentuh tetap 44px biar nyaman di ponsel */
+.btn-kembali {
+    min-width: 44px;
+    min-height: 44px;
+    padding: .5rem;
+    flex: 0 0 auto;
+}
