@@ -61,19 +61,20 @@
 
                 <form id="loginForm">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Email</label>
-                        <input id="email" type="email" class="form-control" placeholder="nama@email.com" value="abc@email.com" required>
+                        <label class="form-label fw-semibold" for="email">Email</label>
+                        <input id="email" name="email" type="email" class="form-control" placeholder="nama@email.com"
+                            autocomplete="email" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Password</label>
-                        <input id="password" type="password" class="form-control" placeholder="Masukkan password"
-                            value="abc" required>
+                        <label class="form-label fw-semibold" for="password">Password</label>
+                        <input id="password" name="password" type="password" class="form-control"
+                            placeholder="Masukkan password" autocomplete="current-password" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Masuk sebagai</label>
-                        <select id="role" class="form-select">
+                        <label class="form-label fw-semibold" for="role">Masuk sebagai</label>
+                        <select id="role" name="role" class="form-select">
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
@@ -81,7 +82,7 @@
 
                     <div class="d-flex justify-content-between mb-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="remember">
+                            <input class="form-check-input" type="checkbox" id="remember" name="remember">
                             <label class="form-check-label text-secondary" for="remember">
                                 Ingat saya
                             </label>
@@ -92,7 +93,7 @@
                     </div>
 
                     <button class="btn btn-ungu w-100 py-2">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
                         Masuk
                     </button>
                 </form>
@@ -131,12 +132,12 @@
 
                 <div class="col-6 col-lg-4 col-md-3">
                     <h6 class="footer-title">Informasi</h6>
-                    <span class="footer-info"><i class="bi bi-clock me-2"></i>Senin–Jumat, 08.00–16.00</span>
-                    <span class="footer-info"><i class="bi bi-envelope me-2"></i>info@pustakadigital.id</span>
+                    <span class="footer-info"><i class="bi bi-clock me-2" aria-hidden="true"></i>Senin–Jumat, 08.00–16.00</span>
+                    <span class="footer-info"><i class="bi bi-envelope me-2" aria-hidden="true"></i>info@pustakadigital.id</span>
                     <div class="footer-social mt-3">
-                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>

@@ -22,22 +22,22 @@
 
         <nav class="nav flex-column">
             <a class="nav-link" href="dashboard-admin.html">
-                <i class="bi bi-grid me-2"></i>Dashboard
+                <i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard
             </a>
             <a class="nav-link" href="katalog.html">
-                <i class="bi bi-book me-2"></i>Katalog
+                <i class="bi bi-book me-2" aria-hidden="true"></i>Katalog
             </a>
-            <a class="nav-link active" href="kelola-buku.html">
-                <i class="bi bi-collection me-2"></i>Kelola Buku
+            <a class="nav-link active" href="kelola-buku.html" aria-current="page">
+                <i class="bi bi-collection me-2" aria-hidden="true"></i>Kelola Buku
             </a>
             <a class="nav-link" href="kelola-pengguna.html">
-                <i class="bi bi-people me-2"></i>Kelola Pengguna
+                <i class="bi bi-people me-2" aria-hidden="true"></i>Kelola Pengguna
             </a>
             <a class="nav-link" href="../index.html">
-                <i class="bi bi-house me-2"></i>Beranda
+                <i class="bi bi-house me-2" aria-hidden="true"></i>Beranda
             </a>
             <a class="nav-link logout" href="login.html">
-                <i class="bi bi-box-arrow-right me-2"></i>Keluar
+                <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar
             </a>
         </nav>
     </aside>
@@ -47,7 +47,7 @@
         <header class="topbar p-3">
             <div class="d-flex align-items-center gap-3">
                 <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                    <i class="bi bi-list"></i>
+                    <i class="bi bi-list" aria-hidden="true"></i>
                 </button>
                 <div>
                     <b>Kelola Buku</b>
@@ -68,7 +68,7 @@
                     <p class="text-secondary mb-0">Semua data buku yang tersimpan di PustakaDigital.</p>
                 </div>
                 <button class="btn btn-ungu" onclick="bukaModalTambah()">
-                    <i class="bi bi-plus-lg me-1"></i>Tambah Buku
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Tambah Buku
                 </button>
             </div>
 
@@ -77,15 +77,15 @@
                     <div class="col-md-6">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">
-                                <i class="bi bi-search text-secondary"></i>
+                                <i class="bi bi-search text-secondary" aria-hidden="true"></i>
                             </span>
                             <input id="cariBukuAdmin" type="search" class="form-control border-start-0"
                                 placeholder="Cari judul atau penulis..." oninput="cariBukuAdmin()">
                         </div>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <span id="jumlahBukuAdmin" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2">3
-                            Buku</span>
+                        <span id="jumlahBukuAdmin" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2"
+                            aria-live="polite">3 Buku</span>
                     </div>
                 </div>
 
@@ -93,15 +93,15 @@
                     <table class="table align-middle">
                         <thead>
                             <tr>
-                                <th>Judul</th>
-                                <th>Penulis</th>
-                                <th>Kategori</th>
-                                <th>Penerbit</th>
-                                <th>Tahun</th>
-                                <th>Halaman</th>
-                                <th>Format</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th scope="col">Judul</th>
+                                <th scope="col">Penulis</th>
+                                <th scope="col">Kategori</th>
+                                <th scope="col">Penerbit</th>
+                                <th scope="col">Tahun</th>
+                                <th scope="col">Halaman</th>
+                                <th scope="col">Format</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tabelBukuAdmin">
@@ -124,8 +124,8 @@
                                 <td class="kolom-format">PDF</td>
                                 <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
                                 </td>
                             </tr>
 
@@ -147,8 +147,8 @@
                                 <td class="kolom-format">PDF</td>
                                 <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
                                 </td>
                             </tr>
 
@@ -170,16 +170,16 @@
                                 <td class="kolom-format">PDF</td>
                                 <td class="kolom-status"><span class="badge bg-danger-subtle text-danger">Belum Tersedia</span></td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div id="tabelBukuKosong" class="text-center py-5 d-none">
-                    <i class="bi bi-inbox" style="font-size:2.5rem;color:var(--abu)"></i>
+                <div id="tabelBukuKosong" class="text-center py-5 d-none" role="status">
+                    <i class="bi bi-inbox" style="font-size:2.5rem;color:var(--abu)" aria-hidden="true"></i>
                     <p class="text-secondary mt-2 mb-0">Tidak ada buku yang cocok.</p>
                 </div>
             </div>
@@ -192,26 +192,26 @@
             <div class="modal-content" style="border-radius:16px; max-height:90vh; overflow-y:auto; overflow-x:hidden">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold" id="modalBukuTitle">Tambah Buku</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <form id="formBuku" onsubmit="simpanBuku(event)">
                     <div class="modal-body" style="overflow-y:auto; overflow-x:hidden;">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><i class="bi bi-upload me-1"></i>Upload buku, skripsi, novel atau bacaan</label>
+                            <label class="form-label fw-semibold" for="inputBerkas"><i class="bi bi-upload me-1" aria-hidden="true"></i>Upload buku, skripsi, novel atau bacaan</label>
                             <input id="inputBerkas" type="file" class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Judul</label>
+                            <label class="form-label fw-semibold" for="inputJudul">Judul</label>
                             <input id="inputJudul" type="text" class="form-control" placeholder="Judul buku" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Penulis</label>
+                            <label class="form-label fw-semibold" for="inputPenulis">Penulis</label>
                             <input id="inputPenulis" type="text" class="form-control" placeholder="Nama penulis"
                                 required>
                         </div>
                         <div class="row g-3">
                             <div class="col-7">
-                                <label class="form-label fw-semibold">Kategori</label>
+                                <label class="form-label fw-semibold" for="inputKategori">Kategori</label>
                                 <select id="inputKategori" class="form-select">
                                     <option>Pengembangan Diri</option>
                                     <option>Teknologi</option>
@@ -220,7 +220,7 @@
                                 </select>
                             </div>
                             <div class="col-5">
-                                <label class="form-label fw-semibold">Format E-book</label>
+                                <label class="form-label fw-semibold" for="inputFormat">Format E-book</label>
                                 <select id="inputFormat" class="form-select" required>
                                     <option value="PDF" selected>PDF</option>
                                     <option value="EPUB">EPUB</option>
@@ -229,21 +229,21 @@
                         </div>
                         <div class="row g-3 mt-0">
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Penerbit</label>
+                                <label class="form-label fw-semibold" for="inputPenerbit">Penerbit</label>
                                 <input id="inputPenerbit" type="text" class="form-control" placeholder="Nama penerbit">
                             </div>
                             <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold">Tahun</label>
+                                <label class="form-label fw-semibold" for="inputTahun">Tahun</label>
                                 <input id="inputTahun" type="number" min="1000" max="2100" class="form-control"
                                     placeholder="2024">
                             </div>
                             <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold">Halaman</label>
+                                <label class="form-label fw-semibold" for="inputHalaman">Halaman</label>
                                 <input id="inputHalaman" type="number" min="1" class="form-control" placeholder="320">
                             </div>
                         </div>
                         <div class="mt-3">
-                            <label class="form-label fw-semibold">Sinopsis</label>
+                            <label class="form-label fw-semibold" for="inputSinopsis">Sinopsis</label>
                             <textarea id="inputSinopsis" class="form-control" rows="4"
                                 placeholder="Ringkasan isi buku..."></textarea>
                         </div>
@@ -251,7 +251,7 @@
                     <div class="modal-footer border-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-ungu">
-                            <i class="bi bi-check-lg me-1"></i>Simpan
+                            <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Simpan
                         </button>
                     </div>
                 </form>
@@ -266,11 +266,12 @@
                 <div class="toast-body d-flex align-items-center gap-2">
                     <span
                         style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                     </span>
                     <span id="toastAdminMsg">Berhasil disimpan</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
+                    data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>

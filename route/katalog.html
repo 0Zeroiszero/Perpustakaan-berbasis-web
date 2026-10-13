@@ -24,7 +24,7 @@
             <!-- Ikon search (mobile + desktop) -->
             <div class="ms-auto d-flex align-items-center gap-2">
                 <a href="#searchInput" class="catalog-search-icon" aria-label="Cari buku">
-                    <i class="bi bi-search"></i>
+                    <i class="bi bi-search" aria-hidden="true"></i>
                 </a>
                 <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#catalogNavbarMenu" aria-controls="catalogNavbarMenu" aria-expanded="false"
@@ -55,9 +55,8 @@
     <main class="container py-5">
         <!-- HEADER -->
         <div class="mb-4">
-            <p class="text-ungu fw-semibold mb-1"><i class="bi bi-journal-bookmark me-1"></i> KATALOG</p>
             <h1 class="page-title mb-1">Temukan Buku Favoritmu</h1>
-            <p class="text-secondary">Gabungan versi simpel + versi lengkap. Cari, filter, lalu simpan dan baca secara digital.</p>
+            <p class="text-secondary mb-0">Cari, filter, lalu simpan dan baca koleksinya secara digital.</p>
         </div>
 
         <!-- SEARCH + FILTER GABUNGAN -->
@@ -66,37 +65,43 @@
                 <div class="col-lg-6">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0"><i
-                                class="bi bi-search text-secondary"></i></span>
+                                class="bi bi-search text-secondary" aria-hidden="true"></i></span>
                         <input id="searchInput" type="search" class="form-control border-start-0"
-                            placeholder="Cari judul, penulis... (misal: Atomic, Pramoedya)">
+                            placeholder="Cari judul, penulis... (misal: Atomic, Pramoedya)"
+                            aria-label="Cari judul atau penulis">
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <select id="sortSelect" class="form-select" onchange="sortBuku()">
+                    <select id="sortSelect" class="form-select" onchange="sortBuku()" aria-label="Urutkan koleksi">
                         <option value="terbaru">Terbaru</option>
                         <option value="az">Judul A-Z</option>
                         <option value="rating">Rating Tertinggi</option>
                     </select>
                 </div>
                 <div class="col-md-3 col-6">
-                    <button class="btn btn-cari w-100" onclick="cariBuku()"><i class="bi bi-search me-1"></i>
+                    <button type="button" class="btn btn-cari w-100" onclick="cariBuku()"><i class="bi bi-search me-1" aria-hidden="true"></i>
                         Cari</button>
                 </div>
             </div>
             <!-- CATEGORY BUTTON -->
-            <div class="mt-3 d-flex flex-wrap">
-                <button class="category-btn active" onclick="filterKategori('Semua', this)">Semua</button>
-                <button class="category-btn" onclick="filterKategori('Pengembangan Diri', this)">Pengembangan
-                    Diri</button>
-                <button class="category-btn" onclick="filterKategori('Teknologi', this)">Teknologi</button>
-                <button class="category-btn" onclick="filterKategori('Novel', this)">Novel</button>
-                <button class="category-btn" onclick="filterKategori('Sejarah', this)">Sejarah</button>
+            <div class="mt-3 d-flex flex-wrap" role="group" aria-label="Filter kategori">
+                <button type="button" class="category-btn active" aria-pressed="true"
+                    onclick="filterKategori('Semua', this)">Semua</button>
+                <button type="button" class="category-btn" aria-pressed="false"
+                    onclick="filterKategori('Pengembangan Diri', this)">Pengembangan Diri</button>
+                <button type="button" class="category-btn" aria-pressed="false"
+                    onclick="filterKategori('Teknologi', this)">Teknologi</button>
+                <button type="button" class="category-btn" aria-pressed="false"
+                    onclick="filterKategori('Novel', this)">Novel</button>
+                <button type="button" class="category-btn" aria-pressed="false"
+                    onclick="filterKategori('Sejarah', this)">Sejarah</button>
             </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0">Koleksi Buku</h5>
-            <span id="jumlahBuku" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2">4 Buku</span>
+            <span id="jumlahBuku" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite">4
+                Buku</span>
         </div>
 
         <!-- GRID BUKU -->
@@ -106,7 +111,7 @@
                 data-kategori="Pengembangan Diri" data-judul="Atomic Habits" data-rating="4.8">
                 <div class="book-card">
                     <div class="book-cover">
-                        <img src="../assets/image/Atomic habits.jpg" alt="Atomic Habits">
+                        <img src="../assets/image/Atomic habits.jpg" alt="Atomic Habits" loading="lazy">
                     </div>
                     <div class="p-3">
                         <div class="badges">
@@ -115,11 +120,11 @@
                         </div>
                         <h5 class="fw-bold mt-2 mb-1">Atomic Habits</h5>
                         <p class="text-secondary small mb-1">James Clear</p>
-                        <div class="rating small">★★★★★ <span class="text-secondary">4.8</span></div>
+                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.8</span></div>
                         <div class="d-grid gap-2 mt-3">
                             <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Atomic Habits')"><i
-                                    class="bi bi-bookmark-plus me-1"></i> Simpan ke Rak</button>
+                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
                         </div>
                     </div>
                 </div>
@@ -129,7 +134,7 @@
                 data-kategori="Teknologi" data-judul="Clean Code" data-rating="4.7">
                 <div class="book-card">
                     <div class="book-cover bg-biru-muda">
-                        <img src="../assets/image/clean code.jpeg" alt="Clean Code">
+                        <img src="../assets/image/clean code.jpeg" alt="Clean Code" loading="lazy">
                     </div>
                     <div class="p-3">
                         <div class="badges">
@@ -138,11 +143,11 @@
                         </div>
                         <h5 class="fw-bold mt-2 mb-1">Clean Code</h5>
                         <p class="text-secondary small mb-1">Robert C. Martin</p>
-                        <div class="rating small">★★★★★ <span class="text-secondary">4.7</span></div>
+                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.7</span></div>
                         <div class="d-grid gap-2 mt-3">
                             <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Clean Code')"><i
-                                    class="bi bi-bookmark-plus me-1"></i>
+                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i>
                                 Simpan ke Rak</button>
                         </div>
                     </div>
@@ -153,7 +158,7 @@
                 data-judul="Bumi Manusia" data-rating="4.9">
                 <div class="book-card">
                     <div class="book-cover" style="background:var(--merah-muda)">
-                        <img src="../assets/image/bumi manusia.jpg" alt="Bumi Manusia">
+                        <img src="../assets/image/bumi manusia.jpg" alt="Bumi Manusia" loading="lazy">
                     </div>
                     <div class="p-3">
                         <div class="badges">
@@ -162,10 +167,10 @@
                         </div>
                         <h5 class="fw-bold mt-2 mb-1">Bumi Manusia</h5>
                         <p class="text-secondary small mb-1">Pramoedya Ananta Toer</p>
-                        <div class="rating small">★★★★★ <span class="text-secondary">4.9</span></div>
+                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.9</span></div>
                         <div class="d-grid gap-2 mt-3">
                             <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
-                            <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1"></i>
+                            <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
                                 Belum Tersedia</button>
                         </div>
                     </div>
@@ -176,7 +181,7 @@
                 data-judul="Sejarah Dunia" data-rating="4.5">
                 <div class="book-card">
                     <div class="book-cover bg-biru-muda">
-                        <img src="../assets/image/sejarah dunia.jpg" alt="Sejarah Dunia">
+                        <img src="../assets/image/sejarah dunia.jpg" alt="Sejarah Dunia" loading="lazy">
                     </div>
                     <div class="p-3">
                         <div class="badges">
@@ -185,23 +190,23 @@
                         </div>
                         <h5 class="fw-bold mt-2 mb-1">Sejarah Dunia</h5>
                         <p class="text-secondary small mb-1">Edisi Pembelajaran</p>
-                        <div class="rating small">★★★★☆ <span class="text-secondary">4.5</span></div>
+                        <div class="rating small"><span aria-hidden="true">★★★★☆</span> <span class="text-secondary">4.5</span></div>
                         <div class="d-grid gap-2 mt-3">
                             <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Sejarah Dunia')"><i
-                                    class="bi bi-bookmark-plus me-1"></i> Simpan ke Rak</button>
+                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="tidakDitemukan" class="text-center py-5 d-none">
+        <div id="tidakDitemukan" class="text-center py-5 d-none" role="status">
             <div class="card-clean p-5">
-                <i class="bi bi-search" style="font-size:3rem;color:var(--abu)"></i>
+                <i class="bi bi-search" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
                 <h5 class="mt-3">Buku tidak ditemukan</h5>
                 <p class="text-secondary">Coba kata kunci lain atau pilih kategori Semua</p>
-                <button class="btn btn-ungu mt-2"
+                <button type="button" class="btn btn-ungu mt-2"
                     onclick="filterKategori('Semua', document.querySelector('.category-btn'))">Reset Filter</button>
             </div>
         </div>
@@ -214,11 +219,12 @@
                 <div class="toast-body d-flex align-items-center gap-2">
                     <span
                         style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                     </span>
                     <span id="toastMsg">Buku dipilih</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
+                    data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
@@ -244,12 +250,12 @@
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
                     <h6 class="footer-title">Informasi</h6>
-                    <span class="footer-info"><i class="bi bi-clock me-2"></i>Senin–Jumat, 08.00–16.00</span>
-                    <span class="footer-info"><i class="bi bi-envelope me-2"></i>info@pustakadigital.id</span>
+                    <span class="footer-info"><i class="bi bi-clock me-2" aria-hidden="true"></i>Senin–Jumat, 08.00–16.00</span>
+                    <span class="footer-info"><i class="bi bi-envelope me-2" aria-hidden="true"></i>info@pustakadigital.id</span>
                     <div class="footer-social mt-3">
-                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>

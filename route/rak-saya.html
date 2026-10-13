@@ -20,23 +20,23 @@
         </a>
         <nav class="nav flex-column">
             <a class="nav-link" href="dashboard-user.html">
-                <i class="bi bi-grid me-2"></i>
+                <i class="bi bi-grid me-2" aria-hidden="true"></i>
                 Dashboard
             </a>
             <a class="nav-link" href="katalog.html">
-                <i class="bi bi-book me-2"></i>
+                <i class="bi bi-book me-2" aria-hidden="true"></i>
                 Katalog
             </a>
-            <a class="nav-link active" href="rak-saya.html">
-                <i class="bi bi-bookmark me-2"></i>
+            <a class="nav-link active" href="rak-saya.html" aria-current="page">
+                <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
                 Rak Saya
             </a>
             <a class="nav-link" href="../index.html">
-                <i class="bi bi-house me-2"></i>
+                <i class="bi bi-house me-2" aria-hidden="true"></i>
                 Beranda
             </a>
             <a class="nav-link logout" href="login.html">
-                <i class="bi bi-box-arrow-right me-2"></i>
+                <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
                 Keluar
             </a>
         </nav>
@@ -44,8 +44,8 @@
     <div class="main-with-sidebar">
         <header class="topbar p-3">
             <div class="d-flex align-items-center gap-3">
-                <button id="mobileMenu" class="btn btn-light mobile-menu">
-                    <i class="bi bi-list"></i>
+                <button id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
+                    <i class="bi bi-list" aria-hidden="true"></i>
                 </button>
                 <div>
                     <b>Rak Saya</b>
@@ -64,7 +64,8 @@
                     <h2 class="page-title">Rak Saya</h2>
                     <p class="text-secondary mb-0">Koleksi buku pribadi yang sudah kamu tambahkan.</p>
                 </div>
-                <span id="jumlahRak" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2">3 Buku</span>
+                <span id="jumlahRak" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite">3
+                    Buku</span>
             </div>
 
             <div class="row g-4" id="rakGrid">
@@ -73,7 +74,7 @@
                 <div class="col-md-6 col-lg-4 buku-rak">
                     <div class="book-card">
                         <div class="book-cover">
-                            <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)"></i>
+                            <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)" aria-hidden="true"></i>
                         </div>
                         <div class="p-3">
                             <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
@@ -84,8 +85,8 @@
                             </div>
                             <p class="small text-secondary mb-3">72% selesai dibaca</p>
                             <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
+                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1" aria-hidden="true"></i>Lanjut Baca</a>
+                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
                             </div>
                         </div>
                     </div>
@@ -95,7 +96,7 @@
                 <div class="col-md-6 col-lg-4 buku-rak">
                     <div class="book-card">
                         <div class="book-cover bg-biru-muda">
-                            <i class="bi bi-code-slash" style="font-size:3rem;color:var(--biru)"></i>
+                            <i class="bi bi-code-slash" style="font-size:3rem;color:var(--biru)" aria-hidden="true"></i>
                         </div>
                         <div class="p-3">
                             <span class="badge bg-biru-muda text-biru">Teknologi</span>
@@ -106,8 +107,8 @@
                             </div>
                             <p class="small text-secondary mb-3">45% selesai dibaca</p>
                             <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
+                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-book-half me-1" aria-hidden="true"></i>Lanjut Baca</a>
+                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
                             </div>
                         </div>
                     </div>
@@ -117,7 +118,7 @@
                 <div class="col-md-6 col-lg-4 buku-rak">
                     <div class="book-card">
                         <div class="book-cover" style="background:var(--merah-muda)">
-                            <i class="bi bi-journal-text" style="font-size:3rem;color:var(--merah)"></i>
+                            <i class="bi bi-journal-text" style="font-size:3rem;color:var(--merah)" aria-hidden="true"></i>
                         </div>
                         <div class="p-3">
                             <span class="badge bg-danger-subtle text-danger">Novel</span>
@@ -128,21 +129,21 @@
                             </div>
                             <p class="small text-secondary mb-3">Selesai dibaca</p>
                             <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-arrow-repeat me-1"></i>Baca Ulang</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1"></i>Hapus dari Rak</button>
+                                <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-ungu"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang</a>
+                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="rakKosong" class="text-center py-5 d-none">
+            <div id="rakKosong" class="text-center py-5 d-none" role="status">
                 <div class="card-clean p-5">
-                    <i class="bi bi-bookmark" style="font-size:3rem;color:var(--abu)"></i>
+                    <i class="bi bi-bookmark" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
                     <h5 class="mt-3">Rak kamu masih kosong</h5>
                     <p class="text-secondary">Simpan buku dari katalog untuk mulai membaca.</p>
                     <a href="katalog.html" class="btn btn-ungu mt-2">
-                        <i class="bi bi-grid me-1"></i>Jelajahi Katalog
+                        <i class="bi bi-grid me-1" aria-hidden="true"></i>Jelajahi Katalog
                     </a>
                 </div>
             </div>
@@ -156,11 +157,12 @@
                 <div class="toast-body d-flex align-items-center gap-2">
                     <span
                         style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                     </span>
                     <span id="toastRakMsg">Buku dihapus dari rak</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
+                    data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>

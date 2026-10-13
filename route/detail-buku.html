@@ -20,7 +20,7 @@
                 PustakaDigital
             </a>
             <a href="katalog.html" class="btn btn-light ms-auto">
-                <i class="bi bi-arrow-left me-1"></i>
+                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>
                 Kembali ke Katalog
             </a>
         </div>
@@ -43,7 +43,7 @@
                     James Clear
                 </p>
                 <div class="rating mb-4">
-                    ★★★★★
+                    <span aria-hidden="true">★★★★★</span>
                     <span class="text-dark fw-semibold">
                         4.8 / 5
                     </span>
@@ -82,12 +82,12 @@
                 </div>
                 <div class="d-flex gap-2 mt-4">
                     <button class="btn btn-ungu px-4" onclick="pinjamBuku('Atomic Habits')">
-                        <i class="bi bi-bookmark-plus me-1"></i>
+                        <i class="bi bi-bookmark-plus me-1" aria-hidden="true"></i>
                         Simpan ke Rak
                     </button>
                     <!-- Buka file PDF di tab baru -->
                     <a href="../assets/book/atomic-habits.pdf" target="_blank" class="btn btn-outline-secondary px-4">
-                        <i class="bi bi-book me-1"></i>
+                        <i class="bi bi-book me-1" aria-hidden="true"></i>
                         Baca Buku
                     </a>
                 </div>
@@ -113,11 +113,12 @@
                 <div class="toast-body d-flex align-items-center gap-2">
                     <span
                         style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                     </span>
                     <span id="toastMsg">Buku dipilih</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-3" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
+                    data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
@@ -141,12 +142,12 @@
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
                     <h6 class="footer-title">Informasi</h6>
-                    <span class="footer-info"><i class="bi bi-clock me-2"></i>Senin–Jumat, 08.00–16.00</span>
-                    <span class="footer-info"><i class="bi bi-envelope me-2"></i>info@pustakadigital.id</span>
+                    <span class="footer-info"><i class="bi bi-clock me-2" aria-hidden="true"></i>Senin–Jumat, 08.00–16.00</span>
+                    <span class="footer-info"><i class="bi bi-envelope me-2" aria-hidden="true"></i>info@pustakadigital.id</span>
                     <div class="footer-social mt-3">
-                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
