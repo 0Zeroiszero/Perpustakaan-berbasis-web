@@ -1,18 +1,22 @@
 /* Halaman rak-saya.html. Data cuma disimpan di halaman, ilang kalo di-refresh */
 
-// Hapus buku dari rak, terus update jumlah buku dan kasih notifikasi
+// Hapus buku dari rak, harus lewat modal konfirmasi dulu
 function hapusRak(tombol) {
     const kartu = tombol.closest(".buku-rak");
-    const judul = kartu.querySelector("h5").textContent;
+    const judul = kartu.querySelector("h2").textContent;
 
-    kartu.remove();
+    konfirmasiHapus(judul, "buku dari rak").then(function (ya) {
+        if (!ya) return;
 
-    const sisa = document.querySelectorAll(".buku-rak").length;
+        kartu.remove();
 
-    document.getElementById("jumlahRak").textContent = sisa + " Buku";
+        const sisa = document.querySelectorAll(".buku-rak").length;
 
-    document.getElementById("rakKosong").classList.toggle("d-none", sisa !== 0);
+        document.getElementById("jumlahRak").textContent = sisa + " Buku";
 
-    document.getElementById("toastRakMsg").textContent = "Buku \"" + judul + "\" dihapus dari rak.";
-    bootstrap.Toast.getOrCreateInstance(document.getElementById("toastRak"), { delay: 2500 }).show();
-}
+        document.getElementById("rakKosong").classList.toggle("d-none", sisa !== 0);
+
+        document.getElementById("toastRakMsg").textContent = "Buku \"" + judul + "\" dihapus dari rak.";
+        bootstrap.Toast.getOrCreateInstance(document.getElementById("toastRak"), { delay: 2500 }).show();
+    });
+}

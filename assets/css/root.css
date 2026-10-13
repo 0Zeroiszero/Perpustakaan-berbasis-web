@@ -14,6 +14,10 @@
     /* Versi gelap dari --biru/--merah khusus teks & tombol: menjaga kontras ≥4.5:1 */
     --biru-tua: #0369A1;
     --merah-tua: #DC2626;
+    /* Versi gelap dari hijau aksi "Baca Buku": 5.02:1 di atas teks putih (lolos WCAG AA) */
+    --hijau-tua: #15803D;
+    /* Latar kartu buku "belum tersedia": lebih redup dari kartu tersedia, tapi teks tetap terbaca */
+    --surface-mati: #EAEAF0;
     /* Teks sekunder bawaan Bootstrap (#6C757D) hanya ~4.5:1 di latar berwarna; digelapkan agar lolos WCAG AA */
     --bs-secondary-rgb: 90, 98, 112;
 
@@ -136,24 +140,80 @@ a { text-decoration: none; }
     color: #fff;
 }
 
-.btn-cari {
+.btn-ungu:active {
+    background: #5B21B6;
+    border-color: #5B21B6;
+    transform: translateY(1px);
+}
+
+/* Aksi sekunder brand (mis. "Cari" di index.html & katalog.html): outline ungu */
+.btn-ungu-outline {
+    background: transparent;
+    border: 1px solid var(--ungu);
+    color: var(--ungu);
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+.btn-ungu-outline:hover,
+.btn-ungu-outline:active {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+}
+
+/* Aksi merusak (konfirmasi hapus) */
+.btn-hapus {
     background: var(--merah-tua);
     border-color: var(--merah-tua);
     color: #fff;
     font-weight: 700;
     border-radius: var(--radius-sm);
 }
-.btn-cari:hover {
+.btn-hapus:hover,
+.btn-hapus:active {
     background: #B91C1C;
     border-color: #B91C1C;
     color: #fff;
 }
-.btn-ungu:active,
-.btn-cari:active {
+
+/* AKSI BUKU — dipakai di katalog & detail supaya warnanya tidak berbeda antar halaman */
+.btn-pinjam {          /* "Simpan ke Rak" */
+    background: var(--biru-tua);
+    border-color: var(--biru-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-pinjam:hover {
+    background: #075985;
+    border-color: #075985;
+    color: #fff;
+}
+.btn-baca {            /* "Baca Buku" / "Lanjut Baca" — beda dari aksi simpan */
+    background: var(--hijau-tua);
+    border-color: var(--hijau-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-baca:hover {
+    background: #166534;
+    border-color: #166534;
+    color: #fff;
+}
+.btn-pinjam:active,
+.btn-baca:active {
     transform: translateY(1px);
 }
-.btn-ungu:active { background: #5B21B6; border-color: #5B21B6; }
-.btn-cari:active { background: #991B1B; border-color: #991B1B; }
+
+/* Bootstrap meng-hardcode warna tombol outline (#6C757D, hanya 4.67:1); ikuti secondary
+   yang sudah digelapkan di :root biar konsisten dengan teks secondary lain (6.15:1) */
+.btn-outline-secondary {
+    --bs-btn-color: rgb(var(--bs-secondary-rgb));
+    --bs-btn-border-color: rgb(var(--bs-secondary-rgb));
+    --bs-btn-hover-bg: rgb(var(--bs-secondary-rgb));
+    --bs-btn-hover-border-color: rgb(var(--bs-secondary-rgb));
+}
 
 /* UTILITIES */
 .text-ungu { color: var(--ungu) !important; }
@@ -260,6 +320,87 @@ a.card-clean {
     object-fit: cover;
 }
 .book-card .card-body { padding: 18px; }
+
+/* PIL FILTER/KATEGORI — dipakai katalog.html & modal filter di rak-saya.html.
+   Tidak aktif: putih polos (netral). Aktif: ungu muda + teks ungu.
+   Dipasangkan dengan .btn-check Bootstrap supaya berubah tanpa JS */
+.category-btn {
+    border: 1px solid #E5E5EC;
+    color: var(--gelap);
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 7px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition), transform .1s ease;
+}
+.category-btn:hover {
+    border-color: var(--ungu);
+}
+.category-btn.active,
+.btn-check:checked + .category-btn {
+    background: var(--ungu-muda);
+    border-color: var(--ungu);
+    color: var(--ungu);
+}
+.category-btn:active {
+    transform: translateY(1px);
+}
+/* Input .btn-check disembunyikan Bootstrap, jadi ring fokus dipindah ke pilnya */
+.btn-check:focus-visible + .category-btn {
+    outline: 3px solid var(--ungu);
+    outline-offset: 2px;
+}
+
+/* GRID BUKU — dipakai katalog.html & rak-saya.html supaya tinggi & rasio sampunya sama.
+   Tcolumnwidth selalu col-6 col-lg-3 (2 di ponsel, 4 di laptop) */
+.grid-buku .book-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+/* Sampul ikut rasio buku dan menyesuaikan lebar kolom, bukan tinggi tetap */
+.grid-buku .book-cover {
+    height: auto;
+    aspect-ratio: 3 / 4;
+    /* jadi anchor lapisan peneduh sampul di buku yang belum tersedia */
+    position: relative;
+}
+/* Isi kartu setinggi mungkin */
+.grid-buku .book-card > .p-3 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+/* Badge jadi anak flex langsung di rak-saya.html, jadi harus dikecilkan sendiri
+   supaya tidak melebar penuh (di katalog.html badge dibungkus div.badges) */
+.grid-buku .book-card > .p-3 > .badge {
+    align-self: flex-start;
+}
+/* Tombol rata bawah */
+.grid-buku .book-card .d-grid {
+    margin-top: auto;
+    padding-top: .75rem;
+}
+/* Judul & penulis 1 baris */
+.grid-buku .book-card h5,
+.grid-buku .book-card .p-3 > p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Teks 1 baris di atas tidak boleh melebarkan kolom (min-width default flex item = auto),
+   kalau tidak gridnya turun dari 4 ke 3 kolom di laptop */
+.grid-buku > [class*="col-"] {
+    min-width: 0;
+}
+/* Dikurangi 1px supaya 4 kolom tidak pernah turun baris hanya karena pembulatan pecahan
+   (mis. row 1126px / 4 = 281.5px, Chrome bulatkan ke 282 -> 4x282 = 1128 > 1126) */
+@media (min-width: 992px) {
+    .grid-buku > [class*="col-"] {
+        width: calc(25% - 1px);
+    }
+}
 
 /* LOGIN */
 .login-page {
