@@ -7,10 +7,11 @@
     background: #fff;
 }
 .hero h1 {
-    font-size: clamp(2.6rem, 5vw, 4.5rem);
-    line-height: 1.04;
+    font-size: clamp(2.3rem, 1.61rem + 2.93vw, 4.25rem);
+    line-height: 1.05;
     font-weight: 800;
-    letter-spacing: -2px;
+    letter-spacing: -.03em;
+    text-wrap: balance;
 }
 .hero h1 span { color: var(--ungu); }
 .hero p {
@@ -24,7 +25,7 @@
     background: var(--ungu-muda);
     color: var(--ungu);
     padding: 8px 14px;
-    border-radius: 50px;
+    border-radius: var(--radius-pill);
     font-weight: 600;
 }
 
@@ -32,17 +33,54 @@
 .search-box {
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 14px;
+    border-radius: var(--radius);
     padding: 6px;
-    box-shadow: 0 8px 24px rgba(30, 27, 75, .07);
+    box-shadow: var(--shadow);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+/* Seluruh kotak ikut menyala saat kolomnya difokus */
+.search-box:focus-within {
+    border-color: var(--ungu);
+    box-shadow: var(--ring);
 }
 .search-box input {
     border: 0 !important;
     box-shadow: none !important;
 }
 
+/* KARTU JELAJAH (Katalog & Rak Saya) */
+.entry-card {
+    display: block;
+    height: 100%;
+    padding: 28px;
+    color: var(--gelap);
+}
+.entry-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-lg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+}
+.entry-title {
+    margin: 18px 0 6px;
+    font-weight: 800;
+}
+.entry-card p {
+    margin-bottom: 0;
+}
+
 /* RESPONSIVE */
 /* Tablet & mobile (≤991px) */
 @media (max-width: 991px) {
     .hero { padding: 55px 0; }
+}
+
+/* Ponsel (≤576px) */
+@media (max-width: 575.98px) {
+    .hero { padding: 42px 0; }
+    .entry-card { padding: 22px; }
+    .search-box { padding: 4px; }
 }
