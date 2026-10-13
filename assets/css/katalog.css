@@ -3,14 +3,14 @@
 
 /* BUTTONS */
 .btn-pinjam {
-    background: var(--biru);
-    border-color: var(--biru);
+    background: var(--biru-tua);
+    border-color: var(--biru-tua);
     color: #fff;
     font-weight: 600;
     border-radius: var(--radius-sm);
 }
 .btn-pinjam:hover {
-    background: #0284C7;
+    background: #075985;
     color: #fff;
 }
 
