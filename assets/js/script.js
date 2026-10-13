@@ -176,7 +176,7 @@ function showToast(judul, customMessage) {
     const msgEl = document.getElementById("toastMsg");
     msgEl.textContent = customMessage
         ? customMessage
-        : `Buku "${judul}" dipilih untuk dipinjam.`;
+        : `Buku "${judul}" disimpan ke rak.`;
 
     const el = document.getElementById("toastPinjam");
     const t = new bootstrap.Toast(el, { delay: 3000 });
