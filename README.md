@@ -17,22 +17,23 @@ PustakaDigital hadir sebagai solusi dengan menyediakan katalog buku, fitur penca
 
 ## Latar Belakang
 
-1. Perkembangan teknologi mendorong perpustakaan untuk beralih ke sistem digital.
-2. Perpustakaan konvensional memiliki keterbatasan dalam hal akses dan pencarian koleksi.
-3. Pengguna membutuhkan akses buku yang lebih cepat dan mudah.
-4. Dibutuhkan sistem perpustakaan digital berbasis web yang praktis dan terorganisir.
-5. PustakaDigital dikembangkan untuk menyediakan katalog, pencarian, detail buku, dan rak buku pribadi.
-6. Sistem juga menyediakan dashboard user dan admin untuk mendukung pengelolaan koleksi.
+1. Perkembangan teknologi mendorong layanan perpustakaan beralih ke bentuk digital.
+2. Perpustakaan konvensional terbatas oleh jam buka, lokasi, dan jumlah salinan buku cetak, sehingga koleksi tidak selalu bisa diakses kapan saja.
+3. Proses peminjaman dan pengembalian buku fisik menambah langkah manual bagi pengguna maupun pengelola.
+4. Pengguna membutuhkan bacaan yang cepat dicari dan bisa dilanjutkan kapan saja langsung dari browser.
+5. Karena itu PustakaDigital dikembangkan sepenuhnya sebagai perpustakaan digital: koleksinya e-book, tanpa koleksi fisik, peminjaman, maupun pengembalian buku cetak.
+6. Sistem menyediakan katalog, pencarian, detail buku, dan rak pribadi, serta dashboard user dan admin untuk mendukung pengelolaan koleksi.
 
 ---
 
 ## Tujuan
 
-- Mempermudah pengguna dalam mencari informasi buku yang tersedia di perpustakaan digital.
-- Mempermudah pengguna menyimpan buku dan melanjutkan bacaan kapan saja.
-- Mempermudah admin dalam mengelola data buku dan data pengguna.
-- Mengurangi penggunaan proses manual dalam pengelolaan koleksi.
-- Menyediakan sistem perpustakaan yang lebih cepat, praktis, dan terstruktur.
+- Menyediakan akses koleksi e-book kapan saja, tanpa terikat jam buka atau kunjungan fisik.
+- Mempermudah pengguna menemukan buku melalui pencarian judul/penulis dan filter kategori.
+- Mempermudah pengguna menyimpan buku ke rak pribadi serta melanjutkan bacaan.
+- Mempermudah admin mengelola data buku dan data pengguna dalam satu tempat.
+- Menghilangkan proses manual khas perpustakaan fisik, seperti peminjaman, pengembalian, dan denda, karena seluruh koleksinya digital.
+- Menyediakan sistem perpustakaan yang cepat, praktis, dan terstruktur.
 
 ---
 
@@ -92,34 +93,6 @@ Halaman autentikasi untuk masuk ke dalam sistem, dengan validasi konfirmasi pass
 - HTML, CSS, dan JavaScript vanilla (tanpa build step)
 - Bootstrap 5.3 + Bootstrap Icons (CDN)
 - Google Fonts: Inter
-
----
-
-## Struktur Proyek
-
-```
-.
-├── index.html              # Beranda
-├── assets/
-│   ├── css/                # root.css = gaya bersama, sisanya gaya per halaman
-│   ├── js/                 # script.js = perilaku bersama, sisanya per halaman
-│   ├── image/              # sampul buku
-│   ├── book/               # berkas e-book (PDF)
-│   └── svg/                # aset SVG
-└── route/                  # katalog, detail buku, rak saya, login, daftar, dashboard
-```
-
----
-
-## Menjalankan Proyek
-
-Buka `index.html` langsung di browser, atau jalankan server statis dari root proyek:
-
-```bash
-python -m http.server 8000
-```
-
-Lalu buka `http://localhost:8000`.
 
 ---
 
