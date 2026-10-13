@@ -7,7 +7,7 @@
     border-color: var(--biru);
     color: #fff;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 .btn-pinjam:hover {
     background: #0284C7;
@@ -19,16 +19,19 @@
     border: 1px solid var(--ungu);
     color: var(--ungu);
     background: #fff;
-    border-radius: 50px;
+    border-radius: var(--radius-pill);
     padding: 7px 18px;
     margin: 4px;
-    transition: .2s;
     font-weight: 600;
+    transition: background-color var(--transition), color var(--transition), transform .1s ease;
 }
 .category-btn:hover,
 .category-btn.active {
     background: var(--ungu);
     color: #fff;
+}
+.category-btn:active {
+    transform: translateY(1px);
 }
 
 /* SEARCH ICON */
@@ -38,9 +41,10 @@
     justify-content: center;
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     color: var(--ungu);
     text-decoration: none;
+    transition: background-color var(--transition);
 }
 .catalog-search-icon:hover,
 .catalog-search-icon:focus {
@@ -59,6 +63,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+/* Sampul ikut rasio buku dan menyesuaikan lebar kolom, bukan tinggi tetap */
+#bookGrid .book-cover {
+    height: auto;
+    aspect-ratio: 3 / 4;
 }
 /* Isi kartu setinggi mungkin */
 #bookGrid .book-card > .p-3 {
@@ -82,5 +91,10 @@
 @media (max-width: 575.98px) {
     #bookGrid .book-card .badges {
         min-height: 3.5rem;
+    }
+    /* Gutter dirapatkan supaya kartu tidak terlalu sempit di ponsel */
+    #bookGrid {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
     }
 }
