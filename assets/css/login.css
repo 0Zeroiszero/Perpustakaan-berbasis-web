@@ -1,2 +1,16 @@
 /* Halaman login — hanya mengimpor root.css */
 @import "root.css";
+
+/* Dropdown akun demo di atas card login */
+.demo-akun { max-width: 440px; margin: auto; } /* lebar sama dengan .login-card di root.css */
+.demo-akun .dropdown-menu { --bs-dropdown-min-width: 100%; }
+.demo-akun .dropdown-item { min-height: 44px; }
+
+/* Bootstrap memberi gaya "active" ke .btn.show, jadi tombol demo berubah warna saat kebuka — kunci ke ungu brand */
+.demo-akun .dropdown-toggle.show,
+.demo-akun .dropdown-toggle.show:hover,
+.demo-akun .dropdown-toggle.show:focus {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+}
