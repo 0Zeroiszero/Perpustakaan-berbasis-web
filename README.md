@@ -42,8 +42,8 @@ PustakaDigital hadir sebagai solusi dengan menyediakan katalog buku, fitur penca
 ### 🏠 Beranda
 Halaman utama sebagai pintu masuk ke koleksi:
 - Dua pintu masuk utama: **Katalog Buku** dan **Rak Saya**
-- Pencarian langsung dari hero, kata kuncinya diteruskan ke katalog (`katalog.html?q=...`)
-- Tautan kategori populer (`katalog.html?kategori=...`)
+- Pencarian langsung dari hero, kata kuncinya diteruskan ke katalog (`katalog.php?q=...`)
+- Tautan kategori populer (`katalog.php?kategori=...`)
 
 ### 📚 Katalog Buku
 Halaman untuk menemukan buku favorit dengan fitur:
@@ -83,8 +83,8 @@ Panel khusus admin untuk mengelola sistem PustakaDigital:
 - **Katalog** – melihat katalog buku
 - **Keluar** – logout dari sistem
 
-### 🔐 Login & Registrasi
-Halaman autentikasi untuk masuk ke dalam sistem, dengan validasi konfirmasi password dan pilihan peran (User/Admin).
+### 🔐 Login
+Halaman autentikasi memvalidasi email + password terhadap akun yang terdaftar. Tidak ada pendaftaran dan tidak ada pilihan peran: peran mengikuti akun, sehingga login langsung diarahkan ke dashboard yang sesuai (user atau admin). Halaman dashboard hanya terbuka setelah login, dan halaman admin menolak akun user. Dropdown "Akun demo" di atas card login menampilkan email admin/user untuk mengisi form sekaligus.
 
 ---
 
