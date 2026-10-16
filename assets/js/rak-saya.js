@@ -1,4 +1,4 @@
-/* Halaman rak-saya.html. Data cuma disimpan di halaman, ilang kalo di-refresh */
+/* Halaman rak-saya.php. Data cuma disimpan di halaman, ilang kalo di-refresh */
 
 // Hapus buku dari rak, harus lewat modal konfirmasi dulu
 function hapusRak(tombol) {

@@ -1,4 +1,4 @@
-/* Halaman kelola-buku.html. Data buku cuma ada di tabel, ilang kalo di-refresh */
+/* Halaman kelola-buku.php. Data buku cuma ada di tabel, ilang kalo di-refresh */
 
 // Munculin pop-up form kosong buat nambah buku baru
 function bukaModalTambah() {

@@ -14,41 +14,14 @@ function escAttr(t) {
 
 // Nyalakan semua tombol dan menu yang ada di tiap halaman
 document.addEventListener("DOMContentLoaded", function () {
-    const login = document.getElementById("loginForm");
-    if (login) {
-        login.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const role = document.getElementById("role").value;
-            window.location.href = (role === "admin") ? "dashboard-admin.html" : "dashboard-user.html";
-        });
-    }
-
     const search = document.getElementById("searchForm");
     if (search) {
         search.addEventListener("submit", function (e) {
+            const input = search.querySelector("input");
+            if (!input) return; // form tanpa input: jangan blokir submit
             e.preventDefault();
-            const kata = search.querySelector("input").value.trim();
-            window.location.href = "route/katalog.html" + (kata ? "?q=" + encodeURIComponent(kata) : "");
-        });
-    }
-
-    const register = document.getElementById("registerForm");
-    if (register) {
-        const pass = document.getElementById("password");
-        const konfirmasi = document.getElementById("passwordConfirm");
-
-        konfirmasi.addEventListener("input", function () {
-            konfirmasi.classList.remove("is-invalid");
-        });
-
-        register.addEventListener("submit", function (e) {
-            e.preventDefault();
-            if (pass.value !== konfirmasi.value) {
-                konfirmasi.classList.add("is-invalid");
-                konfirmasi.focus();
-                return;
-            }
-            window.location.href = "dashboard-user.html";
+            const kata = input.value.trim();
+            window.location.href = "route/katalog.php" + (kata ? "?q=" + encodeURIComponent(kata) : "");
         });
     }
 
@@ -101,12 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (window.innerWidth >= 992) closeSidebar();
         });
     }
-
-    document.querySelectorAll(".logout").forEach(function (button) {
-        button.addEventListener("click", function () {
-            window.location.href = "login.html";
-        });
-    });
 
     const searchInputEl = document.getElementById("searchInput");
     if (searchInputEl) {

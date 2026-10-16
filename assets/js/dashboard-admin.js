@@ -1,4 +1,4 @@
-/* Halaman dashboard-admin.html. Data buku cuma ada di tabel, ilang kalo di-refresh */
+/* Halaman dashboard-admin.php. Data buku cuma ada di tabel, ilang kalo di-refresh */
 
 // Munculin pop-up form kosong buat nambah buku baru
 function bukaModalTambah() {

@@ -1,4 +1,4 @@
-/* Halaman kelola-pengguna.html. Data pengguna cuma ada di tabel, ilang kalo di-refresh */
+/* Halaman kelola-pengguna.php. Data pengguna cuma ada di tabel, ilang kalo di-refresh */
 
 // Munculin pop-up form kosong buat nambah pengguna baru
 function bukaTambah() {
