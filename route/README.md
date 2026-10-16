@@ -1,1 +1,1 @@
-Berisikan file kayak "dashboard.html", dll.
+Halaman statis tanpa PHP: katalog, detail-buku, daftar, rak-saya. Yang butuh PHP ada di ../api/ (login + dashboard) — URL publiknya tetap /route/*.php lewat rewrites di vercel.json + .htaccess di root.
