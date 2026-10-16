@@ -1,3 +1,6 @@
+<?php
+require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -43,13 +46,13 @@
                         <a class="nav-link" href="../index.html">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="katalog.html" aria-current="page">Katalog</a>
+                        <a class="nav-link active" href="katalog.php" aria-current="page">Katalog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard-user.html">Dashboard</a>
+                        <a class="nav-link" href="<?= dashboard_url() ?>">Dashboard</a>
                     </li>
                     <li class="nav-item ms-lg-2">
-                        <a href="login.html" class="btn btn-ungu">Masuk</a>
+                        <a href="login.php" class="btn btn-ungu">Masuk</a>
                     </li>
                 </ul>
             </div>
@@ -90,7 +93,7 @@
                         <p class="text-secondary small mb-1">James Clear</p>
                         <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.8</span></div>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
+                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Atomic Habits')"><i
                                     class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
                         </div>
@@ -113,7 +116,7 @@
                         <p class="text-secondary small mb-1">Robert C. Martin</p>
                         <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.7</span></div>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
+                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Clean Code')"><i
                                     class="bi bi-bookmark-plus me-1" aria-hidden="true"></i>
                                 Simpan ke Rak</button>
@@ -137,7 +140,7 @@
                         <p class="text-secondary small mb-1">Pramoedya Ananta Toer</p>
                         <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.9</span></div>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.html" class="btn btn-outline-secondary">Lihat Detail</a>
+                            <a href="detail-buku.php" class="btn btn-outline-secondary">Lihat Detail</a>
                             <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
                                 Belum Tersedia</button>
                         </div>
@@ -160,7 +163,7 @@
                         <p class="text-secondary small mb-1">Edisi Pembelajaran</p>
                         <div class="rating small"><span aria-hidden="true">★★★★☆</span> <span class="text-secondary">4.5</span></div>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.html" class="btn btn-ungu">Lihat Detail</a>
+                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
                             <button class="btn btn-pinjam" onclick="pinjamBuku('Sejarah Dunia')"><i
                                     class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
                         </div>
@@ -258,7 +261,7 @@
                 <div class="col-6 col-lg-3 col-md-3">
                     <h2 class="footer-title h6">Navigasi</h2>
                     <a href="../index.html" class="footer-link">Beranda</a>
-                    <a href="katalog.html" class="footer-link">Katalog Buku</a>
+                    <a href="katalog.php" class="footer-link">Katalog Buku</a>
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
                     <h2 class="footer-title h6">Informasi</h2>

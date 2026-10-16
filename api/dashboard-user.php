@@ -1,3 +1,8 @@
+<?php
+require __DIR__ . '/_auth.php';
+wajib_login();
+if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit; }
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -22,15 +27,15 @@
             PustakaDigital
         </a>
         <nav class="nav flex-column">
-            <a class="nav-link active" href="dashboard-user.html" aria-current="page">
+            <a class="nav-link active" href="<?= dashboard_url() ?>" aria-current="page">
                 <i class="bi bi-grid me-2" aria-hidden="true"></i>
                 Dashboard
             </a>
-            <a class="nav-link" href="katalog.html">
+            <a class="nav-link" href="katalog.php">
                 <i class="bi bi-book me-2" aria-hidden="true"></i>
                 Katalog
             </a>
-            <a class="nav-link" href="rak-saya.html">
+            <a class="nav-link" href="rak-saya.php">
                 <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
                 Rak Saya
             </a>
@@ -38,7 +43,7 @@
                 <i class="bi bi-house me-2" aria-hidden="true"></i>
                 Beranda
             </a>
-            <a class="nav-link logout" href="login.html">
+            <a class="nav-link logout" href="logout.php">
                 <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
                 Keluar
             </a>
@@ -135,7 +140,7 @@
                             <h2 class="h5 fw-bold mb-0">
                                 Sedang Dibaca
                             </h2>
-                            <a href="katalog.html" class="text-ungu">
+                            <a href="katalog.php" class="text-ungu">
                                 Lihat Katalog
                             </a>
                         </div>

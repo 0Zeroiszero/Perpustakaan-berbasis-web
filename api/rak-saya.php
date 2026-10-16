@@ -1,3 +1,7 @@
+<?php
+require __DIR__ . '/_auth.php';
+wajib_login();
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -22,15 +26,15 @@
             PustakaDigital
         </a>
         <nav class="nav flex-column">
-            <a class="nav-link" href="dashboard-user.html">
+            <a class="nav-link" href="<?= dashboard_url() ?>">
                 <i class="bi bi-grid me-2" aria-hidden="true"></i>
                 Dashboard
             </a>
-            <a class="nav-link" href="katalog.html">
+            <a class="nav-link" href="katalog.php">
                 <i class="bi bi-book me-2" aria-hidden="true"></i>
                 Katalog
             </a>
-            <a class="nav-link active" href="rak-saya.html" aria-current="page">
+            <a class="nav-link active" href="rak-saya.php" aria-current="page">
                 <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
                 Rak Saya
             </a>
@@ -38,7 +42,7 @@
                 <i class="bi bi-house me-2" aria-hidden="true"></i>
                 Beranda
             </a>
-            <a class="nav-link logout" href="login.html">
+            <a class="nav-link logout" href="logout.php">
                 <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
                 Keluar
             </a>
@@ -165,7 +169,7 @@
                             </div>
                             <p class="small mb-3"><span class="badge bg-success-subtle d-inline-block">Selesai Dibaca</span></p>
                             <div class="d-grid gap-2">
-                                <a href="katalog.html" class="btn btn-ungu"><i class="bi bi-compass me-1" aria-hidden="true"></i>Buku Selanjutnya</a>
+                                <a href="katalog.php" class="btn btn-ungu"><i class="bi bi-compass me-1" aria-hidden="true"></i>Buku Selanjutnya</a>
                                 <a href="../assets/book/atomic-habits.pdf" target="_blank" rel="noopener" class="btn btn-outline-secondary"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang</a>
                                 <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
                             </div>
@@ -179,7 +183,7 @@
                     <i class="bi bi-bookmark" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
                     <h2 class="h5 mt-3">Rak kamu masih kosong</h2>
                     <p class="text-secondary">Simpan buku dari katalog untuk mulai membaca.</p>
-                    <a href="katalog.html" class="btn btn-ungu mt-2">
+                    <a href="katalog.php" class="btn btn-ungu mt-2">
                         <i class="bi bi-grid me-1" aria-hidden="true"></i>Jelajahi Katalog
                     </a>
                 </div>

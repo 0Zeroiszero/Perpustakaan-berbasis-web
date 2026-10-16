@@ -1,3 +1,6 @@
+<?php
+require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -36,13 +39,13 @@
                         <a class="nav-link" href="../index.html">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="katalog.html">Katalog</a>
+                        <a class="nav-link" href="katalog.php">Katalog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard-user.html">Dashboard</a>
+                        <a class="nav-link" href="<?= dashboard_url() ?>">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-ungu ms-lg-2" href="login.html">Masuk</a>
+                        <a class="btn btn-ungu ms-lg-2" href="login.php">Masuk</a>
                     </li>
                 </ul>
             </div>
@@ -52,8 +55,8 @@
     <!-- HEADER -->
     <header class="text-center py-5">
         <div class="container">
-            <h1 class="page-title">Buat Akun Baru</h1>
-            <p class="text-secondary mb-0">Daftar untuk mulai mengakses koleksi perpustakaan.</p>
+            <h1 class="page-title">Pendaftaran</h1>
+            <p class="text-secondary mb-0">Pendaftaran akun baru belum dibuka saat ini.</p>
         </div>
     </header>
 
@@ -62,61 +65,16 @@
         <div class="container">
             <div class="login-card">
 
-                <form id="registerForm">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="nama">Nama Lengkap</label>
-                        <input id="nama" name="nama" type="text" class="form-control" placeholder="Masukkan nama lengkap"
-                            autocomplete="name" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="email">Email</label>
-                        <input id="email" name="email" type="email" class="form-control" placeholder="nama@email.com"
-                            autocomplete="email" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="telepon">No. Telepon</label>
-                        <input id="telepon" name="telepon" type="tel" class="form-control"
-                            placeholder="0812-3456-7890" autocomplete="tel" pattern="[0-9+\-\s()]{8,20}" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="password">Password</label>
-                        <input id="password" name="password" type="password" class="form-control"
-                            placeholder="Minimal 6 karakter" autocomplete="new-password" minlength="6" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="passwordConfirm">Konfirmasi Password</label>
-                        <input id="passwordConfirm" name="passwordConfirm" type="password" class="form-control"
-                            placeholder="Ulangi password" autocomplete="new-password" minlength="6" required
-                            aria-describedby="passwordConfirmError">
-                        <div id="passwordConfirmError" class="invalid-feedback">
-                            Password tidak sama. Coba lagi.
-                        </div>
-                    </div>
-
-                    <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" id="agree" name="agree" required>
-                        <label class="form-check-label text-secondary" for="agree">
-                            Saya setuju dengan
-                            <a href="#" class="text-ungu fw-semibold">Syarat &amp; Ketentuan</a>
-                        </label>
-                    </div>
-
-                    <button class="btn btn-ungu w-100 py-2">
-                        <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
-                        Daftar
-                    </button>
-                </form>
-
-                <p class="text-center text-secondary mt-4 mb-0">
-                    Sudah punya akun?
-                    <a href="login.html" class="text-ungu fw-bold">
-                        Masuk
-                    </a>
+                <h2 class="h5 fw-bold mb-2">Pendaftaran tidak dibuka</h2>
+                <p class="text-secondary">
+                    Saat ini pendaftaran akun baru belum dibuka. Pakai akun demo di halaman masuk untuk mencoba
+                    sistem.
                 </p>
+
+                <a href="login.php" class="btn btn-ungu w-100 py-2 mt-3">
+                    <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
+                    Masuk
+                </a>
 
             </div>
         </div>
@@ -139,7 +97,7 @@
                 <div class="col-6 col-lg-3 col-md-3">
                     <h2 class="footer-title h6">Navigasi</h2>
                     <a href="../index.html" class="footer-link">Beranda</a>
-                    <a href="katalog.html" class="footer-link">Katalog Buku</a>
+                    <a href="katalog.php" class="footer-link">Katalog Buku</a>
                 </div>
 
                 <div class="col-6 col-lg-4 col-md-3">

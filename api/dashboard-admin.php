@@ -1,3 +1,7 @@
+<?php
+require __DIR__ . '/_auth.php';
+wajib_admin();
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -20,12 +24,12 @@
         <a class="navbar-brand d-flex align-items-center gap-2 mb-4 px-2" href="../index.html"><span
                 class="logo">P</span>PustakaDigital</a>
         <nav class="nav flex-column">
-            <a class="nav-link active" href="dashboard-admin.html" aria-current="page"><i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard</a>
-            <a class="nav-link" href="katalog.html"><i class="bi bi-book me-2" aria-hidden="true"></i>Katalog</a>
-            <a class="nav-link" href="kelola-buku.html"><i class="bi bi-collection me-2" aria-hidden="true"></i>Kelola Buku</a>
-            <a class="nav-link" href="kelola-pengguna.html"><i class="bi bi-people me-2" aria-hidden="true"></i>Kelola Pengguna</a>
+            <a class="nav-link active" href="dashboard-admin.php" aria-current="page"><i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard</a>
+            <a class="nav-link" href="katalog.php"><i class="bi bi-book me-2" aria-hidden="true"></i>Katalog</a>
+            <a class="nav-link" href="kelola-buku.php"><i class="bi bi-collection me-2" aria-hidden="true"></i>Kelola Buku</a>
+            <a class="nav-link" href="kelola-pengguna.php"><i class="bi bi-people me-2" aria-hidden="true"></i>Kelola Pengguna</a>
             <a class="nav-link" href="../index.html"><i class="bi bi-house me-2" aria-hidden="true"></i>Beranda</a>
-            <a class="nav-link logout" href="login.html"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</a>
+            <a class="nav-link logout" href="logout.php"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</a>
         </nav>
     </aside>
 
@@ -95,7 +99,7 @@
                         <h2 class="h5 fw-bold mb-1">Data Buku Terbaru</h2>
                         <small class="text-secondary">Buku yang baru ditambahkan ke sistem.</small>
                     </div>
-                    <a href="katalog.html" class="btn btn-light">Lihat Katalog</a>
+                    <a href="katalog.php" class="btn btn-light">Lihat Katalog</a>
                 </div>
 
                 <div class="row g-2 align-items-center mb-3">

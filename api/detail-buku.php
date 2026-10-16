@@ -23,7 +23,7 @@
                 PustakaDigital
             </a>
             <!-- Tombol hanya ikon, jadi butuh aria-label supaya tetap terbaca screen reader -->
-            <a href="katalog.html" class="btn btn-ungu-outline btn-kembali ms-auto" aria-label="Kembali ke Katalog"
+            <a href="katalog.php" class="btn btn-ungu-outline btn-kembali ms-auto" aria-label="Kembali ke Katalog"
                 title="Kembali ke Katalog">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </a>
@@ -71,7 +71,7 @@
                 </div>
             </div>
         </div>
-        <!-- INFO: kolomnya sama dengan tabel di kelola-buku.html (judul & kategori sudah tampil di atas) -->
+        <!-- INFO: kolomnya sama dengan tabel di kelola-buku.php (judul & kategori sudah tampil di atas) -->
         <section class="mt-4 mt-md-5">
             <div class="card-clean p-4">
                 <h2 class="h4 fw-bold mb-3">
@@ -166,7 +166,7 @@
                 <div class="col-6 col-lg-3 col-md-3">
                     <h2 class="footer-title h6">Navigasi</h2>
                     <a href="../index.html" class="footer-link">Beranda</a>
-                    <a href="katalog.html" class="footer-link">Katalog Buku</a>
+                    <a href="katalog.php" class="footer-link">Katalog Buku</a>
                 </div>
                 <div class="col-6 col-lg-4 col-md-3">
                     <h2 class="footer-title h6">Informasi</h2>

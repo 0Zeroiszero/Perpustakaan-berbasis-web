@@ -1,3 +1,7 @@
+<?php
+require __DIR__ . '/_auth.php';
+wajib_admin();
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -24,22 +28,22 @@
         </a>
 
         <nav class="nav flex-column">
-            <a class="nav-link" href="dashboard-admin.html">
+            <a class="nav-link" href="dashboard-admin.php">
                 <i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard
             </a>
-            <a class="nav-link" href="katalog.html">
+            <a class="nav-link" href="katalog.php">
                 <i class="bi bi-book me-2" aria-hidden="true"></i>Katalog
             </a>
-            <a class="nav-link active" href="kelola-buku.html" aria-current="page">
+            <a class="nav-link active" href="kelola-buku.php" aria-current="page">
                 <i class="bi bi-collection me-2" aria-hidden="true"></i>Kelola Buku
             </a>
-            <a class="nav-link" href="kelola-pengguna.html">
+            <a class="nav-link" href="kelola-pengguna.php">
                 <i class="bi bi-people me-2" aria-hidden="true"></i>Kelola Pengguna
             </a>
             <a class="nav-link" href="../index.html">
                 <i class="bi bi-house me-2" aria-hidden="true"></i>Beranda
             </a>
-            <a class="nav-link logout" href="login.html">
+            <a class="nav-link logout" href="logout.php">
                 <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar
             </a>
         </nav>

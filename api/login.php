@@ -1,3 +1,27 @@
+<?php
+require __DIR__ . '/_auth.php';
+header('Cache-Control: no-store');
+header('Clear-Site-Data: "cache"'); // sementara: paksa browser buang script.js lama; hapus setelah semua device hard refresh
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = strtolower(trim($_POST['email'] ?? ''));
+    if (isset(AKUN[$email]) && AKUN[$email]['password'] === ($_POST['password'] ?? '')) {
+        setcookie('pustaka_login', $email, ['path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+        header('Location: ' . AKUN[$email]['dashboard']);
+        exit;
+    }
+    header('Location: login.php?gagal=1&email=' . urlencode($email));
+    exit;
+}
+
+if (akun()) {
+    header('Location: ' . akun()['dashboard']);
+    exit;
+}
+
+$email = strtolower(trim($_GET['email'] ?? ''));
+$gagal = isset($_GET['gagal']);
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -36,13 +60,13 @@
                         <a class="nav-link" href="../index.html">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="katalog.html">Katalog</a>
+                        <a class="nav-link" href="katalog.php">Katalog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard-user.html">Dashboard</a>
+                        <a class="nav-link" href="<?= dashboard_url() ?>">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-ungu ms-lg-2" href="login.html">Masuk</a>
+                        <a class="btn btn-ungu ms-lg-2" href="login.php">Masuk</a>
                     </li>
                 </ul>
             </div>
@@ -60,39 +84,49 @@
     <!-- MAIN -->
     <main class="pb-5">
         <div class="container">
+            <div class="dropdown demo-akun mb-3">
+                <button class="btn btn-ungu w-100 dropdown-toggle" type="button" id="demoAkun"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-badge me-1" aria-hidden="true"></i>Akun demo
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="demoAkun">
+                    <li>
+                        <button class="dropdown-item py-2" type="button" data-email="admin@pustakadigital.id"
+                            data-password="admin123">
+                            <span class="fw-semibold text-ungu d-block">
+                                <i class="bi bi-shield-lock me-1" aria-hidden="true"></i>Admin
+                            </span>
+                            <span class="small text-secondary">admin@pustakadigital.id</span>
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button class="dropdown-item py-2" type="button" data-email="user@pustakadigital.id"
+                            data-password="user123">
+                            <span class="fw-semibold text-ungu d-block">
+                                <i class="bi bi-person me-1" aria-hidden="true"></i>User
+                            </span>
+                            <span class="small text-secondary">user@pustakadigital.id</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
             <div class="login-card">
 
-                <form id="loginForm">
+                <form id="loginForm" method="post" action="login.php">
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="email">Email</label>
-                        <input id="email" name="email" type="email" class="form-control" placeholder="nama@email.com"
+                        <input id="email" name="email" type="email" class="form-control<?= $gagal ? ' is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>" placeholder="nama@email.com"
                             autocomplete="email" required>
+                        <div class="invalid-feedback">Email atau password salah.</div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="password">Password</label>
                         <input id="password" name="password" type="password" class="form-control"
                             placeholder="Masukkan password" autocomplete="current-password" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="role">Masuk sebagai</label>
-                        <select id="role" name="role" class="form-select">
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                            <label class="form-check-label text-secondary" for="remember">
-                                Ingat saya
-                            </label>
-                        </div>
-                        <a href="#" class="text-ungu">
-                            Lupa password?
-                        </a>
                     </div>
 
                     <button class="btn btn-ungu w-100 py-2">
@@ -103,7 +137,7 @@
 
                 <p class="text-center text-secondary mt-4 mb-0">
                     Belum punya akun?
-                    <a href="daftar.html" class="text-ungu fw-bold">
+                    <a href="daftar.php" class="text-ungu fw-bold">
                         Daftar
                     </a>
                 </p>
@@ -129,7 +163,7 @@
                 <div class="col-6 col-lg-3 col-md-3">
                     <h2 class="footer-title h6">Navigasi</h2>
                     <a href="../index.html" class="footer-link">Beranda</a>
-                    <a href="katalog.html" class="footer-link">Katalog Buku</a>
+                    <a href="katalog.php" class="footer-link">Katalog Buku</a>
                 </div>
 
                 <div class="col-6 col-lg-4 col-md-3">
@@ -152,6 +186,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
+
+    <script>
+        // Akun demo: klik salah satu -> kolom email + password keisi.
+        // Inline di halaman ini (bukan script.js) supaya tidak pernah kena cache browser.
+        document.querySelectorAll(".demo-akun [data-email]").forEach(function (item) {
+            item.addEventListener("click", function () {
+                document.getElementById("email").value = item.dataset.email;
+                document.getElementById("password").value = item.dataset.password;
+            });
+        });
+    </script>
 </body>
 
 </html>
