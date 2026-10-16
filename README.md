@@ -1,3 +1,9 @@
+## 🔗 Demo Online
+
+<a href="https://perpustakaan-digital-4s5pv393x-abdullah-affandis-projects.vercel.app/"><strong>Buka PustakaDigital secara online di Vercel</strong></a>
+
+> Akun demo — **Admin**: `admin@pustakadigital.id` / `admin123` · **User**: `user@pustakadigital.id` / `user123`
+
 <img src="thumbnail/thumbnail.png" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
 
 # Anggota Kelompok
