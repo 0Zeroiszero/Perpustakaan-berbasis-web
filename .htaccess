@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^route/(.*)$ api/$1 [L]
+
+# Lokal: halaman & asset tidak di-cache, supaya edit langsung terlihat tanpa hard refresh
+<FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-store"
+</FilesMatch>
