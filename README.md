@@ -1,6 +1,6 @@
 ## 🔗 Demo Online
 
-<a href="https://perpustakaan-digital-4s5pv393x-abdullah-affandis-projects.vercel.app/"><strong>Buka PustakaDigital secara online di Vercel</strong></a>
+<a href="https://perpustakaan-digital-git-verc-349420-abdullah-affandis-projects.vercel.app/"><strong>Buka PustakaDigital secara online di Vercel</strong></a>
 
 > Akun demo — **Admin**: `admin@pustakadigital.id` / `admin123` · **User**: `user@pustakadigital.id` / `user123`
 
