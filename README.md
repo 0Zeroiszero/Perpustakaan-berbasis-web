@@ -1,3 +1,8 @@
+# ERD Relasional & Logical
+<img src="ERD Relasional.jpg" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
+<img src="ERD Logical.jpg" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
+
+# Landing Page
 <img src="thumbnail/thumbnail.png" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
 
 # Anggota Kelompok
