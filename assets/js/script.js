@@ -1,17 +1,5 @@
 /* JS umum — dipakai di semua halaman */
 
-// Membersihkan teks yang diketik user biar aman&display di halaman
-function esc(t) {
-    const d = document.createElement("div");
-    d.textContent = (t === null || t === undefined) ? "" : String(t);
-    return d.innerHTML;
-}
-
-// Sama seperti di atas, tapi buat teks yang masuk ke dalam tanda kutip
-function escAttr(t) {
-    return esc(t).replace(/"/g, "&quot;");
-}
-
 // Nyalakan semua tombol dan menu yang ada di tiap halaman
 document.addEventListener("DOMContentLoaded", function () {
     const search = document.getElementById("searchForm");
@@ -140,21 +128,6 @@ function filterKategori(kategori, btn) {
 // Update tulisan jumlah buku yang muncul di atas daftar
 function updateJumlah(j) { document.getElementById("jumlahBuku").textContent = j + " Buku"; }
 
-// Munculin notifikasi kecil di pojok bawah selama 3 detik
-function showToast(judul, customMessage) {
-    const msgEl = document.getElementById("toastMsg");
-    msgEl.textContent = customMessage
-        ? customMessage
-        : `Buku "${judul}" disimpan ke rak.`;
-
-    const el = document.getElementById("toastPinjam");
-    const t = new bootstrap.Toast(el, { delay: 3000 });
-    t.show();
-}
-
-// Dipanggil waktu tombol Pinjam diklik, inti cuma nampilin notifikasi
-function pinjamBuku(judul) { showToast(judul); }
-
 // KONFIRMASI HAPUS — modal tunggal dipakai bersama semua halaman.
 // WAJIB dipakai sebelum menghapus apa pun yang nggak bisa dibatalkan.
 // Pakai: konfirmasiHapus("Atomic Habits", "buku").then(function (ya) { if (ya) { ...hapus... } });
@@ -221,7 +194,7 @@ function tutupKonfirmasi(jawab) {
     if (fn) fn(jawab);
 }
 
-// Urutin buku sesuai pilihan: judul A-Z atau rating paling tinggi
+// Urutin buku sesuai pilihan: default (urutan terbaru dari server) atau judul A-Z
 function sortBuku() {
     const grid = document.getElementById("bookGrid");
     if (!grid) return;
@@ -229,7 +202,6 @@ function sortBuku() {
     const mode = document.getElementById("sortSelect").value;
     items.sort((a, b) => {
         if (mode === "az") return a.dataset.judul.localeCompare(b.dataset.judul);
-        if (mode === "rating") return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
         return 0;
     });
     items.forEach(i => grid.appendChild(i));

@@ -118,6 +118,37 @@ a { text-decoration: none; }
     border-radius: var(--radius-sm);
 }
 
+/* Akun yang sedang login menggantikan tombol Masuk */
+.navbar .btn-akun {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .25rem .9rem .25rem .3rem;
+    border: 1px solid #E5E5EC;
+    border-radius: var(--radius-pill);
+    background: #fff;
+    color: var(--gelap);
+    font-weight: 600;
+}
+.navbar .btn-akun:hover,
+.navbar .btn-akun.show {
+    background: var(--ungu-muda);
+    border-color: var(--ungu);
+    color: var(--ungu);
+}
+.navbar .btn-akun .avatar {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    font-size: .85rem;
+}
+.navbar .btn-akun .nama-akun {
+    max-width: 9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* BUTTONS */
 .btn {
     display: inline-flex;
@@ -201,8 +232,61 @@ a { text-decoration: none; }
     border-color: #166534;
     color: #fff;
 }
+/* Warna tombol status rak di katalog/detail mengikuti status_baca tersimpan */
+.btn-rak-netral {
+    background: #fff;
+    border: 1px solid var(--abu);
+    color: var(--gelap);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-netral:hover {
+    background: #F3F4F6;
+    border-color: #4B5563;
+    color: var(--gelap);
+}
+.btn-rak-sedang {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-sedang:hover {
+    background: #6D28D9;
+    border-color: #6D28D9;
+    color: #fff;
+}
+.btn-rak-selesai {
+    background: var(--hijau-tua);
+    border-color: var(--hijau-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-selesai:hover {
+    background: #166534;
+    border-color: #166534;
+    color: #fff;
+}
+.btn-rak-gagal {
+    background: var(--merah-tua);
+    border-color: var(--merah-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-gagal:hover {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #fff;
+}
 .btn-pinjam:active,
-.btn-baca:active {
+.btn-baca:active,
+.btn-rak-netral:active,
+.btn-rak-sedang:active,
+.btn-rak-selesai:active,
+.btn-rak-gagal:active {
     transform: translateY(1px);
 }
 
@@ -399,6 +483,22 @@ a.card-clean {
 @media (min-width: 992px) {
     .grid-buku > [class*="col-"] {
         width: calc(25% - 1px);
+    }
+}
+
+/* Di ponsel label "Tambah ke rak" lebih panjang dari kartu: kecilkan padding/font
+   dan biarkan teks membungkus di layar sangat sempit supaya tidak terpotong. */
+@media (max-width: 575.98px) {
+    .grid-buku .book-card .d-grid > * {
+        min-width: 0;
+    }
+    .grid-buku .book-card .d-grid .btn {
+        padding-left: .5rem;
+        padding-right: .5rem;
+        font-size: .875rem;
+    }
+    .grid-buku .book-card .d-grid .dropdown-toggle {
+        white-space: normal;
     }
 }
 
@@ -638,7 +738,7 @@ a.card-clean {
 }
 .footer-link { transition: color var(--transition); }
 .footer-link:hover { color: #fff; }
-.footer-info { line-height: 1.5; }
+.footer-info { line-height: 1.5; overflow-wrap: anywhere; }
 .footer-social { display: flex; gap: 9px; }
 .footer-social a {
     width: 36px;
@@ -707,6 +807,9 @@ a.card-clean {
     .navbar .btn-ungu {
         width: 100%;
         padding: .7rem;
+    }
+    .navbar .btn-akun {
+        width: 100%;
     }
     .navbar .navbar-toggler {
         border: none;
