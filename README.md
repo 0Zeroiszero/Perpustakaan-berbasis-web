@@ -1,8 +1,9 @@
-## 🔗 Demo Online
+## 🔗 Demo
 
-<a href="https://perpustakaan-digital-git-verc-349420-abdullah-affandis-projects.vercel.app/"><strong>Buka PustakaDigital secara online di Vercel</strong></a>
+- **Lokal (Laragon):** <http://localhost/Perpustakaan-berbasis-web/>
+- **Online:** <a href="https://perpustakaan-digital-git-verc-349420-abdullah-affandis-projects.vercel.app/">Vercel</a> — perlu variabel `DB_*` yang mengarah ke MySQL publik.
 
-> Akun demo — **Admin**: `admin@pustakadigital.id` / `admin123` · **User**: `user@pustakadigital.id` / `user123`
+> Akun demo — **Admin**: `admin@pustaka.com` / `admin123` · **User**: `andi@email.com` / `andi123`
 
 <img src="thumbnail/thumbnail.png" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
 
@@ -54,22 +55,23 @@ Halaman utama sebagai pintu masuk ke koleksi:
 ### 📚 Katalog Buku
 Halaman untuk menemukan buku favorit dengan fitur:
 - Pencarian berdasarkan judul atau penulis
-- Filter kategori: Semua, Pengembangan Diri, Teknologi, Novel, Sejarah
-- Pengurutan koleksi (Terbaru, Judul A-Z, Rating Tertinggi)
-- Kartu buku berisi judul, penulis, rating, kategori, dan status ketersediaan
+- Filter kategori dari database (pill yang tersambung ke tabel `kategori`)
+- Pengurutan koleksi (Terbaru, Judul A-Z)
+- Kartu buku berisi judul, penulis, dan kategori
 - Hasil pencarian dan filter bisa dibagikan lewat URL
+- Data buku dibaca langsung dari tabel `ebook`
 
 ### 📖 Detail Buku
 Halaman detail buku yang menampilkan:
 - Sampul dan judul buku
 - Nama penulis
-- Rating buku
 - Deskripsi singkat
-- Informasi penerbit, tahun terbit, dan jumlah halaman
-- Aksi: **Simpan ke Rak** dan **Baca Buku** (membuka berkas e-book PDF)
+- Informasi kategori, tahun terbit, jumlah halaman, ISBN, dan format e-book
+- Aksi: dropdown status (default **Tambah ke rak**, lalu Akan dibaca/Sedang dibaca/Telah dibaca/Tidak selesai) yang menyimpan ke rak dan warnanya mengikuti status tersimpan, plus **Baca Buku** (membuka berkas e-book)
 
 ### 🗂️ Rak Saya
 Koleksi buku digital pribadi pengguna:
+- Menyimpan buku dari katalog atau halaman detail ke rak (tersimpan di tabel `reading_progress`)
 - Progres bacaan tiap buku
 - Lanjut baca atau hapus buku dari rak
 - Tampilan kosong yang mengarahkan pengguna ke katalog
@@ -77,28 +79,48 @@ Koleksi buku digital pribadi pengguna:
 ### 🏠 Dashboard User
 Ringkasan aktivitas membaca pengguna, meliputi:
 - **Rak Saya** – jumlah buku tersimpan
-- **Sedang Dibaca** – buku dengan progres bacaan
-- **Selesai Dibaca** – daftar buku yang telah selesai
-- **Aktivitas Terbaru** – log aktivitas pengguna
+- **Sedang Dibaca** – buku berstatus `Sedang dibaca`/`Tidak selesai`
+- **Selesai Dibaca** – buku berstatus `Telah dibaca`
+- **Aktivitas Terbaru** – riwayat buku yang dibaca
+- Seluruh angka dihitung dari tabel `reading_progress`
 
 ### 🛠️ Dashboard Admin
 Panel khusus admin untuk mengelola sistem PustakaDigital:
-- **Dashboard** – ringkasan aktivitas sistem
-- **Kelola Buku** – tambah, ubah, dan hapus data buku
-- **Kelola Pengguna** – manajemen akun pengguna
+- **Dashboard** – statistik buku/pengguna serta data buku terbaru
+- **Kelola Buku** – CRUD buku: tambah, cari, ubah, dan hapus, termasuk ISBN, jumlah halaman, upload cover (folder `cover/`), dan file e-book PDF/EPUB/MOBI (folder `ebook/`)
+- **Kelola Pengguna** – CRUD pengguna: nama, email, password, role (Admin/User), jenis kelamin, nomor ponsel, alamat, dan bio
 - **Katalog** – melihat katalog buku
 - **Keluar** – logout dari sistem
 
-### 🔐 Login
-Halaman autentikasi memvalidasi email + password terhadap akun yang terdaftar. Tidak ada pendaftaran dan tidak ada pilihan peran: peran mengikuti akun, sehingga login langsung diarahkan ke dashboard yang sesuai (user atau admin). Halaman dashboard hanya terbuka setelah login, dan halaman admin menolak akun user. Dropdown "Akun demo" di atas card login menampilkan email admin/user untuk mengisi form sekaligus.
+### 🔐 Login & Hak Akses
+Halaman autentikasi memvalidasi email + password terhadap tabel `users`; password disimpan sebagai hash Bcrypt (`password_hash()`), bukan teks polos. Tidak ada pendaftaran, dan role mengikuti akun: login langsung diarahkan ke dashboard yang sesuai. Halaman user dan admin dilindungi session; akun User yang membuka halaman admin dilempar kembali ke dashboard user. Admin tidak dapat menghapus akunnya sendiri, dan akun Admin terakhir tidak dapat dihapus. Dropdown "Akun demo" di atas card login menampilkan email admin/user untuk mengisi form sekaligus.
 
 ---
 
 ## Teknologi
 
+- PHP 8.4 + MySQL (mysqli, prepared statements)
+- Session PHP untuk login/logout, `password_hash()` / `password_verify()`
 - HTML, CSS, dan JavaScript vanilla (tanpa build step)
 - Bootstrap 5.3 + Bootstrap Icons (CDN)
 - Google Fonts: Inter
+
+---
+
+## Database
+
+Aplikasi memakai database MySQL `db_pustaka` dengan enam tabel:
+
+- `kategori` — kelompok buku (novel, fiksi fantasi, dst.)
+- `author` — data penulis beserta email, negara asal, dan bio singkat
+- `ebook` — data buku (judul, tahun terbit, jumlah halaman, ISBN, berkas, kategori)
+- `users` — akun (`user_role`: `Admin`/`User`/`anggota`) beserta kontak dan alamat
+- `ebook_author` — relasi buku–penulis (satu buku bisa banyak penulis)
+- `reading_progress` — progres bacaan per pengguna dan buku, termasuk `status_baca`
+
+Semua ID berbentuk string (`KAT01`, `AUT01`, `BK001`, `USR001`, `PRG001`) dan tiap tabel diisi 10 data dummy saat impor. Berkas sampul dan e-book dummy tersedia di `cover/` dan `ebook/` mengikuti kolom `COVER`/`FILE_BOOK`.
+
+Impor `database/pustakadigital.sql` lewat phpMyAdmin atau `mysql -uroot < database/pustakadigital.sql`. Koneksi default memakai `root` tanpa password di `127.0.0.1`; di server lain isi environment variable `DB_HOST`, `DB_USER`, `DB_PASS`, dan `DB_NAME`.
 
 ---
 
@@ -114,6 +136,6 @@ Halaman autentikasi memvalidasi email + password terhadap akun yang terdaftar. T
 ## Future Release
 
 Fitur-fitur yang direncanakan untuk rilis mendatang:
-- Integrasi backend dan basis data (data buku, pengguna, dan rak saat ini masih dummy dan hilang saat halaman dimuat ulang)
 - Reader e-book terintegrasi langsung di dalam aplikasi
-- Autentikasi sungguhan beserta manajemen sesi
+- Pagination dan filter lanjutan pada tabel admin
+- Reset password dan verifikasi email
