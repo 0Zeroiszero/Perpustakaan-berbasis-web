@@ -4,18 +4,20 @@ header('Cache-Control: no-store');
 header('Clear-Site-Data: "cache"'); // sementara: paksa browser buang script.js lama; hapus setelah semua device hard refresh
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    cek_csrf();
     $email = strtolower(trim($_POST['email'] ?? ''));
-    if (isset(AKUN[$email]) && AKUN[$email]['password'] === ($_POST['password'] ?? '')) {
-        setcookie('pustaka_login', $email, ['path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
-        header('Location: ' . AKUN[$email]['dashboard']);
+
+    if (login_user($email, (string) ($_POST['password'] ?? ''))) {
+        header('Location: ' . dashboard_url());
         exit;
     }
+
     header('Location: login.php?gagal=1&email=' . urlencode($email));
     exit;
 }
 
 if (akun()) {
-    header('Location: ' . akun()['dashboard']);
+    header('Location: ' . dashboard_url());
     exit;
 }
 
@@ -91,22 +93,22 @@ $gagal = isset($_GET['gagal']);
                 </button>
                 <ul class="dropdown-menu w-100" aria-labelledby="demoAkun">
                     <li>
-                        <button class="dropdown-item py-2" type="button" data-email="admin@pustakadigital.id"
+                        <button class="dropdown-item py-2" type="button" data-email="admin@pustaka.com"
                             data-password="admin123">
                             <span class="fw-semibold text-ungu d-block">
                                 <i class="bi bi-shield-lock me-1" aria-hidden="true"></i>Admin
                             </span>
-                            <span class="small text-secondary">admin@pustakadigital.id</span>
+                            <span class="small text-secondary">admin@pustaka.com</span>
                         </button>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <button class="dropdown-item py-2" type="button" data-email="user@pustakadigital.id"
-                            data-password="user123">
+                        <button class="dropdown-item py-2" type="button" data-email="andi@email.com"
+                            data-password="andi123">
                             <span class="fw-semibold text-ungu d-block">
                                 <i class="bi bi-person me-1" aria-hidden="true"></i>User
                             </span>
-                            <span class="small text-secondary">user@pustakadigital.id</span>
+                            <span class="small text-secondary">andi@email.com</span>
                         </button>
                     </li>
                 </ul>
@@ -115,6 +117,7 @@ $gagal = isset($_GET['gagal']);
             <div class="login-card">
 
                 <form id="loginForm" method="post" action="login.php">
+                    <?= csrf_field() ?>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="email">Email</label>
                         <input id="email" name="email" type="email" class="form-control<?= $gagal ? ' is-invalid' : '' ?>"

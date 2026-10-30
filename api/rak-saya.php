@@ -1,6 +1,23 @@
 <?php
 require __DIR__ . '/_auth.php';
 wajib_login();
+
+$rak = rows(
+    "SELECT e.id_book AS id, e.judul, e.sinopsis,
+            e.cover AS cover_path, e.file_book AS file_path,
+            k.nama_kategori AS kategori,
+            r.progress_percent AS progres, r.last_read AS updated_at, r.status_baca AS status,
+            GROUP_CONCAT(CONCAT_WS(' ', a.nama_depan, a.nama_belakang) SEPARATOR ', ') AS penulis
+     FROM reading_progress r
+     JOIN ebook e ON e.id_book = r.book_id_book
+     JOIN kategori k ON k.id_kategori = e.kategori_id_kategori
+     LEFT JOIN ebook_author ea ON ea.book_id_book = e.id_book
+     LEFT JOIN author a ON a.id_author = ea.author_id_author
+     WHERE r.user_id_user = ?
+     GROUP BY e.id_book, e.judul, e.sinopsis, e.cover, e.file_book, k.nama_kategori, r.progress_percent, r.last_read, r.status_baca
+     ORDER BY r.last_read DESC, e.id_book DESC",
+    [(string) akun()['id']]
+);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -71,9 +88,11 @@ wajib_login();
                     <h1 class="page-title page-title-sm">Rak Saya</h1>
                     <p class="text-secondary mb-0">Koleksi buku pribadi yang sudah kamu tambahkan.</p>
                 </div>
-                <span id="jumlahRak" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite">3
+                <span id="jumlahRak" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite"><?= count($rak) ?>
                     Buku</span>
             </div>
+
+            <?php tampilkan_flash(); ?>
 
             <!-- TOOLBAR RAK — tepat di atas grid, nempel di bawah navbar dashboard.
                  UI saja: belum ada logika JS, nanti cukup listensubmit di kontrol ini.
@@ -95,7 +114,6 @@ wajib_login();
                         <select id="urutRak" class="form-select">
                             <option value="terbaru">Terbaru</option>
                             <option value="az">Judul A-Z</option>
-                            <option value="rating">Rating Tertinggi</option>
                             <option value="progres">Progres Baca</option>
                         </select>
                     </div>
@@ -109,76 +127,74 @@ wajib_login();
             </div>
 
             <div class="row g-4 grid-buku" id="rakGrid">
-
-                <!-- Kartu 1 (dummy) -->
-                <div class="col-6 col-lg-3 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover">
-                            <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)" aria-hidden="true"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
-                            <h2 class="h5 fw-bold mt-2 mb-1">Atomic Habits</h2>
-                            <p class="text-secondary small mb-2">James Clear</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:72%;background:var(--ungu);"></div>
+                <?php foreach ($rak as $b):
+                    $progres = (int) $b['progres'];
+                    $status = $b['status'] ?: 'Akan dibaca';
+                    $selesai = $status === 'Telah dibaca';
+                    $badgeStatus = match ($status) {
+                        'Telah dibaca' => 'bg-success-subtle text-success',
+                        'Sedang dibaca' => 'bg-ungu-muda text-ungu',
+                        'Tidak selesai' => 'bg-danger-subtle text-danger',
+                        default => 'bg-biru-muda text-biru',
+                    };
+                    $badgeKategori = match ($b['kategori']) {
+                        'Teknologi' => 'bg-biru-muda text-biru',
+                        'Novel' => 'bg-danger-subtle text-danger',
+                        default => 'bg-ungu-muda text-ungu',
+                    };
+                ?>
+                    <div class="col-6 col-lg-3 buku-rak">
+                        <div class="book-card">
+                            <div class="book-cover">
+                                <?php if ($b['cover_path']): ?>
+                                    <img src="../<?= e($b['cover_path']) ?>" alt="<?= e($b['judul']) ?>" loading="lazy">
+                                <?php else: ?>
+                                    <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)" aria-hidden="true"></i>
+                                <?php endif; ?>
                             </div>
-                            <p class="small text-secondary mb-3">72% selesai dibaca</p>
-                            <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" rel="noopener" class="btn btn-baca"><i class="bi bi-book-half me-1" aria-hidden="true"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kartu 2 (dummy) -->
-                <div class="col-6 col-lg-3 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover bg-biru-muda">
-                            <i class="bi bi-code-slash" style="font-size:3rem;color:var(--biru)" aria-hidden="true"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-biru-muda text-biru">Teknologi</span>
-                            <h2 class="h5 fw-bold mt-2 mb-1">Clean Code</h2>
-                            <p class="text-secondary small mb-2">Robert C. Martin</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:45%;background:var(--biru);"></div>
-                            </div>
-                            <p class="small text-secondary mb-3">45% selesai dibaca</p>
-                            <div class="d-grid gap-2">
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" rel="noopener" class="btn btn-baca"><i class="bi bi-book-half me-1" aria-hidden="true"></i>Lanjut Baca</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kartu 3 (dummy) -->
-                <div class="col-6 col-lg-3 buku-rak">
-                    <div class="book-card">
-                        <div class="book-cover" style="background:var(--merah-muda)">
-                            <i class="bi bi-journal-text" style="font-size:3rem;color:var(--merah)" aria-hidden="true"></i>
-                        </div>
-                        <div class="p-3">
-                            <span class="badge bg-danger-subtle text-danger">Novel</span>
-                            <h2 class="h5 fw-bold mt-2 mb-1">Bumi Manusia</h2>
-                            <p class="text-secondary small mb-2">Pramoedya Ananta Toer</p>
-                            <div class="progress mb-1" style="height:7px;">
-                                <div class="progress-bar" style="width:100%;background:var(--merah);"></div>
-                            </div>
-                            <p class="small mb-3"><span class="badge bg-success-subtle d-inline-block">Selesai Dibaca</span></p>
-                            <div class="d-grid gap-2">
-                                <a href="katalog.php" class="btn btn-ungu"><i class="bi bi-compass me-1" aria-hidden="true"></i>Buku Selanjutnya</a>
-                                <a href="../assets/book/atomic-habits.pdf" target="_blank" rel="noopener" class="btn btn-outline-secondary"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang</a>
-                                <button class="btn btn-light border" onclick="hapusRak(this)"><i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak</button>
+                            <div class="p-3">
+                                <span class="badge <?= $badgeKategori ?>"><?= e($b['kategori']) ?></span>
+                                <h2 class="h5 fw-bold mt-2 mb-1"><?= e($b['judul']) ?></h2>
+                                <p class="text-secondary small mb-2"><?= e($b['penulis']) ?></p>
+                                <div class="progress mb-1" style="height:7px;">
+                                    <div class="progress-bar" style="width:<?= $progres ?>%;background:var(--ungu);"></div>
+                                </div>
+                                <?php if ($selesai): ?>
+                                    <p class="small mb-3"><span class="badge <?= $badgeStatus ?> d-inline-block">Selesai Dibaca</span></p>
+                                <?php else: ?>
+                                    <p class="small mb-3">
+                                        <span class="badge <?= $badgeStatus ?>"><?= e($status) ?></span>
+                                        <span class="text-secondary ms-1"><?= $progres ?>%</span>
+                                    </p>
+                                <?php endif; ?>
+                                <div class="d-grid gap-2">
+                                    <?php if ($selesai): ?>
+                                        <a href="katalog.php" class="btn btn-ungu"><i class="bi bi-compass me-1" aria-hidden="true"></i>Buku Selanjutnya</a>
+                                        <?php if ($b['file_path']): ?>
+                                            <a href="../<?= e($b['file_path']) ?>" target="_blank" rel="noopener" class="btn btn-outline-secondary"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang</a>
+                                        <?php endif; ?>
+                                    <?php elseif ($b['file_path']): ?>
+                                        <a href="../<?= e($b['file_path']) ?>" target="_blank" rel="noopener" class="btn btn-baca"><i class="bi bi-book-half me-1" aria-hidden="true"></i><?= $status === 'Sedang dibaca' ? 'Lanjut Baca' : 'Baca Buku' ?></a>
+                                    <?php else: ?>
+                                        <button class="btn btn-baca" disabled><i class="bi bi-book-half me-1" aria-hidden="true"></i>Berkas Belum Tersedia</button>
+                                    <?php endif; ?>
+                                    <form method="post" action="rak.php">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="aksi" value="hapus">
+                                        <input type="hidden" name="book_id" value="<?= e($b['id']) ?>">
+                                        <button type="button" class="btn btn-light border w-100"
+                                            data-judul="<?= e($b['judul']) ?>" onclick="hapusRak(this)">
+                                            <i class="bi bi-bookmark-x me-1" aria-hidden="true"></i>Hapus dari Rak
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                <?php endforeach; ?>
             </div>
 
-            <div id="rakKosong" class="text-center py-5 d-none" role="status">
+            <div id="rakKosong" class="text-center py-5 <?= $rak ? 'd-none' : '' ?>" role="status">
                 <div class="card-clean p-5">
                     <i class="bi bi-bookmark" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
                     <h2 class="h5 mt-3">Rak kamu masih kosong</h2>
@@ -214,8 +230,6 @@ wajib_login();
                         <label class="category-btn" for="urutTerbaru">Terbaru</label>
                         <input type="radio" class="btn-check" name="urutRakOpsi" id="urutAZ">
                         <label class="category-btn" for="urutAZ">Judul A-Z</label>
-                        <input type="radio" class="btn-check" name="urutRakOpsi" id="urutRating">
-                        <label class="category-btn" for="urutRating">Rating Tertinggi</label>
                         <input type="radio" class="btn-check" name="urutRakOpsi" id="urutProgres">
                         <label class="category-btn" for="urutProgres">Progres Baca</label>
                     </div>

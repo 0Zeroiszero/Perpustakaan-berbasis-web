@@ -1,7 +1,32 @@
 <?php
 require __DIR__ . '/_auth.php';
 wajib_login();
-if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit; }
+if (akun()['role'] === 'Admin') {
+    header('Location: dashboard-admin.php');
+    exit;
+}
+
+$user_id = (string) akun()['id'];
+$rak = rows(
+    "SELECT e.id_book AS id, e.judul,
+            e.cover AS cover_path, e.file_book AS file_path,
+            k.nama_kategori AS kategori,
+            r.progress_percent AS progres, r.last_read AS updated_at, r.status_baca AS status,
+            GROUP_CONCAT(CONCAT_WS(' ', a.nama_depan, a.nama_belakang) SEPARATOR ', ') AS penulis
+     FROM reading_progress r
+     JOIN ebook e ON e.id_book = r.book_id_book
+     JOIN kategori k ON k.id_kategori = e.kategori_id_kategori
+     LEFT JOIN ebook_author ea ON ea.book_id_book = e.id_book
+     LEFT JOIN author a ON a.id_author = ea.author_id_author
+     WHERE r.user_id_user = ?
+     GROUP BY e.id_book, e.judul, e.cover, e.file_book, k.nama_kategori, r.progress_percent, r.last_read, r.status_baca
+     ORDER BY r.last_read DESC, e.id_book DESC",
+    [$user_id]
+);
+$jumlah_rak = count($rak);
+$sedang_dibaca = array_values(array_filter($rak, fn($b) => $b['status'] === 'Sedang dibaca'));
+$selesai_dibaca = count(array_filter($rak, fn($b) => $b['status'] === 'Telah dibaca'));
+$total_buku = (int) scalar("SELECT COUNT(*) FROM ebook");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -60,7 +85,7 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                         Dashboard User
                     </b>
                     <div class="small text-secondary">
-                        Selamat datang kembali, Najwa.
+                        Selamat datang kembali, <?= e(akun()['nama']) ?>.
                     </div>
                 </div>
                 <div class="ms-auto">
@@ -85,7 +110,7 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                         <div class="d-flex justify-content-between">
                             <div>
                                 <small class="text-secondary">Rak Saya</small>
-                                <div class="stat-number" id="statRakSaya">24</div>
+                                <div class="stat-number" id="statRakSaya"><?= $jumlah_rak ?></div>
                             </div>
                             <div class="stat-icon">
                                 <i class="bi bi-bookmark" aria-hidden="true"></i>
@@ -98,7 +123,7 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                         <div class="d-flex justify-content-between">
                             <div>
                                 <small class="text-secondary">Sedang Dibaca</small>
-                                <div class="stat-number" id="statSedangDibaca">6</div>
+                                <div class="stat-number" id="statSedangDibaca"><?= count($sedang_dibaca) ?></div>
                             </div>
                             <div class="stat-icon">
                                 <i class="bi bi-book-half" aria-hidden="true"></i>
@@ -111,7 +136,7 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                         <div class="d-flex justify-content-between">
                             <div>
                                 <small class="text-secondary">Selesai Dibaca</small>
-                                <div class="stat-number" id="statSelesaiDibaca">38</div>
+                                <div class="stat-number" id="statSelesaiDibaca"><?= $selesai_dibaca ?></div>
                             </div>
                             <div class="stat-icon">
                                 <i class="bi bi-check-circle" aria-hidden="true"></i>
@@ -123,11 +148,11 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                     <div class="stat">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <small class="text-secondary">Jam Membaca</small>
-                                <div class="stat-number">4</div>
+                                <small class="text-secondary">Total Koleksi</small>
+                                <div class="stat-number"><?= $total_buku ?></div>
                             </div>
                             <div class="stat-icon">
-                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -144,42 +169,33 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                                 Lihat Katalog
                             </a>
                         </div>
-                        <!-- Daftar buku (dummy) -->
                         <div id="sedangDibacaList">
-                            <div class="d-flex align-items-center gap-3 border-bottom py-3 sedang-dibaca">
-                                <div class="book-cover thumb rounded-3">
-                                    <i class="bi bi-book text-ungu" aria-hidden="true"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <b>Atomic Habits</b>
-                                    <div class="small text-secondary">
-                                        James Clear
+                            <?php foreach (array_slice($sedang_dibaca, 0, 3) as $b): ?>
+                                <div class="d-flex align-items-center gap-3 border-bottom py-3 sedang-dibaca">
+                                    <div class="book-cover thumb rounded-3">
+                                        <?php if ($b['cover_path']): ?>
+                                            <img src="../<?= e($b['cover_path']) ?>" alt="<?= e($b['judul']) ?>" loading="lazy">
+                                        <?php else: ?>
+                                            <i class="bi bi-book text-ungu" aria-hidden="true"></i>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="progress mt-2" style="height: 7px;">
-                                        <div class="progress-bar" style="width: 72%; background: var(--ungu);"></div>
+                                    <div class="flex-grow-1">
+                                        <b><?= e($b['judul']) ?></b>
+                                        <div class="small text-secondary">
+                                            <?= e($b['penulis']) ?>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 7px;">
+                                            <div class="progress-bar" style="width: <?= (int) $b['progres'] ?>%; background: var(--ungu);"></div>
+                                        </div>
                                     </div>
+                                    <span class="small fw-semibold">
+                                        <?= (int) $b['progres'] ?>%
+                                    </span>
                                 </div>
-                                <span class="small fw-semibold">
-                                    72%
-                                </span>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 border-bottom py-3 sedang-dibaca">
-                                <div class="book-cover thumb rounded-3 bg-biru-muda">
-                                    <i class="bi bi-code-slash text-biru" aria-hidden="true"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <b>Clean Code</b>
-                                    <div class="small text-secondary">
-                                        Robert C. Martin
-                                    </div>
-                                    <div class="progress mt-2" style="height: 7px;">
-                                        <div class="progress-bar" style="width: 45%; background: var(--biru);"></div>
-                                    </div>
-                                </div>
-                                <span class="small fw-semibold">
-                                    45%
-                                </span>
-                            </div>
+                            <?php endforeach; ?>
+                            <?php if (!$sedang_dibaca): ?>
+                                <p class="text-secondary py-3 mb-0">Belum ada buku yang sedang dibaca. Simpan buku dari katalog untuk mulai.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -188,24 +204,17 @@ if (akun()['peran'] === 'admin') { header('Location: dashboard-admin.php'); exit
                         <h2 class="h5 fw-bold">
                             Aktivitas Terbaru
                         </h2>
-                        <div class="py-3 border-bottom">
-                            <b>Menambahkan buku</b>
-                            <div class="small text-secondary">
-                                Atomic Habits · 2 jam lalu
+                        <?php foreach (array_slice($rak, 0, 3) as $i => $b): ?>
+                            <div class="py-3 <?= $i < 2 ? 'border-bottom' : '' ?>">
+                                <b><?= $b['progres'] >= 100 ? 'Menyelesaikan bacaan' : 'Membaca buku' ?></b>
+                                <div class="small text-secondary">
+                                    <?= e($b['judul']) ?> · <?= e($b['updated_at'] ? date('d/m/Y', strtotime($b['updated_at'])) : '-') ?>
+                                </div>
                             </div>
-                        </div>
-                        <div class="py-3 border-bottom">
-                            <b>Menyelesaikan bacaan</b>
-                            <div class="small text-secondary">
-                                Bumi Manusia · Kemarin
-                            </div>
-                        </div>
-                        <div class="py-3">
-                            <b>Membuka katalog</b>
-                            <div class="small text-secondary">
-                                Hari ini
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
+                        <?php if (!$rak): ?>
+                            <p class="text-secondary py-3 mb-0">Belum ada aktivitas.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

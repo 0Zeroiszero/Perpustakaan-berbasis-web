@@ -1,6 +1,24 @@
 <?php
 require __DIR__ . '/_auth.php';
 wajib_admin();
+
+$total_buku = (int) scalar("SELECT COUNT(*) FROM ebook");
+$total_pengguna = (int) scalar("SELECT COUNT(*) FROM users");
+$total_admin = (int) scalar("SELECT COUNT(*) FROM users WHERE user_role = 'Admin'");
+$sedang_dibaca = (int) scalar("SELECT COUNT(*) FROM reading_progress WHERE status_baca = 'Sedang dibaca'");
+$total_kategori = (int) scalar("SELECT COUNT(*) FROM kategori");
+
+$buku_terbaru = rows(
+    "SELECT e.id_book AS id, e.judul, e.format_file AS format, k.nama_kategori AS kategori,
+            GROUP_CONCAT(CONCAT_WS(' ', a.nama_depan, a.nama_belakang) SEPARATOR ', ') AS penulis
+     FROM ebook e
+     JOIN kategori k ON k.id_kategori = e.kategori_id_kategori
+     LEFT JOIN ebook_author ea ON ea.book_id_book = e.id_book
+     LEFT JOIN author a ON a.id_author = ea.author_id_author
+     GROUP BY e.id_book, e.judul, e.format_file, k.nama_kategori
+     ORDER BY e.id_book DESC LIMIT 5"
+);
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -39,7 +57,7 @@ wajib_admin();
                 <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu"><i
                         class="bi bi-list" aria-hidden="true"></i></button>
                 <div><b>Dashboard Admin</b>
-                    <div class="small text-secondary">Kelola sistem PustakaDigital.</div>
+                    <div class="small text-secondary">Selamat datang, <?= e(akun()['nama']) ?>.</div>
                 </div>
                 <div class="ms-auto"><span class="badge bg-ungu-muda text-ungu">Admin</span></div>
             </div>
@@ -51,9 +69,9 @@ wajib_admin();
                     <h1 class="page-title page-title-sm">Dashboard Admin</h1>
                     <p class="text-secondary mb-0">Pantau seluruh aktivitas PustakaDigital.</p>
                 </div>
-                <button class="btn btn-ungu" onclick="bukaModalTambah()">
-                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Tambah Buku
-                </button>
+                <a href="kelola-buku.php" class="btn btn-ungu">
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Kelola Buku
+                </a>
             </div>
 
             <!-- STAT CARDS -->
@@ -62,255 +80,73 @@ wajib_admin();
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-center mb-2"><span
                                 class="text-secondary">Total Buku</span><span class="stat-icon"><i class="bi bi-book" aria-hidden="true"></i></span></div>
-                        <div class="stat-number">10.248</div>
-                        <div class="small text-success">+340 minggu ini</div>
+                        <div class="stat-number"><?= $total_buku ?></div>
+                        <div class="small text-secondary">Koleksi e-book seluruhnya</div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-center mb-2"><span
                                 class="text-secondary">Total Pengguna</span><span class="stat-icon"><i class="bi bi-people" aria-hidden="true"></i></span></div>
-                        <div class="stat-number">2.840</div>
-                        <div class="small text-success">+120 bulan ini</div>
+                        <div class="stat-number"><?= $total_pengguna ?></div>
+                        <div class="small text-secondary"><?= $total_admin ?> akun Admin</div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-center mb-2"><span
                                 class="text-secondary">Sedang Dibaca</span><span class="stat-icon"><i class="bi bi-book-half" aria-hidden="true"></i></span></div>
-                        <div class="stat-number">486</div>
-                        <div class="small text-secondary">Aktif dibaca</div>
+                        <div class="stat-number"><?= $sedang_dibaca ?></div>
+                        <div class="small text-secondary">Buku di rak pengguna</div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-center mb-2"><span
                                 class="text-secondary">Kategori</span><span class="stat-icon"><i class="bi bi-tags" aria-hidden="true"></i></span></div>
-                        <div class="stat-number">18</div>
+                        <div class="stat-number"><?= $total_kategori ?></div>
                         <div class="small text-secondary">Genre tersedia</div>
                     </div>
                 </div>
             </div>
 
-            <!-- TABLE CARD -->
-            <div class="table-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
+            <!-- DATA BUKU TERBARU -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="table-card">
                         <h2 class="h5 fw-bold mb-1">Data Buku Terbaru</h2>
                         <small class="text-secondary">Buku yang baru ditambahkan ke sistem.</small>
-                    </div>
-                    <a href="katalog.php" class="btn btn-light">Lihat Katalog</a>
-                </div>
-
-                <div class="row g-2 align-items-center mb-3">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">
-                                <i class="bi bi-search text-secondary" aria-hidden="true"></i>
-                            </span>
-                            <input id="cariBukuAdmin" type="search" class="form-control border-start-0"
-                                placeholder="Cari judul atau penulis..." aria-label="Cari buku"
-                                oninput="cariBukuAdmin()">
+                        <div class="table-responsive mt-3">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Judul</th>
+                                        <th scope="col">Kategori</th>
+                                        <th scope="col">Format</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($buku_terbaru as $b): ?>
+                                        <tr>
+                                            <td>
+                                                <b><?= e($b['judul']) ?></b>
+                                                <div class="small text-secondary"><?= e($b['penulis']) ?></div>
+                                            </td>
+                                            <td><?= e($b['kategori']) ?></td>
+                                            <td><?= e($b['format']) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
+                        <a href="katalog.php" class="btn btn-light mt-3">Lihat Katalog</a>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <span id="jumlahBukuAdmin" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2"
-                            aria-live="polite">3 Buku</span>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th scope="col">Judul</th>
-                                <th scope="col">Penulis</th>
-                                <th scope="col">Kategori</th>
-                                <th scope="col">Penerbit</th>
-                                <th scope="col">Tahun</th>
-                                <th scope="col">Halaman</th>
-                                <th scope="col">Format</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBukuAdmin">
-
-                            <!-- Baris 1 (dummy) -->
-                            <tr class="baris-buku" data-sinopsis="Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan baik dan menghasilkan perubahan besar dalam hidup.">
-                                <td class="kolom-judul">
-                                    <b>Atomic Habits</b>
-                                    <div class="small text-secondary text-truncate" style="max-width:260px"
-                                        title="Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan baik dan menghasilkan perubahan besar dalam hidup.">
-                                        Perubahan kecil yang dilakukan secara konsisten dapat membentuk kebiasaan
-                                        baik dan menghasilkan perubahan besar dalam hidup.
-                                    </div>
-                                </td>
-                                <td class="kolom-penulis">James Clear</td>
-                                <td class="kolom-kategori">Pengembangan Diri</td>
-                                <td class="kolom-penerbit">Avery</td>
-                                <td class="kolom-tahun">2018</td>
-                                <td class="kolom-halaman">320</td>
-                                <td class="kolom-format">PDF</td>
-                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
-                                <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Baris 2 (dummy) -->
-                            <tr class="baris-buku" data-sinopsis="Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh seluruh tim pengembang.">
-                                <td class="kolom-judul">
-                                    <b>Clean Code</b>
-                                    <div class="small text-secondary text-truncate" style="max-width:260px"
-                                        title="Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh seluruh tim pengembang.">
-                                        Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat oleh
-                                        seluruh tim pengembang.
-                                    </div>
-                                </td>
-                                <td class="kolom-penulis">Robert C. Martin</td>
-                                <td class="kolom-kategori">Teknologi</td>
-                                <td class="kolom-penerbit">Prentice Hall</td>
-                                <td class="kolom-tahun">2008</td>
-                                <td class="kolom-halaman">464</td>
-                                <td class="kolom-format">PDF</td>
-                                <td class="kolom-status"><span class="badge bg-success-subtle text-success">Tersedia</span></td>
-                                <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Baris 3 (dummy) -->
-                            <tr class="baris-buku" data-sinopsis="Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan cinta, keadilan, dan jati diri bangsanya.">
-                                <td class="kolom-judul">
-                                    <b>Bumi Manusia</b>
-                                    <div class="small text-secondary text-truncate" style="max-width:260px"
-                                        title="Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan cinta, keadilan, dan jati diri bangsanya.">
-                                        Kisah Minke, pribumi terpelajar pada masa kolonial, yang bergulat dengan
-                                        cinta, keadilan, dan jati diri bangsanya.
-                                    </div>
-                                </td>
-                                <td class="kolom-penulis">Pramoedya Ananta Toer</td>
-                                <td class="kolom-kategori">Novel</td>
-                                <td class="kolom-penerbit">Hasta Mitra</td>
-                                <td class="kolom-tahun">1980</td>
-                                <td class="kolom-halaman">535</td>
-                                <td class="kolom-format">PDF</td>
-                                <td class="kolom-status"><span class="badge bg-danger-subtle text-danger">Belum Tersedia</span></td>
-                                <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-light" title="Ubah" onclick="editBuku(this)"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-                                    <button class="btn btn-sm btn-light text-danger" title="Hapus" onclick="hapusBuku(this)"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- EMPTY STATE -->
-                <div id="tabelBukuKosong" class="text-center py-4 d-none" role="status">
-                    <i class="bi bi-inbox" style="font-size:2.5rem;color:var(--abu)" aria-hidden="true"></i>
-                    <p class="text-secondary mt-2 mb-0">Tidak ada buku yang cocok.</p>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- MODAL TAMBAH / EDIT BUKU -->
-    <div class="modal fade" id="modalBuku" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-            <div class="modal-content" style="border-radius:16px; max-height:90vh; overflow-y:auto; overflow-x:hidden">
-                <div class="modal-header border-0">
-                    <h2 class="modal-title h5 fw-bold" id="modalBukuTitle">Tambah Buku</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-                <form id="formBuku" onsubmit="simpanBuku(event)">
-                    <div class="modal-body" style="overflow-y:auto; overflow-x:hidden;">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold" for="inputBerkas"><i class="bi bi-upload me-1" aria-hidden="true"></i>Upload buku, novel, atau bacaan</label>
-                            <input id="inputBerkas" type="file" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold" for="inputJudul">Judul</label>
-                            <input id="inputJudul" type="text" class="form-control" placeholder="Judul buku" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold" for="inputPenulis">Penulis</label>
-                            <input id="inputPenulis" type="text" class="form-control" placeholder="Nama penulis"
-                                required>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-7">
-                                <label class="form-label fw-semibold" for="inputKategori">Kategori</label>
-                                <select id="inputKategori" class="form-select">
-                                    <option>Pengembangan Diri</option>
-                                    <option>Teknologi</option>
-                                    <option>Novel</option>
-                                    <option>Sejarah</option>
-                                </select>
-                            </div>
-                            <div class="col-5">
-                                <label class="form-label fw-semibold" for="inputFormat">Format E-book</label>
-                                <select id="inputFormat" class="form-select" required>
-                                    <option value="PDF" selected>PDF</option>
-                                    <option value="EPUB">EPUB</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row g-3 mt-0">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold" for="inputPenerbit">Penerbit</label>
-                                <input id="inputPenerbit" type="text" class="form-control" placeholder="Nama penerbit">
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold" for="inputTahun">Tahun</label>
-                                <input id="inputTahun" type="number" min="1000" max="2100" class="form-control"
-                                    placeholder="2024">
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold" for="inputHalaman">Halaman</label>
-                                <input id="inputHalaman" type="number" min="1" class="form-control" placeholder="320">
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="form-label fw-semibold" for="inputSinopsis">Sinopsis</label>
-                            <textarea id="inputSinopsis" class="form-control" rows="4"
-                                placeholder="Ringkasan isi buku..."></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-ungu">
-                            <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
-        <div id="toastAdmin" class="toast border-0" role="alert"
-            style="background:var(--gelap); color:white; border-radius:12px">
-            <div class="d-flex align-items-center">
-                <div class="toast-body d-flex align-items-center gap-2">
-                    <span
-                        style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg" aria-hidden="true"></i>
-                    </span>
-                    <span id="toastAdminMsg">Berhasil disimpan</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
-                    data-bs-dismiss="toast"></button>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/dashboard-admin.js"></script>
 </body>
-
 </html>

@@ -1,5 +1,27 @@
 <?php
 require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
+$buku = rows(
+    "SELECT e.id_book AS id, e.judul, e.tahun_terbit AS tahun, e.sinopsis,
+            e.cover AS cover_path, e.file_book AS file_path, e.format_file AS format,
+            k.nama_kategori AS kategori,
+            GROUP_CONCAT(CONCAT_WS(' ', a.nama_depan, a.nama_belakang) SEPARATOR ', ') AS penulis
+     FROM ebook e
+     JOIN kategori k ON k.id_kategori = e.kategori_id_kategori
+     LEFT JOIN ebook_author ea ON ea.book_id_book = e.id_book
+     LEFT JOIN author a ON a.id_author = ea.author_id_author
+     GROUP BY e.id_book, e.judul, e.tahun_terbit, e.sinopsis, e.cover, e.file_book, e.format_file, k.nama_kategori
+     ORDER BY e.id_book DESC"
+);
+$kategori_list = rows("SELECT nama_kategori FROM kategori ORDER BY nama_kategori");
+$status_baca = ['Akan dibaca', 'Sedang dibaca', 'Telah dibaca', 'Tidak selesai'];
+
+// Status rak milik user yang login, dipakai untuk label & warna tombol tiap kartu.
+$rak = [];
+if ($user = akun()) {
+    foreach (rows("SELECT book_id_book, status_baca FROM reading_progress WHERE user_id_user = ?", [$user['id']]) as $r) {
+        $rak[$r['book_id_book']] = $r['status_baca'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -52,7 +74,38 @@ require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
                         <a class="nav-link" href="<?= dashboard_url() ?>">Dashboard</a>
                     </li>
                     <li class="nav-item ms-lg-2">
-                        <a href="login.php" class="btn btn-ungu">Masuk</a>
+                        <?php if ($user): ?>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-akun dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <span class="avatar" aria-hidden="true">
+                                        <?= e(mb_strtoupper(mb_substr($user['nama'], 0, 1))) ?>
+                                    </span>
+                                    <span class="nama-akun"><?= e($user['nama']) ?></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <div class="dropdown-header">
+                                            <b class="d-block text-dark"><?= e($user['nama']) ?></b>
+                                            <span class="small text-secondary"><?= e($user['role']) ?></span>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="rak-saya.php">
+                                            <i class="bi bi-bookmark me-2" aria-hidden="true"></i>Rak Saya
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item logout" href="logout.php">
+                                            <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <a href="login.php" class="btn btn-ungu">Masuk</a>
+                        <?php endif; ?>
                     </li>
                 </ul>
             </div>
@@ -71,112 +124,76 @@ require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h5 fw-bold mb-0">Koleksi Buku</h2>
-            <span id="jumlahBuku" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite">4
+            <span id="jumlahBuku" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite"><?= count($buku) ?>
                 Buku</span>
         </div>
 
-        <!-- GRID BUKU -->
+        <!-- GRID BUKU: dirender dari tabel books, bukan kartu statis -->
         <div class="row g-4 grid-buku" id="bookGrid">
-            <!-- Buku 1 -->
-            <div class="col-6 col-lg-3 book-item" data-search="atomic habits james clear pengembangan diri"
-                data-kategori="Pengembangan Diri" data-judul="Atomic Habits" data-rating="4.8">
-                <div class="book-card">
-                    <div class="book-cover">
-                        <img src="../assets/image/Atomic habits.jpg" alt="Atomic Habits" loading="lazy">
-                    </div>
-                    <div class="p-3">
-                        <div class="badges">
-                            <span class="badge bg-ungu-muda text-ungu">Pengembangan Diri</span>
-                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
+            <?php foreach ($buku as $b):
+                $badgeKategori = match ($b['kategori']) {
+                    'Teknologi' => 'bg-biru-muda text-biru',
+                    'Novel' => 'bg-danger-subtle text-danger',
+                    default => 'bg-ungu-muda text-ungu',
+                };
+                $status = $rak[$b['id']] ?? null;
+                $kelasStatus = match ($status) {
+                    'Akan dibaca' => 'btn-pinjam',
+                    'Sedang dibaca' => 'btn-rak-sedang',
+                    'Telah dibaca' => 'btn-rak-selesai',
+                    'Tidak selesai' => 'btn-rak-gagal',
+                    default => 'btn-rak-netral',
+                };
+                $labelStatus = $status ?? 'Tambah ke rak';
+            ?>
+                <div class="col-6 col-lg-3 book-item"
+                    data-search="<?= e(strtolower(($b['judul'] ?? '') . ' ' . ($b['penulis'] ?? '') . ' ' . ($b['kategori'] ?? ''))) ?>"
+                    data-kategori="<?= e($b['kategori']) ?>" data-judul="<?= e($b['judul']) ?>">
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <?php if ($b['cover_path']): ?>
+                                <img src="../<?= e($b['cover_path']) ?>" alt="<?= e($b['judul']) ?>" loading="lazy">
+                            <?php else: ?>
+                                <i class="bi bi-book" style="font-size:3rem;color:var(--ungu)" aria-hidden="true"></i>
+                            <?php endif; ?>
                         </div>
-                        <h3 class="h5 fw-bold mt-2 mb-1">Atomic Habits</h3>
-                        <p class="text-secondary small mb-1">James Clear</p>
-                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.8</span></div>
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
-                            <button class="btn btn-pinjam" onclick="pinjamBuku('Atomic Habits')"><i
-                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Buku 2 -->
-            <div class="col-6 col-lg-3 book-item" data-search="clean code robert martin teknologi"
-                data-kategori="Teknologi" data-judul="Clean Code" data-rating="4.7">
-                <div class="book-card">
-                    <div class="book-cover bg-biru-muda">
-                        <img src="../assets/image/clean code.jpeg" alt="Clean Code" loading="lazy">
-                    </div>
-                    <div class="p-3">
-                        <div class="badges">
-                            <span class="badge bg-biru-muda text-biru">Teknologi</span>
-                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
-                        </div>
-                        <h3 class="h5 fw-bold mt-2 mb-1">Clean Code</h3>
-                        <p class="text-secondary small mb-1">Robert C. Martin</p>
-                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.7</span></div>
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
-                            <button class="btn btn-pinjam" onclick="pinjamBuku('Clean Code')"><i
-                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i>
-                                Simpan ke Rak</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Buku 3 -->
-            <div class="col-6 col-lg-3 book-item tidak-tersedia" data-search="bumi manusia pramoedya novel" data-kategori="Novel"
-                data-judul="Bumi Manusia" data-rating="4.9">
-                <div class="book-card">
-                    <div class="book-cover" style="background:var(--merah-muda)">
-                        <img src="../assets/image/bumi manusia.jpg" alt="Bumi Manusia" loading="lazy">
-                    </div>
-                    <div class="p-3">
-                        <div class="badges">
-                            <span class="badge bg-danger-subtle text-danger">Novel</span>
-                            <span class="badge bg-danger-subtle text-danger ms-1">Belum Tersedia</span>
-                        </div>
-                        <h3 class="h5 fw-bold mt-2 mb-1">Bumi Manusia</h3>
-                        <p class="text-secondary small mb-1">Pramoedya Ananta Toer</p>
-                        <div class="rating small"><span aria-hidden="true">★★★★★</span> <span class="text-secondary">4.9</span></div>
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.php" class="btn btn-outline-secondary">Lihat Detail</a>
-                            <button class="btn btn-light border" disabled><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
-                                Belum Tersedia</button>
+                        <div class="p-3">
+                            <div class="badges">
+                                <span class="badge <?= $badgeKategori ?>"><?= e($b['kategori']) ?></span>
+                            </div>
+                            <h3 class="h5 fw-bold mt-2 mb-1"><?= e($b['judul']) ?></h3>
+                            <p class="text-secondary small mb-1"><?= e($b['penulis']) ?></p>
+                            <div class="d-grid gap-2">
+                                <a href="detail-buku.php?id=<?= e($b['id']) ?>" class="btn btn-ungu">Lihat Detail</a>
+                                <form method="post" action="rak.php" class="dropdown">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="aksi" value="simpan">
+                                    <input type="hidden" name="book_id" value="<?= e($b['id']) ?>">
+                                    <button type="button" class="btn <?= $kelasStatus ?> w-100 dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><?= e($labelStatus) ?></span>
+                                    </button>
+                                    <ul class="dropdown-menu w-100">
+                                        <?php foreach ($status_baca as $status): ?>
+                                            <li>
+                                                <button type="submit" class="dropdown-item" name="status"
+                                                    value="<?= e($status) ?>"><?= e($status) ?></button>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Buku 4 -->
-            <div class="col-6 col-lg-3 book-item" data-search="sejarah dunia pembelajaran" data-kategori="Sejarah"
-                data-judul="Sejarah Dunia" data-rating="4.5">
-                <div class="book-card">
-                    <div class="book-cover bg-biru-muda">
-                        <img src="../assets/image/sejarah dunia.jpg" alt="Sejarah Dunia" loading="lazy">
-                    </div>
-                    <div class="p-3">
-                        <div class="badges">
-                            <span class="badge bg-biru-muda text-biru">Sejarah</span>
-                            <span class="badge bg-success-subtle text-success ms-1">Tersedia</span>
-                        </div>
-                        <h3 class="h5 fw-bold mt-2 mb-1">Sejarah Dunia</h3>
-                        <p class="text-secondary small mb-1">Edisi Pembelajaran</p>
-                        <div class="rating small"><span aria-hidden="true">★★★★☆</span> <span class="text-secondary">4.5</span></div>
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="detail-buku.php" class="btn btn-ungu">Lihat Detail</a>
-                            <button class="btn btn-pinjam" onclick="pinjamBuku('Sejarah Dunia')"><i
-                                    class="bi bi-bookmark-plus me-1" aria-hidden="true"></i> Simpan ke Rak</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
 
-        <div id="tidakDitemukan" class="text-center py-5 d-none" role="status">
+        <div id="tidakDitemukan" class="text-center py-5 <?= $buku ? 'd-none' : '' ?>" role="status">
             <div class="card-clean p-5">
                 <i class="bi bi-search" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
-                <h2 class="h5 mt-3">Buku tidak ditemukan</h2>
-                <p class="text-secondary">Coba kata kunci lain atau pilih kategori Semua</p>
+                <h2 class="h5 mt-3"><?= $buku ? 'Buku tidak ditemukan' : 'Belum ada buku' ?></h2>
+                <p class="text-secondary"><?= $buku ? 'Coba kata kunci lain atau pilih kategori Semua' : 'Admin belum menambahkan koleksi.' ?></p>
                 <button type="button" class="btn btn-ungu mt-2"
                     onclick="filterKategori('Semua', document.querySelector('.category-btn'))">Reset Filter</button>
             </div>
@@ -203,7 +220,6 @@ require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
                             <select id="sortSelect" class="form-select" onchange="sortBuku()">
                                 <option value="terbaru">Terbaru</option>
                                 <option value="az">Judul A-Z</option>
-                                <option value="rating">Rating Tertinggi</option>
                             </select>
                         </div>
                     </div>
@@ -214,33 +230,14 @@ require __DIR__ . '/_auth.php'; // untuk dashboard_url() di navbar
                     <div class="mt-3 d-flex flex-wrap gap-2" role="group" aria-label="Filter kategori">
                         <button type="button" class="category-btn active" aria-pressed="true"
                             onclick="filterKategori('Semua', this)">Semua</button>
-                        <button type="button" class="category-btn" aria-pressed="false"
-                            onclick="filterKategori('Pengembangan Diri', this)">Pengembangan Diri</button>
-                        <button type="button" class="category-btn" aria-pressed="false"
-                            onclick="filterKategori('Teknologi', this)">Teknologi</button>
-                        <button type="button" class="category-btn" aria-pressed="false"
-                            onclick="filterKategori('Novel', this)">Novel</button>
-                        <button type="button" class="category-btn" aria-pressed="false"
-                            onclick="filterKategori('Sejarah', this)">Sejarah</button>
+                        <?php foreach ($kategori_list as $kat): ?>
+                            <button type="button" class="category-btn" aria-pressed="false"
+                                onclick="filterKategori('<?= e($kat['nama_kategori']) ?>', this)">
+                                <?= e($kat['nama_kategori']) ?>
+                            </button>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1080">
-        <div id="toastPinjam" class="toast border-0" role="alert"
-            style="background:var(--gelap); color:white; border-radius:12px">
-            <div class="d-flex align-items-center">
-                <div class="toast-body d-flex align-items-center gap-2">
-                    <span
-                        style="width:32px;height:32px;border-radius:8px;background:var(--ungu);display:inline-flex;align-items:center;justify-content:center">
-                        <i class="bi bi-check-lg" aria-hidden="true"></i>
-                    </span>
-                    <span id="toastMsg">Buku disimpan ke rak</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-3" aria-label="Tutup"
-                    data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
