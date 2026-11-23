@@ -4,7 +4,7 @@
 
 > Akun demo — **Admin**: `admin@pustaka.com` / `admin123` · **User**: `andi@email.com` / `andi123`
 
-<img src="thumbnail/thumbnail.png" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
+<img src="docs/screenshots/landing-tamu.png" alt="Thumbnail PustakaDigital - Perpustakaan Berbasis Web" style="width: 100%;">
 
 # Anggota Kelompok
 <div align="center">
