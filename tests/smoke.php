@@ -171,7 +171,8 @@ cek('catalog tamu melihat Masuk', str_contains($b, '>Masuk</a>'));
 cek('catalog pil genre DB', str_contains($b, 'Teknologi') && str_contains($b, 'Psikologi'));
 [$s, $b] = http('/assets/css/root.css');
 cek('root.css tersaji 200', $s === 200);
-cek('root.css byte-identik dengan kontrak lama', $b === file_get_contents("$root/assets/css/root.css"));
+// Kontrak UI: root.css harus byte-identik dengan versi lama (hash dicatat sebelum cutover).
+cek('root.css byte-identik dengan kontrak lama', hash('sha256', $b) === '15fb58762d731e502aef7e99d27d6ac53e3e5a39a418e5b1fc2d222591eda182');
 [$s] = http('/uploads/covers/1.jpg');
 cek('sampul publik 200', $s === 200);
 
