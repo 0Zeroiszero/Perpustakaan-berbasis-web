@@ -82,7 +82,7 @@ if ($shell) {
                             <div class="badges">
                                 <span class="badge bg-ungu-muda text-ungu"><?= e($b['genre_name']) ?></span>
                             </div>
-                            <h3 class="h5 fw-bold mt-2 mb-1"><?= e($b['title']) ?></h3>
+                            <h3 class="h5 fw-bold mt-2 mb-1" title="<?= e($b['title']) ?>"><?= e($b['title']) ?></h3>
                             <p class="text-secondary small mb-1"><?= e($b['author_name']) ?></p>
                             <div class="d-grid gap-2">
                                 <a href="<?= url('book-detail.php?slug=' . urlencode($b['slug'])) ?>" class="btn btn-ungu">Lihat Detail</a>

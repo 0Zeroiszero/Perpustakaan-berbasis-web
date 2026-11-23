@@ -68,6 +68,7 @@ Halaman tamu sebagai pintu masuk koleksi:
 ### 📖 Pembaca PDF Inline
 - PDF.js merender buku langsung di browser (`read.php?slug=...`)
 - Toolbar: kembali ke detail, halaman sebelumnya/berikutnya, input halaman, **Fit Halaman** / **Fit Lebar** (tanpa persentase)
+- Kanvas dirender mengikuti `devicePixelRatio`, jadi teks tetap tajam di layar HP/Retina, termasuk saat Fit Halaman
 - Progres `last_page` tersimpan otomatis tanpa tombol dan tanpa reload (form tersembunyi ke iframe)
 - Saat pertama dibaca dan user belum punya status, sistem menandai **Sedang dibaca**; jika user sudah memilih status, sistem tidak mengubahnya
 - Baris yang dikelola sistem otomatis **Telah dibaca** saat halaman terakhir tercapai; kembali ke halaman sebelumnya tetap 100% sampai user mengganti status
@@ -135,11 +136,5 @@ Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database
 - Fokus keyboard selalu terlihat, dan animasi mengikuti `prefers-reduced-motion`.
 - Ukuran huruf serta padding/margin menyesuaikan saat layar mengecil (teruji sampai 320px).
 - Warna tema diatur lewat token di `public/assets/css/root.css`; kontras teks memenuhi WCAG AA.
-
----
-
-## Future Release
-
-Fitur-fitur yang direncanakan untuk rilis mendatang:
-- Pagination pada tabel admin
-- Reset password dan verifikasi email
+- Topbar mobile: subjudul disembunyikan, judul satu baris, profil berupa avatar bulat. Dropdown tetap di dalam viewport.
+- Judul kartu dibatasi dua baris dengan elipsis; judul lengkap tersedia lewat tooltip.

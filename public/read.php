@@ -126,10 +126,19 @@ require __DIR__ . '/../includes/partials/app_topbar.php';
 
                 pdfDoc.getPage(target).then(function (page) {
                     if (urut !== renderTerakhir) return;
-                    const viewport = page.getViewport({ scale: skalaUntuk(page) });
-                    kanvas.width = viewport.width;
-                    kanvas.height = viewport.height;
-                    return page.render({ canvasContext: konteks, viewport: viewport }).promise;
+
+                    // Resolusi fisik mengikuti DPR agar teks tidak buram di layar kecil/Retina.
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+                    const skala = skalaUntuk(page);
+                    const viewportCss = page.getViewport({ scale: skala });
+                    const viewportRender = page.getViewport({ scale: skala * dpr });
+
+                    kanvas.width = Math.max(1, Math.round(viewportRender.width));
+                    kanvas.height = Math.max(1, Math.round(viewportRender.height));
+                    kanvas.style.width = viewportCss.width + "px";
+                    kanvas.style.height = viewportCss.height + "px";
+
+                    return page.render({ canvasContext: konteks, viewport: viewportRender }).promise;
                 }).then(function () {
                     if (urut !== renderTerakhir) return;
                     if (simpan !== false) simpanProgres(target);

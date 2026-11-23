@@ -9,7 +9,7 @@ const DB_PASS = '';
 const DB_NAME = 'optl_pustaka';
 
 // Naikkan bila css/js berubah supaya browser tidak memakai cache lama (?v=...).
-const ASSET_VERSION = '2';
+const ASSET_VERSION = '3';
 
 const STORAGE_DIR = __DIR__ . '/../storage/ebooks';
 const COVER_DIR = __DIR__ . '/../public/uploads/covers';

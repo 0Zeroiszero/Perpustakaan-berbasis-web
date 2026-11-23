@@ -22,8 +22,8 @@ require __DIR__ . '/../includes/partials/navbar.php';
 
 <main class="landing">
     <div class="container">
-        <div class="row g-4 g-lg-5 align-items-center">
-            <div class="col-lg-7">
+        <div class="landing-grid">
+            <div class="landing-copy">
                 <span class="badge-soft">✦ Gratis untuk pelajar Indonesia</span>
                 <h1 class="mt-3">Baca Lebih <span>Pintar,</span><br>Bukan Lebih Lama.</h1>
                 <p class="text-secondary mb-3">
@@ -35,21 +35,9 @@ require __DIR__ . '/../includes/partials/navbar.php';
                         placeholder="Cari buku atau penulis...">
                     <button class="btn btn-ungu px-4">Cari</button>
                 </form>
-
-                <div class="landing-books" aria-label="Sebagian koleksi terbaru">
-                    <?php foreach ($buku as $b): ?>
-                        <a class="landing-book" href="<?= url('book-detail.php?slug=' . urlencode($b['slug'])) ?>"
-                            title="<?= e($b['title']) ?> — <?= e($b['author_name']) ?>">
-                            <span class="landing-cover">
-                                <img src="<?= url(e($b['cover_path'])) ?>" alt="<?= e($b['title']) ?>" loading="lazy">
-                            </span>
-                            <span class="landing-title"><?= e($b['title']) ?></span>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
             </div>
 
-            <div class="col-lg-5 landing-register">
+            <div class="landing-register">
                 <div class="register-card">
                     <h2 class="h4 fw-bold mb-1">Mulai membaca gratis</h2>
                     <p class="text-secondary small mb-3">Buat akun untuk menyimpan rak dan melanjutkan bacaan.</p>
@@ -75,6 +63,20 @@ require __DIR__ . '/../includes/partials/navbar.php';
                     <p class="text-center text-secondary small mt-3 mb-0">
                         Sudah punya akun? <a href="<?= url('login.php') ?>" class="text-ungu fw-bold">Masuk</a>
                     </p>
+                </div>
+            </div>
+
+            <div class="landing-books-wrap">
+                <div class="landing-books" aria-label="Sebagian koleksi terbaru">
+                    <?php foreach ($buku as $b): ?>
+                        <a class="landing-book" href="<?= url('book-detail.php?slug=' . urlencode($b['slug'])) ?>"
+                            title="<?= e($b['title']) ?> — <?= e($b['author_name']) ?>">
+                            <span class="landing-cover">
+                                <img src="<?= url(e($b['cover_path'])) ?>" alt="<?= e($b['title']) ?>" loading="lazy">
+                            </span>
+                            <span class="landing-title"><?= e($b['title']) ?></span>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

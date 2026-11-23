@@ -161,7 +161,7 @@ require __DIR__ . '/../includes/partials/sidebar.php';
                         </div>
                         <div class="p-3">
                             <span class="badge <?= $badgeKategori ?>"><?= e($b['genre_name']) ?></span>
-                            <h2 class="h5 fw-bold mt-2 mb-1"><?= e($b['title']) ?></h2>
+                            <h2 class="h5 fw-bold mt-2 mb-1" title="<?= e($b['title']) ?>"><?= e($b['title']) ?></h2>
                             <p class="text-secondary small mb-2"><?= e($b['author_name']) ?></p>
                             <div class="progress mb-1" style="height:7px;">
                                 <div class="progress-bar" style="width:<?= $progres ?>%;background:var(--ungu);"></div>

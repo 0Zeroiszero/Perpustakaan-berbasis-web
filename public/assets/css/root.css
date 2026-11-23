@@ -471,8 +471,17 @@ a.card-clean {
     margin-top: auto;
     padding-top: .75rem;
 }
-/* Judul & penulis 1 baris */
+/* Judul kartu maksimal 2 baris + ellipsis (markup memakai h3). */
+.grid-buku .book-card h3,
 .grid-buku .book-card h5,
+.grid-buku .book-card h2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+}
 .grid-buku .book-card .p-3 > p {
     white-space: nowrap;
     overflow: hidden;
@@ -573,7 +582,7 @@ a.card-clean {
     background: var(--merah-muda);
     color: #B91C1C; /* merah lebih gelap: di latar merah-muda butuh ≥4.5:1 */
 }
-.main-with-sidebar { margin-left: 250px; }
+.main-with-sidebar { margin-left: 250px; min-height: 100vh; }
 /* Container Bootstrap memakai max-width viewport; di dalam shell sisa lebar harus 100%. */
 .main-with-sidebar > main.container { max-width: 100%; }
 .topbar {
@@ -583,6 +592,15 @@ a.card-clean {
     background: #fff;
     border-bottom: 1px solid #eee;
     box-shadow: var(--shadow-sm);
+}
+.topbar .topbar-title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.topbar .dropdown-menu {
+    max-width: calc(100vw - 1rem);
 }
 .stat {
     border: 1px solid #eee;
@@ -846,6 +864,39 @@ a.card-clean {
         outline: 3px solid var(--ungu);
         outline-offset: 2px;
         box-shadow: none;
+    }
+}
+
+/* Topbar mobile: subjudul hilang, judul satu baris, profil jadi avatar bulat. */
+@media (max-width: 767.98px) {
+    .topbar {
+        padding: .5rem .65rem !important;
+    }
+    .topbar .topbar-sub {
+        display: none;
+    }
+    .topbar .topbar-title {
+        max-width: calc(100vw - 155px);
+    }
+    .topbar > .d-flex > div:first-of-type {
+        min-width: 0;
+    }
+    .topbar .btn-akun {
+        width: 40px;
+        height: 40px;
+        padding: .2rem;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    .topbar .btn-akun .nama-akun,
+    .topbar .btn-akun.dropdown-toggle::after {
+        display: none;
+    }
+    .topbar .btn-akun .avatar {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+        font-size: .8rem;
     }
 }
 

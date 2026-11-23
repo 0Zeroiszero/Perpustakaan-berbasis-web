@@ -121,7 +121,10 @@ if ($shell) {
                 <dl class="row row-cols-2 row-cols-md-3 g-3 mb-0">
                     <div class="col">
                         <dt class="info-label">Penulis</dt>
-                        <dd class="mb-0 fw-semibold"><?= e($buku['author_name']) ?></dd>
+                        <dd class="mb-0 fw-semibold">
+                            <a class="text-ungu detail-author-link"
+                                href="<?= url('author.php?slug=' . urlencode($buku['author_slug'])) ?>"><?= e($buku['author_name']) ?></a>
+                        </dd>
                     </div>
                     <div class="col">
                         <dt class="info-label">Kategori</dt>

@@ -14,7 +14,7 @@ import urllib.request
 from websockets.sync.client import connect
 
 BASE = "http://localhost/Perpustakaan-berbasis-web/public"
-LEBAR = [320, 375, 768, 1200, 1366]
+LEBAR = [320, 375, 390, 768, 1200, 1366]
 TAMU = [
     "index.php",
     "catalog.php",
@@ -164,6 +164,19 @@ try:
     cek("landing grid 3 kolom", d["grid"] == 3, d["grid"])
     cek("landing tamu memakai navbar publik", d["navbar"] and not d["sidebar"])
 
+    # Landing mobile: judul -> registrasi -> buku.
+    send("Emulation.setDeviceMetricsOverride", {"width": 390, "height": 844, "deviceScaleFactor": 1, "mobile": True})
+    kunjungi("index.php")
+    d = json.loads(evaluasi(
+        'JSON.stringify({copy:document.querySelector(".landing-copy").getBoundingClientRect().top,'
+        'reg:document.querySelector(".landing-register").getBoundingClientRect().top,'
+        'books:document.querySelector(".landing-books-wrap").getBoundingClientRect().top,'
+        'n:document.querySelectorAll(".landing-book").length})'
+    ))
+    cek("landing mobile: judul di atas", d["copy"] < d["reg"], d)
+    cek("landing mobile: registrasi sebelum buku", d["reg"] < d["books"], d)
+    cek("landing mobile: 3 buku", d["n"] == 3, d)
+
     # Login admin via HTTP, lalu pasang cookie di CDP.
     jar = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
@@ -198,6 +211,39 @@ try:
     cek("dropdown profil keluar merah", d["logout"] == "rgb(220, 38, 38)", d["logout"])
     cek("Rak Saya ada di sidebar, bukan dropdown", d["sideRak"] and not d["dropRak"], d)
 
+    # Mobile topbar: subjudul hilang, avatar bulat saja, dropdown tetap dalam viewport.
+    send("Emulation.setDeviceMetricsOverride", {"width": 375, "height": 812, "deviceScaleFactor": 1, "mobile": True})
+    kunjungi("catalog.php")
+    d = json.loads(evaluasi(
+        'JSON.stringify({sub:getComputedStyle(document.querySelector(".topbar-sub")).display,'
+        'nama:getComputedStyle(document.querySelector(".topbar .nama-akun")).display,'
+        'judul:getComputedStyle(document.querySelector(".topbar-title")).whiteSpace,'
+        'clamp:getComputedStyle(document.querySelector(".grid-buku .book-card h3")).webkitLineClamp})'
+    ))
+    cek("topbar mobile tanpa subjudul", d["sub"] == "none", d)
+    cek("topbar mobile avatar-only", d["nama"] == "none", d)
+    cek("topbar judul satu baris", d["judul"] == "nowrap", d)
+    cek("judul kartu maksimal 2 baris", d["clamp"] == "2", d)
+
+    send("Runtime.evaluate", {"expression": 'document.querySelector(".topbar .btn-akun").click()'})
+    time.sleep(0.3)
+    d = json.loads(evaluasi(
+        'JSON.stringify({show:!!document.querySelector(".topbar .dropdown-menu.show"),'
+        'left:document.querySelector(".topbar .dropdown-menu.show").getBoundingClientRect().left,'
+        'right:document.querySelector(".topbar .dropdown-menu.show").getBoundingClientRect().right,'
+        'iw:window.innerWidth})'
+    ))
+    cek("dropdown profil terbuka", d["show"], d)
+    cek("dropdown profil tidak overflow", d["left"] >= 0 and d["right"] <= d["iw"], d)
+
+    # Sticky: topbar harus tetap di atas setelah scroll.
+    send("Runtime.evaluate", {"expression": 'window.scrollTo(0, 600)'})
+    time.sleep(0.3)
+    d = json.loads(evaluasi(
+        'JSON.stringify({y:window.scrollY,top:document.querySelector(".topbar").getBoundingClientRect().top})'
+    ))
+    cek("topbar katalog sticky saat scroll", d["y"] > 100 and abs(d["top"]) <= 1, d)
+
     # Modal admin auto-terbuka dan tidak overflow di 320px.
     send("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 800, "deviceScaleFactor": 1, "mobile": True})
     kunjungi("admin/users.php?edit=2")
@@ -220,6 +266,19 @@ try:
     cek("footer modal buku terlihat", d["footer"] <= d["tinggi"] + 1, d)
     cek("modal buku tidak overflow horizontal", d["sw"] <= d["iw"], d)
     cek("topbar admin punya dropdown profil", d["akun"], d)
+
+    # Reader di HP: resolusi fisik mengikuti DPR agar tidak buram (fit halaman/lebar).
+    send("Emulation.setDeviceMetricsOverride", {"width": 390, "height": 844, "deviceScaleFactor": 2, "mobile": True})
+    kunjungi("read.php?slug=laskar-pelangi", 8)
+    pump(4)
+    d = json.loads(evaluasi(
+        'JSON.stringify({dpr:window.devicePixelRatio,'
+        'w:document.getElementById("pdfCanvas").width,'
+        'css:document.getElementById("pdfCanvas").getBoundingClientRect().width,'
+        'h:document.getElementById("pdfCanvas").height})'
+    ))
+    cek("reader HP memakai resolusi DPR", d["dpr"] >= 2 and d["w"] >= d["css"] * 1.8, d)
+    cek("reader HP kanvas punya tinggi", d["h"] > 100, d)
 
     # Reader: kanvas benar-benar berisi, fit halaman/lebar, iframe auto-save.
     send("Emulation.setDeviceMetricsOverride", {"width": 1200, "height": 900, "deviceScaleFactor": 1, "mobile": False})

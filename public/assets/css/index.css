@@ -7,6 +7,19 @@
     background: #fff;
 }
 
+.landing-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr);
+    grid-template-areas:
+        "copy register"
+        "books register";
+    gap: 16px 32px;
+    align-items: start;
+}
+.landing-copy { grid-area: copy; min-width: 0; }
+.landing-register { grid-area: register; min-width: 0; }
+.landing-books-wrap { grid-area: books; min-width: 0; }
+
 .landing h1 {
     font-size: clamp(1.75rem, 1.2rem + 2.1vw, 3rem);
     line-height: 1.08;
@@ -119,8 +132,15 @@
 
 @media (max-width: 991.98px) {
     .landing { padding: 20px 0 30px; }
+    .landing-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "copy"
+            "register"
+            "books";
+        gap: 14px;
+    }
     .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .landing-register { order: -1; }
 }
 
 @media (max-width: 575.98px) {

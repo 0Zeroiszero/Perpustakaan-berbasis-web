@@ -9,8 +9,8 @@ $user = akun();
             <i class="bi bi-list" aria-hidden="true"></i>
         </button>
         <div>
-            <b><?= e($judulTopbar ?? '') ?></b>
-            <div class="small text-secondary"><?= e($subTopbar ?? '') ?></div>
+            <b class="topbar-title"><?= e($judulTopbar ?? '') ?></b>
+            <div class="small text-secondary topbar-sub"><?= e($subTopbar ?? '') ?></div>
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
             <?php if (!empty($cari)): ?>
@@ -21,7 +21,7 @@ $user = akun();
             <?php endif; ?>
             <div class="dropdown">
                 <button type="button" class="btn btn-akun dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                    aria-expanded="false" aria-label="Menu akun <?= e($user['nama']) ?>">
                     <span class="avatar" aria-hidden="true"><?= e(mb_strtoupper(mb_substr($user['nama'], 0, 1))) ?></span>
                     <span class="nama-akun"><?= e($user['nama']) ?></span>
                 </button>

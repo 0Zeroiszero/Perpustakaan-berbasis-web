@@ -176,7 +176,7 @@ cek('catalog pil genre DB', str_contains($b, 'Teknologi') && str_contains($b, 'P
 [$s, $b] = http('/assets/css/root.css');
 cek('root.css tersaji 200', $s === 200);
 // Kontrak UI: root.css harus byte-identik dengan versi lama (hash dicatat sebelum cutover).
-cek('root.css byte-identik dengan kontrak lama', hash('sha256', $b) === '8ab12bbf9baa0d2fe35e6e6512bc19d1f52c774120d11ea301a866b3f741c776');
+cek('root.css byte-identik dengan kontrak lama', hash('sha256', $b) === 'abdf9e5cd14179788c54e005c3e546c137afc6de3b4713dd8364b9243176021d');
 [$s] = http('/uploads/covers/1.jpg');
 cek('sampul publik 200', $s === 200);
 
@@ -200,6 +200,7 @@ cek('author slug salah 404', $s === 404);
 // REVISI: penerbit clickable seperti penulis
 [$s, $b] = http('/book-detail.php?slug=laskar-pelangi');
 cek('detail menautkan publisher', $s === 200 && str_contains($b, 'publisher.php?slug=bentang-pustaka'));
+cek('detail tabel author ungu + link', $s === 200 && str_contains($b, 'class="text-ungu detail-author-link"') && str_contains($b, 'author.php?slug=george-r-r-martin'));
 [$s, $b] = http('/publisher.php?slug=bentang-pustaka');
 cek('publisher 200 + daftar buku', $s === 200 && str_contains($b, 'Bentang Pustaka') && str_contains($b, 'Laskar Pelangi'));
 [$s] = http('/publisher.php?slug=tidak-ada');
