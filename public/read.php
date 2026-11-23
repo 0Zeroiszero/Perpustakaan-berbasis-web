@@ -92,14 +92,17 @@ require __DIR__ . '/../includes/partials/navbar.php';
             const konteks = kanvas.getContext("2d");
 
             function renderPage(nomor) {
+                // Guard race: klik cepat/zoom saat render berjalan tidak menumpuk render di kanvas yang sama.
+                if (!pdfDoc || nomor === halamanIni) return;
+                halamanIni = nomor;
+                document.getElementById("pageNum").value = nomor;
+
                 pdfDoc.getPage(nomor).then(function (page) {
                     const viewport = page.getViewport({ scale: skala });
                     kanvas.width = viewport.width;
                     kanvas.height = viewport.height;
                     return page.render({ canvasContext: konteks, viewport: viewport }).promise;
                 }).then(function () {
-                    halamanIni = nomor;
-                    document.getElementById("pageNum").value = nomor;
                     simpanProgres(nomor);
                 });
             }

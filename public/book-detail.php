@@ -32,6 +32,7 @@ require __DIR__ . '/../includes/partials/head.php';
 </nav>
 
 <main class="container py-5">
+    <?php tampilkan_flash(); ?>
     <?php if (!$buku): ?>
         <div class="card-clean p-5 text-center">
             <i class="bi bi-search" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>

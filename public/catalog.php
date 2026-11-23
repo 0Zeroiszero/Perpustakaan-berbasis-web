@@ -21,6 +21,8 @@ require __DIR__ . '/../includes/partials/navbar.php';
         <p class="text-secondary mb-0">Cari, filter, lalu simpan dan baca koleksinya secara digital.</p>
     </div>
 
+    <?php tampilkan_flash(); ?>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h5 fw-bold mb-0">Koleksi Buku</h2>
         <span id="jumlahBuku" class="badge bg-ungu-muda text-ungu rounded-pill px-3 py-2" aria-live="polite"><?= count($buku) ?>
@@ -70,7 +72,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
             <h2 class="h5 mt-3"><?= $buku ? 'Buku tidak ditemukan' : 'Belum ada buku' ?></h2>
             <p class="text-secondary"><?= $buku ? 'Coba kata kunci lain atau pilih kategori Semua' : 'Admin belum menambahkan koleksi.' ?></p>
             <button type="button" class="btn btn-ungu mt-2"
-                onclick="filterKategori('Semua', document.querySelector('.category-btn'))">Reset Filter</button>
+                onclick="filterKategori('Semua', document.querySelector('#modalCari .category-btn'))">Reset Filter</button>
         </div>
     </div>
 </main>
@@ -103,13 +105,10 @@ require __DIR__ . '/../includes/partials/navbar.php';
                 </p>
                 <!-- CATEGORY BUTTON -->
                 <div class="mt-3 d-flex flex-wrap gap-2" role="group" aria-label="Filter kategori">
-                    <button type="button" class="category-btn active" aria-pressed="true"
-                        onclick="filterKategori('Semua', this)">Semua</button>
+                    <button type="button" class="category-btn active" aria-pressed="true" data-nama="Semua">Semua</button>
                     <?php foreach ($genre_list as $g): ?>
                         <button type="button" class="category-btn" aria-pressed="false"
-                            onclick="filterKategori('<?= e($g['name']) ?>', this)">
-                            <?= e($g['name']) ?>
-                        </button>
+                            data-nama="<?= e($g['name']) ?>"><?= e($g['name']) ?></button>
                     <?php endforeach; ?>
                 </div>
             </div>

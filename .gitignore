@@ -3,3 +3,4 @@ svg-builder/
 .vercel
 .env*
 .superpowers/
+.planning/

@@ -121,7 +121,7 @@ Aplikasi memakai database MySQL **`optl_pustaka`** dengan tujuh tabel 3NF + satu
 - `reading_progress` — halaman terakhir per (user, book)
 - `v_books_catalog` — VIEW gabungan katalog sehingga halaman publik cukup `SELECT *` (0 JOIN)
 
-Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`, lalu jalankan `python database/migrasi_berkas.py` sekali untuk menyiapkan berkas PDF dummy dan sampul di `storage/ebooks/` dan `public/uploads/covers/`. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
+Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`. Berkas PDF dan sampul dummy sudah ikut di repo (`storage/ebooks/`, `public/uploads/covers/`), jadi tidak ada langkah migrasi tambahan pada clone baru. Skrip `database/migrasi_berkas.py` hanya dokumentasi historis: ia butuh folder lama `ebook/`+`cover/` dan `pypdf`, dan hanya dipakai sekali saat mengevaluasi skema awal. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
 
 ---
 

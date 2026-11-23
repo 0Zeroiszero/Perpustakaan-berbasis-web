@@ -123,7 +123,8 @@ function next_valid(string $next): bool
 {
     return str_starts_with($next, BASE_URL . '/')
         && !preg_match('/[\r\n]/', $next)
-        && !preg_match('#/(login|register)\.php#', $next);
+        && !str_contains($next, '..')
+        && !preg_match('#/(login|register|logout)\.php#', $next);
 }
 
 // URL kembali setelah POST: referer bila lokal, else fallback.
@@ -155,8 +156,10 @@ function csrf_field(): string
 function cek_csrf(): void
 {
     $token = is_string($_POST['csrf'] ?? null) ? $_POST['csrf'] : '';
+    $sesi = is_string($_SESSION['csrf'] ?? null) ? $_SESSION['csrf'] : '';
 
-    if (!hash_equals($_SESSION['csrf'] ?? '', $token)) {
+    // Sesi tanpa token juga harus gagal (hash_equals('', '') bernilai true).
+    if ($sesi === '' || !hash_equals($sesi, $token)) {
         http_response_code(419);
         exit('Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.');
     }

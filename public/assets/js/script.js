@@ -91,6 +91,14 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("searchInput").focus();
         });
     }
+
+    // Pil kategori: nama genre dibaca dari data-nama (bukan inline onclick),
+    // supaya nama berapostrof tidak merusak JS dan data admin tidak jadi celah XSS.
+    document.querySelectorAll(".category-btn[data-nama]").forEach(function (pil) {
+        pil.addEventListener("click", function () {
+            filterKategori(pil.dataset.nama, pil);
+        });
+    });
 });
 
 // Cari buku di katalog, yang judul/penulisnya cocok doang yang nampil

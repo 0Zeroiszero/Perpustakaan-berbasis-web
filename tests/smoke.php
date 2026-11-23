@@ -55,11 +55,12 @@ foreach (['users', 'publishers', 'genres', 'authors', 'books', 'collections', 'r
 cek('VIEW v_books_catalog ada', isset($tables['v_books_catalog']) && $tables['v_books_catalog'] === 'VIEW');
 
 $hitung = fn(string $t): int => (int) $db->query("SELECT COUNT(*) FROM `$t`")->fetch_row()[0];
-cek('seed 10 users', $hitung('users') === 10);
-cek('seed 10 books', $hitung('books') === 10);
-cek('seed 10 authors', $hitung('authors') === 10);
-cek('seed 10 genres', $hitung('genres') === 10);
-cek('seed 10 collections', $hitung('collections') === 10);
+// Invarian, bukan angka seed mutlak: suite harus tetap green setelah demo/pakai normal.
+cek('seed users >= 10', $hitung('users') >= 10);
+cek('seed books >= 10', $hitung('books') >= 10);
+cek('seed authors >= 10', $hitung('authors') >= 10);
+cek('seed genres >= 10', $hitung('genres') >= 10);
+cek('collections status selalu valid', (int) $db->query("SELECT COUNT(*) FROM collections WHERE status NOT IN ('to_read','reading','not_interested','finished')")->fetch_row()[0] === 0);
 cek('seed >=5 publishers', $hitung('publishers') >= 5);
 
 $admin = $db->query("SELECT password_hash, role, is_active FROM users WHERE email='admin@pustaka.com'")->fetch_assoc();
@@ -69,7 +70,7 @@ $andi = $db->query("SELECT password_hash, role FROM users WHERE email='andi@emai
 cek('password demo user berlaku', $andi && password_verify('andi123', $andi['password_hash']) && $andi['role'] === 'member');
 
 $view = $db->query('SELECT COUNT(*) FROM v_books_catalog WHERE is_active=1')->fetch_row()[0];
-cek('VIEW katalog 10 buku aktif', (int) $view === 10);
+cek('VIEW katalog >= 10 buku aktif', (int) $view >= 10);
 $kolom = $db->query('SELECT * FROM v_books_catalog LIMIT 1')->fetch_assoc();
 cek('VIEW membawa nama penulis/genre/penerbit', $kolom && isset($kolom['author_name'], $kolom['genre_name'], $kolom['publisher_name']));
 
@@ -165,7 +166,7 @@ cek('index dua pintu masuk', str_contains($b, 'Katalog Buku') && str_contains($b
 cek('index tanpa URL route lama', $s === 200 && !str_contains($b, 'route/'));
 [$s, $b] = http('/catalog.php');
 cek('catalog.php 200', $s === 200, "status $s");
-cek('catalog 10 kartu buku', substr_count($b, 'book-item') === 10);
+cek('catalog >= 10 kartu buku', substr_count($b, 'book-item') >= 10);
 cek('catalog modal cari', str_contains($b, 'modalCari'));
 cek('catalog tamu melihat Masuk', str_contains($b, '>Masuk</a>'));
 cek('catalog pil genre DB', str_contains($b, 'Teknologi') && str_contains($b, 'Psikologi'));
@@ -242,6 +243,8 @@ $token = csrf_dari($b);
 $uji = 'smoke-' . substr(md5((string) mt_rand()), 0, 6) . '@uji.test';
 [$s, , $h] = http('/register.php', $post(['csrf' => $token, 'display_name' => 'Akun Uji', 'email' => $uji, 'password' => 'rahasia123']), $jar);
 cek('register sukses -> login', $s === 302 && str_contains(lokasi($h), 'login.php'));
+[$s, $b] = http('/login.php', [], $jar);
+cek('flash registrasi tampil di login', $s === 200 && str_contains($b, 'Akun berhasil dibuat'));
 [$s, $b, $h] = http('/register.php', [], $jar);
 $token = csrf_dari($b);
 [$s, , $h] = http('/register.php', $post(['csrf' => $token, 'display_name' => 'Duplikat', 'email' => $uji, 'password' => 'rahasia123']), $jar);
@@ -341,19 +344,21 @@ cek('stream buku nonaktif 404', $s === 404);
 cek('buku nonaktif hilang dari katalog', $s === 200 && !str_contains($b, 'Prinsip Desain UI/UX'));
 $db->query('UPDATE books SET is_active = 1 WHERE book_id = 10');
 
-// storage tidak punya URL publik (deny .htaccess; DocumentRoot Laragon = www)
-$ch = curl_init('http://localhost/Perpustakaan-berbasis-web/storage/ebooks/1.pdf');
-curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 15]);
-curl_exec($ch);
-$sStorage = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-cek('storage diblokir dari URL (403/404)', $sStorage === 403 || $sStorage === 404, "status $sStorage");
-foreach (['/database/optl_pustaka.sql', '/includes/config.php', '/tests/smoke.php'] as $p) {
-    [$s] = http($p);
-    cek("direktori sensitif diblokir: $p", $s === 403 || $s === 404, "status $s");
+// storage & direktori sensitif tidak punya URL publik: probe URL ABSOLUT di luar public/
+// (DocumentRoot Laragon = www; probe relatif public/ akan 404 palsu tanpa menguji deny).
+foreach (['storage/ebooks/1.pdf', 'database/optl_pustaka.sql', 'includes/config.php', 'tests/smoke.php'] as $p) {
+    $ch = curl_init('http://localhost/Perpustakaan-berbasis-web/' . $p);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 15]);
+    curl_exec($ch);
+    $sD = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    cek("direktori sensitif diblokir: $p", $sD === 403 || $sD === 404, "status $sD");
 }
 @unlink($jar3);
 
 // ---------- SPEC-06: auto-save last_page ----------
+// Fixture milik admin (user 1 buku 9) supaya uji kepemilikan tidak bergantung seed yang bisa berubah saat demo.
+$db->query('INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (1, 9, 3) AS b ON DUPLICATE KEY UPDATE last_page = b.last_page');
+$db->query('INSERT INTO collections (user_id, book_id, status) VALUES (1, 9, \'reading\') AS b ON DUPLICATE KEY UPDATE status = b.status');
 $jar4 = sys_get_temp_dir() . '/smoke-optl-cookies4.txt';
 @unlink($jar4);
 [$s, $b] = http('/login.php', [], $jar4);
@@ -374,7 +379,10 @@ cek('progress tanpa CSRF 419', $s === 419);
 cek('progress buku tak dikenal 404', $s === 404);
 [$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 3, 'last_page' => 5]));
 cek('progress tamu ditolak', $s === 302 || $s === 403);
-cek('progress milik orang lain tak tersentuh', (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=1 AND book_id=8')->fetch_row()[0] === 12);
+cek('progress milik orang lain tak tersentuh', (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=1 AND book_id=9')->fetch_row()[0] === 3);
+// last_page bertahan setelah reload halaman reader
+[$s, $b] = http('/read.php?slug=laskar-pelangi', [], $jar4);
+cek('last_page bertahan setelah reload', $s === 200 && str_contains($b, 'id="lastPage" value="5"'));
 // bersihkan baris uji (seed tidak punya progres andi buku 3)
 $db->query('DELETE FROM reading_progress WHERE user_id=2 AND book_id=3');
 @unlink($jar4);
@@ -390,10 +398,19 @@ $token = csrf_dari($b);
 http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar5);
 
 [$s, $b] = http('/my-shelf.php', [], $jar5);
-cek('rak 200 + isi seed', $s === 200 && str_contains($b, 'Rak Saya') && str_contains($b, 'Dasar-Dasar Basis Data'));
+$token = csrf_dari($b);
+// Fixture rak sendiri (buku 1 & 4) supaya uji tidak bergantung seed yang bisa berubah saat demo.
+http('/actions/collection-save.php', $post(['csrf' => $token, 'book_id' => 1, 'status' => 'to_read']), $jar5);
+http('/actions/collection-save.php', $post(['csrf' => $token, 'book_id' => 4, 'status' => 'to_read']), $jar5);
+[$s, $b] = http('/catalog.php', [], $jar5);
+cek('flash simpan rak tampil di katalog', $s === 200 && str_contains($b, 'Buku disimpan ke Rak Saya'));
+[$s, $b] = http('/my-shelf.php', [], $jar5);
+cek('rak 200 + fixture', $s === 200 && str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'Fisika Dasar Modern'));
 cek('rak tab 4 status', $s === 200 && str_contains($b, 'status=to_read') && str_contains($b, 'status=reading') && str_contains($b, 'status=finished') && str_contains($b, 'status=not_interested'));
+[$s, $b] = http('/my-shelf.php?status=to_read', [], $jar5);
+cek('rak tab to_read berisi fixture', $s === 200 && str_contains($b, 'Fisika Dasar Modern'));
 [$s, $b] = http('/my-shelf.php?status=reading', [], $jar5);
-cek('rak tab reading kosong untuk andi', $s === 200 && !str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'masih kosong'));
+cek('rak tab reading menyaring fixture', $s === 200 && !str_contains($b, 'Fisika Dasar Modern'));
 [$s, $b] = http('/my-shelf.php', [], $jar5);
 $token = csrf_dari($b);
 
@@ -414,16 +431,23 @@ cek('simpan rak tanpa CSRF 419', $s === 419);
 
 [$s, $b] = http('/my-shelf.php', [], $jar5);
 $token = csrf_dari($b);
-http('/actions/collection-delete.php', $post(['csrf' => $token, 'book_id' => 8]), $jar5);
-cek('hapus rak orang lain ditolak', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=1 AND book_id=8')->fetch_row()[0] === 1);
+http('/actions/collection-delete.php', $post(['csrf' => $token, 'book_id' => 9]), $jar5);
+cek('hapus rak orang lain ditolak', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=1 AND book_id=9')->fetch_row()[0] === 1);
 [$s, , $h] = http('/actions/collection-delete.php', $post(['csrf' => $token, 'book_id' => 2]), $jar5);
 cek('hapus rak sendiri sukses', $s === 302 && (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2 AND book_id=2')->fetch_row()[0] === 0);
 [$s] = http('/actions/collection-delete.php', $post(['csrf' => '', 'book_id' => 1]), $jar5);
 cek('hapus rak tanpa CSRF 419', $s === 419);
-cek('seed rak andi utuh', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2 AND book_id=1')->fetch_row()[0] === 1);
+cek('fixture rak admin utuh setelah uji hapus', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=1 AND book_id=9')->fetch_row()[0] === 1);
 
+$nRak = (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2')->fetch_row()[0];
+$nSelesai = (int) $db->query("SELECT COUNT(*) FROM collections WHERE user_id=2 AND status='finished'")->fetch_row()[0];
 [$s, $b] = http('/dashboard-user.php', [], $jar5);
-cek('dashboard user 200 + statistik nyata', $s === 200 && str_contains($b, 'id="statRakSaya">1<') && str_contains($b, 'id="statSelesaiDibaca">1<') && str_contains($b, 'Total Koleksi'));
+cek('dashboard user 200 + statistik nyata', $s === 200 && str_contains($b, 'id="statRakSaya">' . $nRak . '<') && str_contains($b, 'id="statSelesaiDibaca">' . $nSelesai . '<') && str_contains($b, 'Total Koleksi'));
+// bersih-bersih fixture & kembalikan status seed andi buku 1
+$db->query("UPDATE collections SET status='finished' WHERE user_id=2 AND book_id=1");
+$db->query('DELETE FROM collections WHERE user_id=2 AND book_id=4');
+$db->query('DELETE FROM collections WHERE user_id=1 AND book_id=9');
+$db->query('DELETE FROM reading_progress WHERE user_id=1 AND book_id=9');
 @unlink($jar5);
 
 // ---------- SPEC-08: master penerbit & penulis (admin) ----------
@@ -497,7 +521,7 @@ $token = csrf_dari($b);
 http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar7);
 
 [$s, $b] = http('/admin/books.php', [], $jar7);
-cek('admin buku 200 + 10 baris', $s === 200 && substr_count($b, 'baris-buku') === 10);
+cek('admin buku 200 + >=10 baris', $s === 200 && substr_count($b, 'baris-buku') >= 10);
 cek('admin buku tombol nonaktifkan', $s === 200 && str_contains($b, 'Nonaktifkan'));
 $token = csrf_dari($b);
 [$s, , $h] = http('/admin/books.php', $post(['csrf' => $token, 'aksi' => 'status', 'id' => 10, 'ke' => 0]), $jar7);
@@ -580,7 +604,7 @@ $token = csrf_dari($b);
 http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar8);
 
 [$s, $b] = http('/admin/users.php', [], $jar8);
-cek('users 200 + 10 baris', $s === 200 && substr_count($b, 'baris-user') === 10);
+cek('users 200 + >=10 baris', $s === 200 && substr_count($b, 'baris-user') >= 10);
 cek('users tanpa hapus keras', $s === 200 && !str_contains($b, '>Hapus<'));
 $token = csrf_dari($b);
 [$s, , $h] = http('/admin/users.php', $post(['csrf' => $token, 'id' => 1, 'ke' => 0]), $jar8);
@@ -620,6 +644,89 @@ cek('admin aktif terakhir (diri) tetap dilindungi', (int) $db->query('SELECT is_
 cek('users tanpa CSRF 419', $s === 419);
 $db->query("UPDATE users SET role='member', is_active=1 WHERE user_id=3");
 @unlink($jar8);
+
+// ---------- FIX PASS: cek tambahan hasil review final ----------
+// CSRF pada sesi yang belum punya token (mis. hanya pernah GET stream.php) harus ditolak.
+$jar9 = sys_get_temp_dir() . '/smoke-optl-cookies9.txt';
+@unlink($jar9);
+http('/stream.php?slug=laskar-pelangi', [], $jar9);
+[$s] = http('/login.php', $post(['csrf' => '', 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar9);
+cek('CSRF sesi tanpa token ditolak', $s === 419);
+@unlink($jar9);
+
+// Input array tidak boleh fatal (bocor stack trace).
+[$s] = http('/login.php?email[]=x');
+cek('login email array GET tidak fatal', $s === 200);
+$jar10 = sys_get_temp_dir() . '/smoke-optl-cookies10.txt';
+@unlink($jar10);
+[$s, $b] = http('/login.php', [], $jar10);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => ['x'], 'password' => 'y']), $jar10);
+cek('login email array POST tidak fatal', $s === 302 && str_contains(lokasi($h), 'gagal=1'));
+
+// next tidak boleh lolos keluar BASE_URL lewat /../ atau mendarat di logout.
+[$s, $b] = http('/login.php', [], $jar10);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123', 'next' => BASE_URL . '/../evil']), $jar10);
+$l = lokasi($h);
+cek('next /../ ditolak', $s === 302 && !str_contains($l, '/../') && (str_starts_with($l, BASE_URL . '/') || str_contains($l, 'dashboard')));
+http('/logout.php', [], $jar10);
+[$s, $b] = http('/login.php', [], $jar10);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123', 'next' => BASE_URL . '/logout.php']), $jar10);
+cek('next logout.php ditolak', $s === 302 && !str_contains(lokasi($h), 'logout.php'));
+
+// Nama genre berapostrof harus aman di konteks JS (data-nama, bukan onclick interpolasi).
+$db->query("INSERT INTO genres (name, description) VALUES ('Children''s', '')");
+[$s, $b] = http('/catalog.php');
+cek('pil genre aman konteks JS', $s === 200 && str_contains($b, 'data-nama="Children&#039;s"'));
+$db->query("DELETE FROM genres WHERE name='Children''s'");
+
+// Cover kustom valid/invalid + ISBN duplikat DENGAN PDF valid (uji guard ISBN sungguhan).
+$jar11 = sys_get_temp_dir() . '/smoke-optl-cookies11.txt';
+@unlink($jar11);
+[$s, $b] = http('/login.php', [], $jar11);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar11);
+[$s, $b] = http('/admin/book-form.php', [], $jar11);
+$token = csrf_dari($b);
+http('/admin/book-form.php', [CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+    'csrf' => $token, 'book_id' => 0, 'title' => 'Buku Cover Uji', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1,
+    'published_year' => 2024, 'isbn' => '', 'description' => '',
+    'file_book' => new CURLFile("$root/storage/ebooks/3.pdf", 'application/pdf', 'uji.pdf'),
+    'cover' => new CURLFile("$root/public/uploads/covers/1.jpg", 'image/jpeg', 'cover.jpg'),
+]], $jar11);
+$idC = (int) $db->query("SELECT book_id FROM books WHERE title='Buku Cover Uji'")->fetch_row()[0];
+cek('cover kustom terpakai', $idC > 0 && $db->query("SELECT cover_path FROM books WHERE book_id=$idC")->fetch_row()[0] === "uploads/covers/$idC.jpg");
+if ($idC) {
+    $db->query("DELETE FROM books WHERE book_id=$idC");
+    @unlink("$root/storage/ebooks/$idC.pdf");
+    @unlink("$root/public/uploads/covers/$idC.jpg");
+}
+[$s, $b] = http('/admin/book-form.php', [], $jar11);
+$token = csrf_dari($b);
+$coverPalsu = sys_get_temp_dir() . '/cover-palsu.jpg';
+file_put_contents($coverPalsu, 'bukan gambar');
+// Bersihkan sisa run lama supaya cek idempoten.
+$db->query("DELETE FROM books WHERE title='Buku Cover Palsu'");
+http('/admin/book-form.php', [CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+    'csrf' => $token, 'book_id' => 0, 'title' => 'Buku Cover Palsu', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1,
+    'published_year' => 2024, 'isbn' => '', 'description' => '',
+    'file_book' => new CURLFile("$root/storage/ebooks/3.pdf", 'application/pdf', 'uji.pdf'),
+    'cover' => new CURLFile($coverPalsu, 'image/jpeg', 'cover.jpg'),
+]], $jar11);
+cek('cover palsu ditolak', (int) $db->query("SELECT COUNT(*) FROM books WHERE title='Buku Cover Palsu'")->fetch_row()[0] === 0);
+[$s, $b] = http('/admin/book-form.php', [], $jar11);
+$token = csrf_dari($b);
+http('/admin/book-form.php', [CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+    'csrf' => $token, 'book_id' => 0, 'title' => 'Buku ISBN Dup Pdf', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1,
+    'published_year' => 2024, 'isbn' => '978-602-0001-01-1', 'description' => '',
+    'file_book' => new CURLFile("$root/storage/ebooks/3.pdf", 'application/pdf', 'uji.pdf'),
+]], $jar11);
+cek('ISBN duplikat dengan PDF valid ditolak', (int) $db->query("SELECT COUNT(*) FROM books WHERE title='Buku ISBN Dup Pdf'")->fetch_row()[0] === 0);
+@unlink($coverPalsu);
+@unlink($jar10);
+@unlink($jar11);
 
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);

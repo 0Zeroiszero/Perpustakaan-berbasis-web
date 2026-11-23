@@ -5,9 +5,9 @@ header('Cache-Control: no-store');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     cek_csrf();
-    $nama = trim((string) ($_POST['display_name'] ?? ''));
-    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
-    $password = (string) ($_POST['password'] ?? '');
+    $nama = trim(is_string($_POST['display_name'] ?? null) ? $_POST['display_name'] : '');
+    $email = strtolower(trim(is_string($_POST['email'] ?? null) ? $_POST['email'] : ''));
+    $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
 
     $gagal = match (true) {
         $nama === '' || mb_strlen($nama) > 100 => 'nama',

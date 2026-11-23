@@ -22,7 +22,7 @@ function generate_default_cover(int $book_id, string $judul, string $penulis, st
     imagettftext($img, 22, 0, 48, 62, $putih, $fontTebal, 'PUSTAKADIGITAL');
     imagefilledrectangle($img, 48, 80, 552, 82, $putih);
 
-    // Judul: bungkus per kata supaya tidak keluar sampul
+    // Judul: bungkus per kata, maksimal 3 baris agar tidak menimpa baris penulis.
     $baris = [];
     $kini = '';
     foreach (explode(' ', $judul) as $kata) {
@@ -36,13 +36,26 @@ function generate_default_cover(int $book_id, string $judul, string $penulis, st
         }
     }
     $baris[] = $kini;
+    $baris = array_slice($baris, 0, 3);
+
+    // Baris terakhir dipangkas dengan elipsis bila tetap terlalu lebar.
+    $akhir = array_pop($baris);
+    while ($akhir !== '' && (imagettfbbox(44, 0, $fontTebal, $akhir . '…')[2] > 504)) {
+        $akhir = mb_substr($akhir, 0, -1);
+    }
+    $baris[] = $akhir;
+
     $y = 210;
-    foreach (array_slice($baris, 0, 4) as $barisJudul) {
+    foreach ($baris as $barisJudul) {
         imagettftext($img, 44, 0, 48, $y, $putih, $fontTebal, $barisJudul);
         $y += 58;
     }
 
-    imagettftext($img, 24, 0, 48, 360, $muda, $fontReguler, $penulis);
+    // Penulis & genre dipangkas agar muat dalam lebar sampul (600 - 2*48 = 504px).
+    $penulis = mb_strimwidth($penulis, 0, 42, '…');
+    $genre = mb_strimwidth($genre, 0, 20, '…');
+
+    imagettftext($img, 24, 0, 48, 390, $muda, $fontReguler, $penulis);
 
     // Genre kiri-bawah, format kanan-bawah
     imagettftext($img, 20, 0, 48, 728, $putih, $fontReguler, $genre);

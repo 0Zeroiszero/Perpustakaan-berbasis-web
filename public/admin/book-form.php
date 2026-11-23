@@ -185,9 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $cover_path = simpan_cover($id);
         } catch (RuntimeException $e) {
-            q('UPDATE books SET storage_path = ? WHERE book_id = ?', ['storage/ebooks/' . $id . '.pdf', $id]);
+            // Cover palsu: jangan tinggalkan baris buku & PDF yatim.
+            q('DELETE FROM books WHERE book_id = ?', [$id]);
+            @unlink(STORAGE_DIR . '/' . $id . '.pdf');
             flash($e->getMessage(), 'danger');
-            header('Location: ' . url('admin/book-form.php?edit=' . $id));
+            header('Location: ' . url('admin/book-form.php'));
             exit;
         }
         if ($cover_path === null) {

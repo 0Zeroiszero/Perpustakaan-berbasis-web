@@ -5,8 +5,8 @@ header('Cache-Control: no-store');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     cek_csrf();
-    $email = strtolower(trim($_POST['email'] ?? ''));
-    $hasil = login_user($email, (string) ($_POST['password'] ?? ''));
+    $email = strtolower(trim(is_string($_POST['email'] ?? null) ? $_POST['email'] : ''));
+    $hasil = login_user($email, is_string($_POST['password'] ?? null) ? $_POST['password'] : '');
 
     if ($hasil === null) {
         $next = (string) ($_POST['next'] ?? '');
@@ -24,7 +24,7 @@ if (akun()) {
     exit;
 }
 
-$email = strtolower(trim($_GET['email'] ?? ''));
+$email = strtolower(trim(is_string($_GET['email'] ?? null) ? $_GET['email'] : ''));
 $gagal = isset($_GET['gagal']);
 $nonaktif = isset($_GET['nonaktif']);
 $next = next_valid((string) ($_GET['next'] ?? '')) ? (string) $_GET['next'] : '';
@@ -48,6 +48,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
 <!-- MAIN -->
 <main class="pb-5">
     <div class="container">
+        <?php tampilkan_flash(); ?>
         <?php if ($nonaktif): ?>
             <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
                 <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>

@@ -60,6 +60,7 @@ require __DIR__ . '/../includes/partials/sidebar.php';
             <h1 class="page-title page-title-sm">Ringkasan Aktivitas</h1>
             <p class="text-secondary">Kelola bacaan dan koleksi pribadi kamu.</p>
         </div>
+        <?php tampilkan_flash(); ?>
         <div class="row g-4 mb-4">
             <div class="col-sm-6 col-xl-3">
                 <div class="stat">
