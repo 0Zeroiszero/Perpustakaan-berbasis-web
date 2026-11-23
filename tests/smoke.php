@@ -266,5 +266,48 @@ cek('akun nonaktif ditolak saat login', $s === 302 && str_contains(lokasi($h), '
 $db->query("DELETE FROM users WHERE email = '" . $db->real_escape_string($uji) . "'");
 @unlink($jar);
 
+// ---------- SPEC-04: profil mandiri ----------
+[$s, , $h] = http('/profile.php');
+cek('profil tamu -> login?next', $s === 302 && str_contains(lokasi($h), 'login.php?next=') && str_contains(lokasi($h), 'profile.php'));
+
+$jar2 = sys_get_temp_dir() . '/smoke-optl-cookies2.txt';
+@unlink($jar2);
+[$s, $b] = http('/register.php', [], $jar2);
+$token = csrf_dari($b);
+$uji2 = 'profil-' . substr(md5((string) mt_rand()), 0, 6) . '@uji.test';
+http('/register.php', $post(['csrf' => $token, 'display_name' => 'Profil Uji', 'email' => $uji2, 'password' => 'rahasia123']), $jar2);
+[$s, $b] = http('/login.php', [], $jar2);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => $uji2, 'password' => 'rahasia123']), $jar2);
+
+[$s, $b] = http('/profile.php', [], $jar2);
+cek('profil 200', $s === 200 && str_contains($b, 'Profil Saya'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/profile.php', $post(['csrf' => $token, 'display_name' => 'Nama Baru Uji', 'email' => $uji2, 'password' => '']), $jar2);
+cek('profil ubah nama -> redirect', $s === 302 && str_contains(lokasi($h), 'profile.php'));
+[$s, $b] = http('/profile.php', [], $jar2);
+cek('profil nama baru tersimpan', $s === 200 && str_contains($b, 'Nama Baru Uji'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/profile.php', $post(['csrf' => $token, 'display_name' => 'Nama Baru Uji', 'email' => 'admin@pustaka.com', 'password' => '']), $jar2);
+cek('profil email akun lain ditolak', $s === 302 && str_contains(lokasi($h), 'gagal=email'));
+[$s, $b] = http('/profile.php', [], $jar2);
+$token = csrf_dari($b);
+[$s, , $h] = http('/profile.php', $post(['csrf' => $token, 'display_name' => 'Nama Baru Uji', 'email' => $uji2, 'password' => '123']), $jar2);
+cek('profil password pendek ditolak', $s === 302 && str_contains(lokasi($h), 'gagal=password'));
+[$s, $b] = http('/profile.php', [], $jar2);
+$token = csrf_dari($b);
+http('/profile.php', $post(['csrf' => $token, 'display_name' => 'Nama Baru Uji', 'email' => $uji2, 'password' => 'baru12345']), $jar2);
+http('/logout.php', [], $jar2);
+[$s, $b] = http('/login.php', [], $jar2);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => $uji2, 'password' => 'baru12345']), $jar2);
+cek('password baru berlaku', $s === 302 && str_contains(lokasi($h), 'dashboard-user.php'));
+[$s, $b] = http('/profile.php', [], $jar2);
+$token = csrf_dari($b);
+http('/profile.php', $post(['csrf' => $token, 'user_id' => 1, 'display_name' => 'Hacked', 'email' => $uji2, 'password' => '']), $jar2);
+cek('parameter user_id eksternal diabaikan', $db->query("SELECT display_name FROM users WHERE user_id = 1")->fetch_row()[0] === 'Admin Pustaka');
+$db->query("DELETE FROM users WHERE email = '" . $db->real_escape_string($uji2) . "'");
+@unlink($jar2);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
