@@ -1,0 +1,45 @@
+/* Reader PDF.js: toolbar merek + kanvas di tengah, tanpa AJAX (auto-save lewat iframe). */
+
+.reader-toolbar {
+    position: sticky;
+    top: 81px;
+    z-index: 1010;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: .6rem .8rem;
+}
+
+.reader-stage {
+    background: #F3F4F6;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem .75rem;
+    min-height: 60vh;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+}
+
+.reader-stage canvas {
+    max-width: 100%;
+    height: auto;
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    background: #fff;
+}
+
+.reader-halaman {
+    max-width: 5.5rem;
+    text-align: center;
+}
+
+@media (max-width: 575.98px) {
+    .reader-toolbar {
+        top: 70px;
+        padding: .5rem;
+    }
+    .reader-stage {
+        padding: .75rem .25rem;
+    }
+}

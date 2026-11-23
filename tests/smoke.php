@@ -309,5 +309,48 @@ cek('parameter user_id eksternal diabaikan', $db->query("SELECT display_name FRO
 $db->query("DELETE FROM users WHERE email = '" . $db->real_escape_string($uji2) . "'");
 @unlink($jar2);
 
+// ---------- SPEC-05: reader & streaming aman ----------
+[$s, , $h] = http('/stream.php?slug=laskar-pelangi');
+cek('stream tamu 403', $s === 403);
+[$s, , $h] = http('/read.php?slug=laskar-pelangi');
+cek('read tamu -> login?next', $s === 302 && str_contains(lokasi($h), 'login.php?next='));
+
+$jar3 = sys_get_temp_dir() . '/smoke-optl-cookies3.txt';
+@unlink($jar3);
+[$s, $b] = http('/login.php', [], $jar3);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar3);
+
+[$s, $b, $h] = http('/stream.php?slug=laskar-pelangi', [], $jar3);
+cek('stream member 200 PDF', $s === 200 && str_contains($h, 'application/pdf') && str_starts_with($b, '%PDF'));
+[$s] = http('/stream.php?slug=tidak-ada', [], $jar3);
+cek('stream slug salah 404', $s === 404);
+[$s] = http('/stream.php?slug=../../etc', [], $jar3);
+cek('stream traversal 404', $s === 404);
+[$s, $b] = http('/read.php?slug=laskar-pelangi', [], $jar3);
+cek('read member 200 + PDF.js + iframe', $s === 200 && str_contains($b, 'pdf.min.js') && str_contains($b, 'progressFrame') && str_contains($b, 'stream.php?slug=laskar-pelangi'));
+[$s] = http('/read.php?slug=tidak-ada', [], $jar3);
+cek('read slug salah 404', $s === 404);
+
+// Buku nonaktif: stream diblokir & hilang dari katalog
+$db->query('UPDATE books SET is_active = 0 WHERE book_id = 10');
+[$s] = http('/stream.php?slug=prinsip-desain-ui-ux', [], $jar3);
+cek('stream buku nonaktif 404', $s === 404);
+[$s, $b] = http('/catalog.php');
+cek('buku nonaktif hilang dari katalog', $s === 200 && !str_contains($b, 'Prinsip Desain UI/UX'));
+$db->query('UPDATE books SET is_active = 1 WHERE book_id = 10');
+
+// storage tidak punya URL publik (deny .htaccess; DocumentRoot Laragon = www)
+$ch = curl_init('http://localhost/Perpustakaan-berbasis-web/storage/ebooks/1.pdf');
+curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 15]);
+curl_exec($ch);
+$sStorage = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+cek('storage diblokir dari URL (403/404)', $sStorage === 403 || $sStorage === 404, "status $sStorage");
+foreach (['/database/optl_pustaka.sql', '/includes/config.php', '/tests/smoke.php'] as $p) {
+    [$s] = http($p);
+    cek("direktori sensitif diblokir: $p", $s === 403 || $s === 404, "status $s");
+}
+@unlink($jar3);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
