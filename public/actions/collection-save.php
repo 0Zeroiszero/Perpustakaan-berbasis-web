@@ -15,8 +15,8 @@ if (!isset(STATUS_LABEL[$status]) || !row('SELECT book_id FROM books WHERE book_
 }
 
 q(
-    'INSERT INTO collections (user_id, book_id, status) VALUES (?, ?, ?) AS baru
-     ON DUPLICATE KEY UPDATE status = baru.status',
+    'INSERT INTO collections (user_id, book_id, status, status_source) VALUES (?, ?, ?, \'user\') AS baru
+     ON DUPLICATE KEY UPDATE status = baru.status, status_source = \'user\'',
     [akun()['id'], $book_id, $status]
 );
 

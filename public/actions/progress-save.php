@@ -26,10 +26,31 @@ if ($batas < 1) {
 }
 $last_page = max(1, min($last_page, $batas));
 
+$user_id = (int) akun()['id'];
+$koleksi = row(
+    'SELECT status, status_source FROM collections WHERE user_id = ? AND book_id = ?',
+    [$user_id, $book_id]
+);
+
+// Status awal hanya dibuat sistem bila user belum punya status sama sekali.
+// Request pertama TIDAK langsung finished agar klik pertama Baca Buku = "Sedang dibaca".
+if (!$koleksi) {
+    q(
+        'INSERT INTO collections (user_id, book_id, status, status_source) VALUES (?, ?, \'reading\', \'system\')',
+        [$user_id, $book_id]
+    );
+} elseif ($koleksi['status_source'] === 'system' && $last_page >= $batas && $koleksi['status'] !== 'finished') {
+    // Baris yang masih dikelola sistem otomatis selesai saat halaman terakhir tercapai.
+    q(
+        'UPDATE collections SET status = \'finished\' WHERE user_id = ? AND book_id = ? AND status_source = \'system\'',
+        [$user_id, $book_id]
+    );
+}
+
 q(
     'INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (?, ?, ?) AS baru
      ON DUPLICATE KEY UPDATE last_page = baru.last_page',
-    [akun()['id'], $book_id, $last_page]
+    [$user_id, $book_id, $last_page]
 );
 
 echo 'OK';

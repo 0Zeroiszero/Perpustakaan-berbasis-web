@@ -45,30 +45,32 @@ PustakaDigital hadir sebagai solusi dengan menyediakan katalog buku, pencarian, 
 
 ## Fitur
 
-### 🏠 Beranda
-Halaman utama sebagai pintu masuk ke koleksi:
-- Dua pintu masuk utama: **Katalog Buku** dan **Rak Saya**
-- Pencarian langsung dari hero, kata kuncinya diteruskan ke katalog (`catalog.php?q=...`)
-- Tautan kategori populer (`catalog.php?kategori=...`)
+### 🏠 Beranda (Landing)
+Halaman tamu sebagai pintu masuk koleksi:
+- Sepuluh sampul koleksi terbaru (grid 5×2 di desktop) dan form registrasi singkat di sampingnya
+- Informasi utama muat satu layar desktop; footer tetap ada dan muncul setelah scroll
+- Pencarian langsung ke katalog (`catalog.php?q=...`)
+- User yang sudah login diarahkan langsung ke katalog
 
 ### 📚 Katalog Buku
-- Pencarian berdasarkan judul atau penulis (modal cari dari navbar, tekan Enter)
-- Filter kategori dari database (pil yang tersambung ke tabel `genres`)
-- Pengurutan koleksi (Terbaru, Judul A-Z)
+- Pencarian judul/penulis, filter kategori, dan urutan diproses **server-side PHP** (form GET + tombol Terapkan)
+- Modal cari dari navbar/topbar, pil genre dari database, hasil bisa dibagikan lewat URL
 - Kartu buku berisi judul, penulis, kategori, dan dropdown status rak
-- Hasil pencarian dan filter bisa dibagikan lewat URL
+- Setelah login, katalog memakai shell sidebar dashboard (tanpa navbar publik)
 
 ### 📖 Detail Buku & Profil Penulis
 - Sampul, judul, penulis (tautan ke profil penulis), sinopsis
-- Informasi kategori, tahun terbit, jumlah halaman, ISBN, dan format (PDF)
+- Informasi kategori, **penerbit (nama + kota)**, tahun terbit, jumlah halaman, ISBN, dan format (PDF)
 - Dropdown status rak (Akan dibaca / Sedang dibaca / Telah dibaca / Tidak Tertarik) yang langsung menyimpan
 - **Baca Buku** membuka pembaca inline; pengguna belum login diarahkan ke login lalu kembali ke buku tersebut
 - Profil penulis publik (`author.php?slug=...`) menampilkan bio, negara asal, dan daftar karyanya
 
 ### 📖 Pembaca PDF Inline
 - PDF.js merender buku langsung di browser (`read.php?slug=...`)
-- Toolbar: kembali ke detail, halaman sebelumnya/berikutnya, input halaman, zoom
+- Toolbar: kembali ke detail, halaman sebelumnya/berikutnya, input halaman, **Fit Halaman** / **Fit Lebar** (tanpa persentase)
 - Progres `last_page` tersimpan otomatis tanpa tombol dan tanpa reload (form tersembunyi ke iframe)
+- Saat pertama dibaca dan user belum punya status, sistem menandai **Sedang dibaca**; jika user sudah memilih status, sistem tidak mengubahnya
+- Baris yang dikelola sistem otomatis **Telah dibaca** saat halaman terakhir tercapai; kembali ke halaman sebelumnya tetap 100% sampai user mengganti status
 - Berkas PDF dialirkan lewat `stream.php` yang menolak akses tanpa login (403)
 
 ### 🗂️ Rak Saya
@@ -87,9 +89,10 @@ Ringkasan aktivitas membaca: jumlah rak, sedang dibaca, selesai dibaca, total ko
 
 ### 🛠️ Dashboard Admin
 - Statistik buku/pengguna/penerbit/penulis serta buku terbaru
-- **Kelola Buku** — tambah/edit buku (upload PDF, sampul kustom atau sampul otomatis GD), nonaktifkan/aktifkan buku
-- **Master Data** — kelola penerbit dan penulis (slug otomatis)
-- **Kelola Pengguna** — aktif/nonaktif akun (admin tidak dapat menonaktifkan dirinya sendiri atau admin aktif terakhir)
+- **Kelola Buku** — daftar + modal tambah/edit (upload PDF, sampul kustom atau sampul otomatis GD), nonaktifkan/aktifkan buku
+- **Kelola Pengguna** — daftar + modal tambah/edit akun, reset password acak sekali-tampil dengan tombol Salin, aktif/nonaktif akun
+- **Kelola Publisher** dan **Kelola Penulis** — master data lewat modal tambah/edit; pencarian server-side
+- Admin tidak dapat menonaktifkan dirinya sendiri, menurunkan role sendiri, atau menghilangkan admin aktif terakhir
 
 ### 🔐 Hak Akses
 Publik: beranda, katalog, detail buku, profil penulis, login, registrasi. Wajib login: rak saya, pembaca, streaming, profil, dashboard user. Wajib admin: dashboard admin dan halaman admin/*. Semua aksi tulis memakai POST + CSRF + redirect + flash.
@@ -117,11 +120,11 @@ Aplikasi memakai database MySQL **`optl_pustaka`** dengan tujuh tabel 3NF + satu
 - `genres` — master kategori/genre buku
 - `authors` — master penulis (nama, slug unik, negara, bio)
 - `books` — katalog buku (slug unik, ISBN, berkas PDF + metadata, is_active)
-- `collections` — Rak Saya: empat status, unik per (user, book)
+- `collections` — Rak Saya: empat status, sumber status (`system`/`user`), unik per (user, book)
 - `reading_progress` — halaman terakhir per (user, book)
 - `v_books_catalog` — VIEW gabungan katalog sehingga halaman publik cukup `SELECT *` (0 JOIN)
 
-Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`. Berkas PDF dan sampul dummy sudah ikut di repo (`storage/ebooks/`, `public/uploads/covers/`), jadi tidak ada langkah migrasi tambahan pada clone baru. Skrip `database/migrasi_berkas.py` hanya dokumentasi historis: ia butuh folder lama `ebook/`+`cover/` dan `pypdf`, dan hanya dipakai sekali saat mengevaluasi skema awal. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
+Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`. Untuk database lama yang sudah ada sebelum revisi status lifecycle, jalankan `database/migrasi_status_source.sql` sekali. Berkas PDF dan sampul dummy sudah ikut di repo (`storage/ebooks/`, `public/uploads/covers/`), jadi tidak ada langkah migrasi tambahan pada clone baru. Skrip `database/migrasi_berkas.py` hanya dokumentasi historis: ia butuh folder lama `ebook/`+`cover/` dan `pypdf`, dan hanya dipakai sekali saat mengevaluasi skema awal. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
 
 ---
 

@@ -25,12 +25,17 @@ if ($buku) {
 
 $judul = ($buku ? 'Baca: ' . $buku['title'] : 'Buku tidak ditemukan') . ' - PustakaDigital';
 $css = ['read.css'];
-$aktif = '';
+$aktif = 'katalog';
+$admin = akun()['role'] === 'admin';
 require __DIR__ . '/../includes/partials/head.php';
-require __DIR__ . '/../includes/partials/navbar.php';
+require __DIR__ . '/../includes/partials/sidebar.php';
+echo '<div class="main-with-sidebar">';
+$judulTopbar = 'Baca Buku';
+$subTopbar = 'Pembaca PDF dan progres otomatis.';
+require __DIR__ . '/../includes/partials/app_topbar.php';
 ?>
 
-<main class="container-fluid px-3 px-md-4 py-4">
+<main class="container-fluid p-3 p-lg-4">
     <?php if (!$buku): ?>
         <div class="card-clean p-5 text-center">
             <i class="bi bi-search" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
@@ -55,13 +60,14 @@ require __DIR__ . '/../includes/partials/navbar.php';
             <button type="button" id="nextPage" class="btn btn-rak-netral" aria-label="Halaman berikutnya">
                 <i class="bi bi-chevron-right" aria-hidden="true"></i>
             </button>
-            <label class="visually-hidden" for="zoomSelect">Perbesaran</label>
-            <select id="zoomSelect" class="form-select w-auto">
-                <option value="0.75">75%</option>
-                <option value="1" selected>100%</option>
-                <option value="1.25">125%</option>
-                <option value="1.5">150%</option>
-            </select>
+
+            <!-- Mode tampilan menggantikan persentase: fit satu halaman / fit lebar -->
+            <div class="btn-group" role="group" aria-label="Mode tampilan halaman">
+                <button type="button" id="fitPage" class="btn btn-rak-netral fit-btn"
+                    aria-pressed="true">Fit Halaman</button>
+                <button type="button" id="fitWidth" class="btn btn-rak-netral fit-btn"
+                    aria-pressed="false">Fit Lebar</button>
+            </div>
         </div>
 
         <div class="reader-stage">
@@ -86,24 +92,47 @@ require __DIR__ . '/../includes/partials/navbar.php';
             let totalHalaman = <?= (int) $buku['page_count'] ?>;
             let pdfDoc = null;
             let halamanIni = <?= $awal ?>;
-            let skala = 1;
+            let modeTampilan = window.matchMedia("(max-width: 767.98px)").matches ? "lebar" : "halaman";
+            let renderTerakhir = 0;
 
             const kanvas = document.getElementById("pdfCanvas");
             const konteks = kanvas.getContext("2d");
+            const panggung = document.querySelector(".reader-stage");
+            const tombolFitHalaman = document.getElementById("fitPage");
+            const tombolFitLebar = document.getElementById("fitWidth");
 
-            function renderPage(nomor) {
-                // Guard race: klik cepat/zoom saat render berjalan tidak menumpuk render di kanvas yang sama.
-                if (!pdfDoc || nomor === halamanIni) return;
-                halamanIni = nomor;
-                document.getElementById("pageNum").value = nomor;
+            function tandaiMode() {
+                tombolFitHalaman.setAttribute("aria-pressed", modeTampilan === "halaman" ? "true" : "false");
+                tombolFitLebar.setAttribute("aria-pressed", modeTampilan === "lebar" ? "true" : "false");
+            }
 
-                pdfDoc.getPage(nomor).then(function (page) {
-                    const viewport = page.getViewport({ scale: skala });
+            function skalaUntuk(page) {
+                const dasar = page.getViewport({ scale: 1 });
+                const lebarTersedia = Math.max(240, panggung.clientWidth - 24);
+                const atas = panggung.getBoundingClientRect().top;
+                const tinggiTersedia = Math.max(280, window.innerHeight - atas - 24);
+                if (modeTampilan === "lebar") return lebarTersedia / dasar.width;
+                return Math.min(lebarTersedia / dasar.width, tinggiTersedia / dasar.height);
+            }
+
+            // Render pertama HARUS jalan walau nomornya sama dengan halamanIni.
+            // Nomor urut mencegah render lama menimpa render baru saat klik cepat.
+            function gambarHalaman(nomor, simpan) {
+                if (!pdfDoc) return;
+                const target = Math.max(1, Math.min(totalHalaman, nomor));
+                const urut = ++renderTerakhir;
+                halamanIni = target;
+                document.getElementById("pageNum").value = target;
+
+                pdfDoc.getPage(target).then(function (page) {
+                    if (urut !== renderTerakhir) return;
+                    const viewport = page.getViewport({ scale: skalaUntuk(page) });
                     kanvas.width = viewport.width;
                     kanvas.height = viewport.height;
                     return page.render({ canvasContext: konteks, viewport: viewport }).promise;
                 }).then(function () {
-                    simpanProgres(nomor);
+                    if (urut !== renderTerakhir) return;
+                    if (simpan !== false) simpanProgres(target);
                 });
             }
 
@@ -115,16 +144,21 @@ require __DIR__ . '/../includes/partials/navbar.php';
             }
 
             function keHalaman(nomor) {
-                const target = Math.max(1, Math.min(totalHalaman, nomor));
-                if (pdfDoc && target !== halamanIni) renderPage(target);
+                gambarHalaman(nomor, true);
             }
 
             document.getElementById("prevPage").addEventListener("click", function () { keHalaman(halamanIni - 1); });
             document.getElementById("nextPage").addEventListener("click", function () { keHalaman(halamanIni + 1); });
             document.getElementById("pageNum").addEventListener("change", function () { keHalaman(parseInt(this.value, 10) || 1); });
-            document.getElementById("zoomSelect").addEventListener("change", function () {
-                skala = parseFloat(this.value);
-                if (pdfDoc) renderPage(halamanIni);
+            tombolFitHalaman.addEventListener("click", function () {
+                modeTampilan = "halaman";
+                tandaiMode();
+                gambarHalaman(halamanIni, false);
+            });
+            tombolFitLebar.addEventListener("click", function () {
+                modeTampilan = "lebar";
+                tandaiMode();
+                gambarHalaman(halamanIni, false);
             });
             document.addEventListener("keydown", function (e) {
                 if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
@@ -132,6 +166,15 @@ require __DIR__ . '/../includes/partials/navbar.php';
                 if (e.key === "ArrowRight") keHalaman(halamanIni + 1);
             });
 
+            let timerResize = null;
+            window.addEventListener("resize", function () {
+                clearTimeout(timerResize);
+                timerResize = setTimeout(function () {
+                    if (pdfDoc) gambarHalaman(halamanIni, false);
+                }, 150);
+            });
+
+            tandaiMode();
             pdfjsLib.getDocument(streamUrl).promise.then(function (doc) {
                 pdfDoc = doc;
                 // PDF ber-object-stream: page_count DB 0, pakai jumlah halaman nyata dari PDF.js.
@@ -140,7 +183,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
                     document.getElementById("pageNum").max = totalHalaman;
                     document.getElementById("totalPages").textContent = totalHalaman;
                 }
-                renderPage(halamanIni);
+                gambarHalaman(halamanIni, true);
             }).catch(function () {
                 document.querySelector(".reader-stage").innerHTML =
                     '<p class="text-secondary py-5">Gagal memuat berkas buku. Muat ulang halaman atau hubungi admin.</p>';
@@ -148,8 +191,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
         </script>
     <?php endif; ?>
 </main>
-
-<?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= asset('js/script.js') ?>"></script>

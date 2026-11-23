@@ -82,6 +82,7 @@ CREATE TABLE collections (
     user_id INT UNSIGNED NOT NULL,
     book_id INT UNSIGNED NOT NULL,
     status ENUM('to_read','reading','not_interested','finished') NOT NULL DEFAULT 'to_read',
+    status_source ENUM('system','user') NOT NULL DEFAULT 'system',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (collection_id),
     UNIQUE KEY uq_collections_user_book (user_id, book_id),
@@ -174,17 +175,17 @@ INSERT INTO books (book_id, author_id, publisher_id, genre_id, title, slug, desc
 (10, 1, 5, 9, 'Prinsip Desain UI/UX', 'prinsip-desain-ui-ux', 'Prinsip dasar merancang antarmuka yang ramah pengguna.', 2023, '978-602-0001-10-3', 'storage/ebooks/10.pdf', 692, '63c49238562aa5a1c7969534010fc96e0f6b51b4f47edba024e2c05d57661346', 1, 'uploads/covers/10.jpg', 1);
 
 -- Rak Saya: status lama dipetakan ke empat nilai final (Tidak selesai -> not_interested).
-INSERT INTO collections (user_id, book_id, status, created_at) VALUES
-(2, 1, 'finished', '2024-01-01 00:00:00'),
-(3, 3, 'reading', '2024-01-15 00:00:00'),
-(4, 9, 'to_read', '2024-02-01 00:00:00'),
-(5, 7, 'not_interested', '2024-02-10 00:00:00'),
-(6, 6, 'finished', '2024-03-01 00:00:00'),
-(7, 2, 'reading', '2024-03-20 00:00:00'),
-(8, 5, 'to_read', '2024-04-01 00:00:00'),
-(9, 4, 'not_interested', '2024-04-15 00:00:00'),
-(10, 10, 'finished', '2024-05-01 00:00:00'),
-(1, 8, 'reading', '2024-05-10 00:00:00');
+INSERT INTO collections (user_id, book_id, status, status_source, created_at) VALUES
+(2, 1, 'finished', 'user', '2024-01-01 00:00:00'),
+(3, 3, 'reading', 'user', '2024-01-15 00:00:00'),
+(4, 9, 'to_read', 'user', '2024-02-01 00:00:00'),
+(5, 7, 'not_interested', 'user', '2024-02-10 00:00:00'),
+(6, 6, 'finished', 'user', '2024-03-01 00:00:00'),
+(7, 2, 'reading', 'user', '2024-03-20 00:00:00'),
+(8, 5, 'to_read', 'user', '2024-04-01 00:00:00'),
+(9, 4, 'not_interested', 'user', '2024-04-15 00:00:00'),
+(10, 10, 'finished', 'user', '2024-05-01 00:00:00'),
+(1, 8, 'reading', 'user', '2024-05-10 00:00:00');
 
 -- last_page di-clamp ke page_count berkas nyata (seed lama punya posisi melebihi halaman).
 INSERT INTO reading_progress (user_id, book_id, last_page, updated_at) VALUES

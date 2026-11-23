@@ -1,8 +1,8 @@
 <?php
-// Sidebar dashboard bersama (user & admin). Pemanggil menyetel $aktif dan $admin (bool).
+// Sidebar shell setelah login (user & admin). Pemanggil menyetel $aktif dan $admin (bool).
 ?>
 <aside id="sidebar" class="sidebar">
-    <a class="navbar-brand d-flex align-items-center gap-2 mb-4 px-2" href="<?= url('index.php') ?>">
+    <a class="navbar-brand d-flex align-items-center gap-2 mb-4 px-2" href="<?= dashboard_url() ?>">
         <span class="logo">P</span>
         PustakaDigital
     </a>
@@ -21,9 +21,13 @@
                 <i class="bi bi-people me-2" aria-hidden="true"></i>
                 Kelola Pengguna
             </a>
-            <a class="nav-link <?= ($aktif ?? '') === 'masters' ? 'active' : '' ?>" href="<?= url('admin/publishers.php') ?>">
+            <a class="nav-link <?= ($aktif ?? '') === 'publishers' ? 'active' : '' ?>" href="<?= url('admin/publishers.php') ?>">
                 <i class="bi bi-building me-2" aria-hidden="true"></i>
-                Master Data
+                Kelola Publisher
+            </a>
+            <a class="nav-link <?= ($aktif ?? '') === 'authors' ? 'active' : '' ?>" href="<?= url('admin/authors.php') ?>">
+                <i class="bi bi-pen me-2" aria-hidden="true"></i>
+                Kelola Penulis
             </a>
         <?php endif; ?>
         <a class="nav-link <?= ($aktif ?? '') === 'katalog' ? 'active' : '' ?>" href="<?= url('catalog.php') ?>">
@@ -37,10 +41,6 @@
                 Rak Saya
             </a>
         <?php endif; ?>
-        <a class="nav-link" href="<?= url('index.php') ?>">
-            <i class="bi bi-house me-2" aria-hidden="true"></i>
-            Beranda
-        </a>
         <a class="nav-link logout" href="<?= url('logout.php') ?>">
             <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
             Keluar

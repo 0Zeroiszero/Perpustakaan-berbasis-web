@@ -18,12 +18,29 @@ $rak = rak_semua();
 
 $judul = ($penulis ? $penulis['name'] : 'Penulis tidak ditemukan') . ' - PustakaDigital';
 $css = ['catalog.css'];
-$aktif = '';
+$aktif = 'katalog';
+$user = akun();
+$shell = $user !== null;
 require __DIR__ . '/../includes/partials/head.php';
-require __DIR__ . '/../includes/partials/navbar.php';
+
+if ($shell) {
+    $admin = $user['role'] === 'admin';
+    require __DIR__ . '/../includes/partials/sidebar.php';
+    echo '<div class="main-with-sidebar">';
+    $judulTopbar = 'Profil Penulis';
+    $subTopbar = 'Bio dan karya di PustakaDigital.';
+    require __DIR__ . '/../includes/partials/app_topbar.php';
+} else {
+    require __DIR__ . '/../includes/partials/navbar.php';
+}
 ?>
 
-<main class="container py-5">
+<main class="container py-4 py-lg-5">
+    <?php if ($shell): ?>
+        <a href="<?= url('catalog.php') ?>" class="btn btn-ungu-outline mb-3">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Kembali ke Katalog
+        </a>
+    <?php endif; ?>
     <?php tampilkan_flash(); ?>
     <?php if (!$penulis): ?>
         <div class="card-clean p-5 text-center">
@@ -81,8 +98,13 @@ require __DIR__ . '/../includes/partials/navbar.php';
         <?php endif; ?>
     <?php endif; ?>
 </main>
+<?php if ($shell): ?>
+    </div>
+<?php endif; ?>
 
-<?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php if (!$shell): ?>
+    <?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= asset('js/script.js') ?>"></script>

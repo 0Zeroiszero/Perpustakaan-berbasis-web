@@ -12,26 +12,44 @@ if (!$buku) {
 }
 
 $status_rak = $buku ? rak_status((int) $buku['book_id']) : null;
+$user = akun();
+$shell = $user !== null;
 
 $judul = ($buku ? $buku['title'] : 'Buku tidak ditemukan') . ' - PustakaDigital';
 $css = ['book-detail.css'];
+$aktif = 'katalog';
 require __DIR__ . '/../includes/partials/head.php';
+
+if ($shell) {
+    $admin = $user['role'] === 'admin';
+    require __DIR__ . '/../includes/partials/sidebar.php';
+    echo '<div class="main-with-sidebar">';
+    $judulTopbar = 'Detail Buku';
+    $subTopbar = 'Informasi koleksi dan aksi baca.';
+    require __DIR__ . '/../includes/partials/app_topbar.php';
+} else {
+    ?>
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top">
+        <div class="container py-2">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
+                <span class="logo">P</span> PustakaDigital
+            </a>
+            <a href="<?= url('catalog.php') ?>" class="btn btn-ungu-outline btn-kembali ms-auto" aria-label="Kembali ke Katalog"
+                title="Kembali ke Katalog">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            </a>
+        </div>
+    </nav>
+    <?php
+}
 ?>
 
-<nav class="navbar navbar-expand-lg border-bottom sticky-top">
-    <div class="container py-2">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
-            <span class="logo">P</span> PustakaDigital
+<main class="container py-4 py-lg-5">
+    <?php if ($shell): ?>
+        <a href="<?= url('catalog.php') ?>" class="btn btn-ungu-outline mb-3">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Kembali ke Katalog
         </a>
-        <!-- Tombol hanya ikon, jadi butuh aria-label supaya tetap terbaca screen reader -->
-        <a href="<?= url('catalog.php') ?>" class="btn btn-ungu-outline btn-kembali ms-auto" aria-label="Kembali ke Katalog"
-            title="Kembali ke Katalog">
-            <i class="bi bi-arrow-left" aria-hidden="true"></i>
-        </a>
-    </div>
-</nav>
-
-<main class="container py-5">
+    <?php endif; ?>
     <?php tampilkan_flash(); ?>
     <?php if (!$buku): ?>
         <div class="card-clean p-5 text-center">
@@ -99,6 +117,11 @@ require __DIR__ . '/../includes/partials/head.php';
                         <dd class="mb-0 fw-semibold"><?= e($buku['genre_name']) ?></dd>
                     </div>
                     <div class="col">
+                        <dt class="info-label">Penerbit</dt>
+                        <dd class="mb-0 fw-semibold"><?= e($buku['publisher_name'] ?: '-') ?><?php if ($buku['publisher_city']): ?><span
+                                    class="d-block small text-secondary fw-normal"><?= e($buku['publisher_city']) ?></span><?php endif; ?></dd>
+                    </div>
+                    <div class="col">
                         <dt class="info-label">Tahun</dt>
                         <dd class="mb-0 fw-semibold"><?= e($buku['published_year'] ?: '-') ?></dd>
                     </div>
@@ -124,8 +147,13 @@ require __DIR__ . '/../includes/partials/head.php';
         </section>
     <?php endif; ?>
 </main>
+<?php if ($shell): ?>
+    </div>
+<?php endif; ?>
 
-<?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php if (!$shell): ?>
+    <?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= asset('js/script.js') ?>"></script>

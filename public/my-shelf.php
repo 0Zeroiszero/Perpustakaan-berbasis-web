@@ -27,6 +27,7 @@ $genre_list = rows('SELECT name FROM genres ORDER BY name');
 $judul = 'Rak Saya - PustakaDigital';
 $css = ['my-shelf.css'];
 $aktif = 'rak';
+$admin = akun()['role'] === 'admin';
 require __DIR__ . '/../includes/partials/head.php';
 require __DIR__ . '/../includes/partials/sidebar.php';
 ?>

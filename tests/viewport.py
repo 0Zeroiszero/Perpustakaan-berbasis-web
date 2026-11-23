@@ -1,6 +1,4 @@
 # Verifikasi viewport & network reader lewat CDP (Chrome headless + paket websockets).
-# Chrome headless mematok lebar window minimum ~512px, jadi 320/375px wajib
-# Emulation.setDeviceMetricsOverride, bukan --window-size.
 import http.cookiejar
 import json
 import os
@@ -16,24 +14,28 @@ import urllib.request
 from websockets.sync.client import connect
 
 BASE = "http://localhost/Perpustakaan-berbasis-web/public"
-LEBAR = [320, 375, 768, 1200]
-HALAMAN_TAMU = [
+LEBAR = [320, 375, 768, 1200, 1366]
+TAMU = [
     "index.php",
     "catalog.php",
     "book-detail.php?slug=laskar-pelangi",
     "author.php?slug=pramoedya-ananta-toer",
     "login.php",
     "register.php",
+]
+LOGIN = [
+    "catalog.php",
+    "book-detail.php?slug=laskar-pelangi",
+    "author.php?slug=pramoedya-ananta-toer",
     "my-shelf.php",
     "read.php?slug=laskar-pelangi",
     "profile.php",
     "dashboard-user.php",
     "dashboard-admin.php",
     "admin/books.php",
-    "admin/book-form.php",
+    "admin/users.php?edit=2",
     "admin/publishers.php",
     "admin/authors.php",
-    "admin/users.php",
 ]
 
 gagal = 0
@@ -113,13 +115,16 @@ try:
     def evaluasi(ekspresi):
         return send("Runtime.evaluate", {
             "expression": ekspresi, "returnByValue": True, "awaitPromise": True,
-        })["result"]["value"]
+        })["result"].get("value")
 
-    def cek_ukuran(lebar, halaman, label):
+    def kunjungi(halaman, detik=10):
         events.clear()
         send("Page.navigate", {"url": f"{BASE}/{halaman}"})
-        pump(10, sampai="Page.loadEventFired")
-        time.sleep(0.3)
+        pump(detik, sampai="Page.loadEventFired")
+        time.sleep(0.35)
+
+    def cek_ukuran(lebar, halaman, label):
+        kunjungi(halaman)
         d = json.loads(evaluasi(
             'JSON.stringify({sw:document.documentElement.scrollWidth,'
             'iw:window.innerWidth,h1:document.querySelectorAll("h1").length,'
@@ -128,24 +133,34 @@ try:
         cek(f"{lebar}px {label} tanpa overflow", d["sw"] <= d["iw"], f"scrollWidth {d['sw']} > {d['iw']}")
         cek(f"{lebar}px {label} satu h1", d["h1"] == 1, f"h1={d['h1']}")
         jenjang = json.loads(d["h"])
-        urut = True
-        for i in range(1, len(jenjang)):
-            if jenjang[i] - jenjang[i - 1] > 1:
-                urut = False
+        urut = all(jenjang[i] - jenjang[i - 1] <= 1 for i in range(1, len(jenjang)))
         cek(f"{lebar}px {label} heading berurutan", urut, jenjang)
 
     send("Page.enable")
     send("Network.enable")
 
-    # Guest: halaman publik harus tampil; halaman terkunci akan redirect ke login.
+    # Tamu: landing + halaman publik + navbar publik.
     for lebar in LEBAR:
         send("Emulation.setDeviceMetricsOverride", {
             "width": lebar, "height": 900, "deviceScaleFactor": 1, "mobile": lebar < 768,
         })
-        for halaman in HALAMAN_TAMU[:6]:
+        for halaman in TAMU:
             cek_ukuran(lebar, halaman, halaman)
 
-    # Login via HTTP biasa, lalu cookie dipasang di CDP supaya halaman terkunci ikut diuji.
+    # Landing 1366x768: informasi utama muat, footer baru muncul bila scroll.
+    send("Emulation.setDeviceMetricsOverride", {"width": 1366, "height": 768, "deviceScaleFactor": 1, "mobile": False})
+    kunjungi("index.php")
+    d = json.loads(evaluasi(
+        'JSON.stringify({lantai:document.querySelector(".landing").getBoundingClientRect().bottom,'
+        'kaki:document.querySelector(".site-footer").getBoundingClientRect().top,'
+        'tinggi:window.innerHeight,'
+        'navbar:!!document.querySelector("#navMenu"),sidebar:!!document.querySelector("#sidebar")})'
+    ))
+    cek("landing 1366x768 muat tanpa scroll konten", d["lantai"] <= d["tinggi"] + 2, d)
+    cek("landing footer hanya muncul setelah scroll", d["kaki"] >= d["tinggi"] - 2, d)
+    cek("landing tamu memakai navbar publik", d["navbar"] and not d["sidebar"])
+
+    # Login admin via HTTP, lalu pasang cookie di CDP.
     jar = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
     html = opener.open(f"{BASE}/login.php", timeout=15).read().decode()
@@ -158,38 +173,59 @@ try:
     sid = next(c.value for c in jar if c.name == "PHPSESSID")
     send("Network.setCookie", {"name": "PHPSESSID", "value": sid, "domain": "localhost", "path": "/"})
 
+    # Shell login: sidebar tetap ada di katalog/detail/reader/admin, tanpa navbar publik.
     for lebar in LEBAR:
         send("Emulation.setDeviceMetricsOverride", {
             "width": lebar, "height": 900, "deviceScaleFactor": 1, "mobile": lebar < 768,
         })
-        for halaman in HALAMAN_TAMU[6:]:
+        for halaman in LOGIN:
             cek_ukuran(lebar, halaman, halaman)
 
-    # Pil genre berapostrof: klik harus menyaring tanpa error JS.
-    send("Emulation.setDeviceMetricsOverride", {"width": 1200, "height": 900, "deviceScaleFactor": 1, "mobile": False})
-    # Sisipkan genre uji lewat DB tidak bisa dari sini; pakai pil yang ada dan pastikan klik berfungsi.
-    send("Page.navigate", {"url": f"{BASE}/catalog.php"})
-    pump(10, sampai="Page.loadEventFired")
-    hasil = evaluasi(
-        '(function(){var p=document.querySelector(".category-btn[data-nama=\\"Novel\\"]");'
-        'if(!p)return "no-pill";p.click();'
-        'return document.querySelectorAll(".book-item:not(.d-none)").length+"/"+'
-        'document.getElementById("jumlahBuku").textContent;})()'
-    )
-    cek("filter genre klik berfungsi", isinstance(hasil, str) and hasil != "no-pill" and not hasil.startswith("no"),
-        str(hasil))
+    kunjungi("catalog.php")
+    d = json.loads(evaluasi(
+        'JSON.stringify({sidebar:!!document.querySelector("#sidebar"),nav:!!document.querySelector("#navMenu"),'
+        'beranda:Array.from(document.querySelectorAll("#sidebar a")).some(function(a){return a.textContent.trim()==="Beranda"}),'
+        'logout:getComputedStyle(document.querySelector(".dropdown-item.logout")).color,'
+        'rak:!!document.querySelector(\'.dropdown-menu a[href*="my-shelf.php"]\')})'
+    ))
+    cek("catalog login memakai shell sidebar", d["sidebar"] and not d["nav"])
+    cek("sidebar tanpa menu Beranda", not d["beranda"])
+    cek("dropdown profil keluar merah", d["logout"] == "rgb(220, 38, 38)", d["logout"])
+    cek("dropdown profil punya Rak Saya (admin)", d["rak"])
 
-    # Network reader: buka PDF, klik next, pastikan auto-save lewat iframe & tanpa AJAX aplikasi.
-    events.clear()
-    send("Page.navigate", {"url": f"{BASE}/read.php?slug=laskar-pelangi"})
-    pump(8, sampai="Page.loadEventFired")
+    # Modal admin auto-terbuka dan tidak overflow di 320px.
+    send("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 800, "deviceScaleFactor": 1, "mobile": True})
+    kunjungi("admin/users.php?edit=2")
+    d = json.loads(evaluasi(
+        'JSON.stringify({modal:!!document.querySelector("#modalUser.show"),sw:document.documentElement.scrollWidth,iw:window.innerWidth})'
+    ))
+    cek("modal pengguna terbuka di 320px", d["modal"], d)
+    cek("modal pengguna tidak overflow 320px", d["sw"] <= d["iw"], d)
+
+    # Reader: kanvas benar-benar berisi, fit halaman/lebar, iframe auto-save.
+    send("Emulation.setDeviceMetricsOverride", {"width": 1200, "height": 900, "deviceScaleFactor": 1, "mobile": False})
+    kunjungi("read.php?slug=laskar-pelangi", 8)
     pump(4)
+    d = json.loads(evaluasi(
+        'JSON.stringify({w:document.getElementById("pdfCanvas").width,'
+        'img:(document.getElementById("pdfCanvas").toDataURL("image/png")||"").length,'
+        'doc:typeof pdfDoc!=="undefined"&&pdfDoc!==null,'
+        'fitH:!!document.getElementById("fitPage"),fitW:!!document.getElementById("fitWidth"),'
+        'zoom:!!document.getElementById("zoomSelect")})'
+    ))
+    cek("kanvas reader benar-benar dirender", d["doc"] and d["w"] > 0 and d["img"] > 5000, d)
+    cek("fit halaman/lebar menggantikan persentase", d["fitH"] and d["fitW"] and not d["zoom"])
+    send("Runtime.evaluate", {"expression": 'document.getElementById("fitWidth").click()'})
+    time.sleep(0.3)
+    d = json.loads(evaluasi(
+        'JSON.stringify({w:document.getElementById("fitWidth").getAttribute("aria-pressed"),'
+        'p:document.getElementById("fitPage").getAttribute("aria-pressed")})'
+    ))
+    cek("tombol fit lebar aktif", d["w"] == "true" and d["p"] == "false", d)
     send("Runtime.evaluate", {"expression": 'document.getElementById("nextPage").click()'})
     pump(2)
     reqs = [e["params"] for e in events if e.get("method") == "Network.requestWillBeSent"]
     progres = [r for r in reqs if "progress-save.php" in r["request"]["url"]]
-    # PDF.js sendiri memakai fetch/XHR internal untuk mengalirkan PDF dari stream.php;
-    # kontrak "tanpa AJAX" melarang AJAX tulisan aplikasi, bukan transport library.
     ajax = [r for r in reqs if r.get("type") in ("XHR", "Fetch") and "stream.php" not in r["request"]["url"]]
     cek("reader auto-save lewat iframe", len(progres) >= 1 and all(r.get("type") == "Document" for r in progres),
         f"{len(progres)} request progress-save")

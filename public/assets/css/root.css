@@ -119,7 +119,8 @@ a { text-decoration: none; }
 }
 
 /* Akun yang sedang login menggantikan tombol Masuk */
-.navbar .btn-akun {
+.navbar .btn-akun,
+.topbar .btn-akun {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
@@ -131,18 +132,22 @@ a { text-decoration: none; }
     font-weight: 600;
 }
 .navbar .btn-akun:hover,
-.navbar .btn-akun.show {
+.navbar .btn-akun.show,
+.topbar .btn-akun:hover,
+.topbar .btn-akun.show {
     background: var(--ungu-muda);
     border-color: var(--ungu);
     color: var(--ungu);
 }
-.navbar .btn-akun .avatar {
+.navbar .btn-akun .avatar,
+.topbar .btn-akun .avatar {
     width: 32px;
     height: 32px;
     flex: 0 0 32px;
     font-size: .85rem;
 }
-.navbar .btn-akun .nama-akun {
+.navbar .btn-akun .nama-akun,
+.topbar .btn-akun .nama-akun {
     max-width: 9rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -569,6 +574,8 @@ a.card-clean {
     color: #B91C1C; /* merah lebih gelap: di latar merah-muda butuh ≥4.5:1 */
 }
 .main-with-sidebar { margin-left: 250px; }
+/* Container Bootstrap memakai max-width viewport; di dalam shell sisa lebar harus 100%. */
+.main-with-sidebar > main.container { max-width: 100%; }
 .topbar {
     position: sticky;
     top: 0;
@@ -739,6 +746,17 @@ a.card-clean {
 .footer-link { transition: color var(--transition); }
 .footer-link:hover { color: #fff; }
 .footer-info { line-height: 1.5; overflow-wrap: anywhere; }
+/* Aksi keluar selalu merah (dropdown profil & sidebar), sesuai kontrak baru. */
+.dropdown-menu .dropdown-item.logout,
+.sidebar .nav-link.logout {
+    color: var(--merah-tua);
+}
+.dropdown-menu .dropdown-item.logout:hover,
+.dropdown-menu .dropdown-item.logout:focus,
+.sidebar .nav-link.logout:hover {
+    background: var(--merah-muda);
+    color: #B91C1C;
+}
 .footer-social { display: flex; gap: 9px; }
 .footer-social a {
     width: 36px;

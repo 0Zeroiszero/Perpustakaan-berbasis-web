@@ -1,9 +1,16 @@
 <?php
-// Beranda: dua pintu masuk (Katalog & Rak Saya); pencarian diteruskan ke katalog.
+// Landing khusus tamu: sampul koleksi di kiri, registrasi singkat di kanan.
+// User yang sudah login langsung ke katalog (shell dashboard).
 require __DIR__ . '/../includes/auth_guard.php';
 
-$unggulan = rows(
-    'SELECT title, author_name FROM v_books_catalog WHERE is_active = 1 ORDER BY book_id DESC LIMIT 3'
+if (akun()) {
+    header('Location: ' . url('catalog.php'));
+    exit;
+}
+
+$buku = rows(
+    'SELECT title, slug, cover_path, author_name FROM v_books_catalog
+     WHERE is_active = 1 ORDER BY book_id DESC LIMIT 10'
 );
 
 $judul = 'PustakaDigital';
@@ -13,102 +20,65 @@ require __DIR__ . '/../includes/partials/head.php';
 require __DIR__ . '/../includes/partials/navbar.php';
 ?>
 
-<main>
-    <section class="hero">
-        <div class="container">
-            <div class="row align-items-center gy-5 gx-lg-5">
-                <div class="col-lg-7">
-                    <span class="badge-soft">
-                        ✦ Gratis untuk pelajar Indonesia
-                    </span>
-                    <h1 class="mt-4">
-                        Baca Lebih
-                        <span>Pintar,</span>
-                        <br>
-                        Bukan Lebih Lama.
-                    </h1>
-                    <p class="mt-4">
-                        Akses seluruh koleksi buku digital dalam satu
-                        perpustakaan yang cepat dan mudah digunakan.
-                    </p>
-                    <form id="searchForm" class="search-box d-flex mt-4">
-                        <input type="search" name="q" class="form-control" placeholder="Cari buku atau penulis..."
-                            aria-label="Cari buku atau penulis">
-                        <button class="btn btn-ungu px-4">
-                            Cari
-                        </button>
-                    </form>
-                    <p class="small mt-3">
-                        Populer:
-                        <a href="<?= url('catalog.php?kategori=Teknologi') ?>" class="text-ungu fw-bold">Teknologi</a>,
-                        <a href="<?= url('catalog.php?kategori=Novel') ?>" class="text-ungu fw-bold">Novel</a>,
-                        <a href="<?= url('catalog.php?kategori=Sejarah') ?>" class="text-ungu fw-bold">Sejarah</a>
-                    </p>
-                </div>
-                <div class="col-lg-5">
-                    <div class="card-clean p-4">
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-ungu" aria-hidden="true">
-                                ●
-                            </span>
-                            <span class="text-secondary">
-                                PustakaDigital / Rak Saya
-                            </span>
-                        </div>
-                        <?php foreach ($unggulan as $i => $b): ?>
-                            <div class="p-3 rounded-4 <?= ['bg-ungu-muda', 'bg-biru-muda', 'bg-light'][$i % 3] ?> mb-3">
-                                <b><?= e($b['title']) ?></b>
-                                <br>
-                                <small class="text-secondary">
-                                    <?= e($b['author_name']) ?>
-                                </small>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="py-5">
-        <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="page-title">
-                    Jelajahi PustakaDigital
-                </h2>
-                <p class="text-secondary">
-                    Temukan bacaan sesuai kebutuhanmu.
+<main class="landing">
+    <div class="container">
+        <div class="row g-4 g-lg-5 align-items-center">
+            <div class="col-lg-7">
+                <span class="badge-soft">✦ Gratis untuk pelajar Indonesia</span>
+                <h1 class="mt-3">Baca Lebih <span>Pintar,</span><br>Bukan Lebih Lama.</h1>
+                <p class="text-secondary mb-3">
+                    Akses koleksi buku digital dalam satu perpustakaan yang cepat dan mudah digunakan.
                 </p>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-6 col-lg-5">
-                    <a href="<?= url('catalog.php') ?>" class="card-clean entry-card">
-                        <span class="entry-icon bg-ungu-muda text-ungu">
-                            <i class="bi bi-grid" aria-hidden="true"></i>
-                        </span>
-                        <h3 class="entry-title h5">
-                            Katalog Buku
-                        </h3>
-                        <p class="text-secondary">
-                            Cari dan lihat seluruh koleksi buku yang tersedia.
-                        </p>
-                    </a>
+                <form class="search-box d-flex mb-3" method="get" action="<?= url('catalog.php') ?>">
+                    <label class="visually-hidden" for="cariLanding">Cari buku atau penulis</label>
+                    <input id="cariLanding" name="q" type="search" class="form-control"
+                        placeholder="Cari buku atau penulis...">
+                    <button class="btn btn-ungu px-4">Cari</button>
+                </form>
+
+                <div class="landing-books" aria-label="Sebagian koleksi terbaru">
+                    <?php foreach ($buku as $b): ?>
+                        <a class="landing-book" href="<?= url('book-detail.php?slug=' . urlencode($b['slug'])) ?>"
+                            title="<?= e($b['title']) ?> — <?= e($b['author_name']) ?>">
+                            <span class="landing-cover">
+                                <img src="<?= url(e($b['cover_path'])) ?>" alt="<?= e($b['title']) ?>" loading="lazy">
+                            </span>
+                            <span class="landing-title"><?= e($b['title']) ?></span>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
-                <div class="col-md-6 col-lg-5">
-                    <a href="<?= url('my-shelf.php') ?>" class="card-clean entry-card">
-                        <span class="entry-icon bg-biru-muda text-biru">
-                            <i class="bi bi-bookmark" aria-hidden="true"></i>
-                        </span>
-                        <h3 class="entry-title h5">
-                            Rak Saya
-                        </h3>
-                        <p class="text-secondary">
-                            Simpan buku pilihanmu dan lanjutkan bacaan.
-                        </p>
-                    </a>
+            </div>
+
+            <div class="col-lg-5 landing-register">
+                <div class="register-card">
+                    <h2 class="h4 fw-bold mb-1">Mulai membaca gratis</h2>
+                    <p class="text-secondary small mb-3">Buat akun untuk menyimpan rak dan melanjutkan bacaan.</p>
+                    <form method="post" action="<?= url('register.php') ?>">
+                        <?= csrf_field() ?>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold" for="regNama">Nama tampilan</label>
+                            <input id="regNama" name="display_name" type="text" class="form-control"
+                                placeholder="Nama kamu" maxlength="100" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold" for="regEmail">Email</label>
+                            <input id="regEmail" name="email" type="email" class="form-control"
+                                placeholder="nama@email.com" autocomplete="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="regPassword">Password</label>
+                            <input id="regPassword" name="password" type="password" class="form-control"
+                                placeholder="Minimal 6 karakter" autocomplete="new-password" required>
+                        </div>
+                        <button class="btn btn-ungu w-100 py-2">Daftar Sekarang</button>
+                    </form>
+                    <p class="text-center text-secondary small mt-3 mb-0">
+                        Sudah punya akun? <a href="<?= url('login.php') ?>" class="text-ungu fw-bold">Masuk</a>
+                    </p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </main>
 
 <?php require __DIR__ . '/../includes/partials/footer.php'; ?>

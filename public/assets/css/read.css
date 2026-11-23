@@ -29,6 +29,12 @@
     background: #fff;
 }
 
+.reader-toolbar .fit-btn[aria-pressed="true"] {
+    background: var(--ungu-muda);
+    border-color: var(--ungu);
+    color: var(--ungu);
+}
+
 .reader-halaman {
     max-width: 5.5rem;
     text-align: center;

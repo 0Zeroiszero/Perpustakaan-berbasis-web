@@ -33,9 +33,6 @@ $user = akun();
                     <a class="nav-link <?= ($aktif ?? '') === 'katalog' ? 'active' : '' ?>" href="<?= url('catalog.php') ?>"
                         <?= ($aktif ?? '') === 'katalog' ? 'aria-current="page"' : '' ?>>Katalog</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= dashboard_url() ?>">Dashboard</a>
-                </li>
                 <li class="nav-item ms-lg-2">
                     <?php if ($user): ?>
                         <div class="dropdown">
@@ -48,17 +45,16 @@ $user = akun();
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <div class="dropdown-header">
-                                        <b class="d-block text-dark"><?= e($user['nama']) ?></b>
-                                        <span class="small text-secondary"><?= e(ucfirst($user['role'])) ?></span>
-                                    </div>
+                                    <a class="dropdown-item" href="<?= dashboard_url() ?>">
+                                        <i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard
+                                    </a>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="<?= url('my-shelf.php') ?>">
                                         <i class="bi bi-bookmark me-2" aria-hidden="true"></i>Rak Saya
                                     </a>
                                 </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item logout" href="<?= url('logout.php') ?>">
                                         <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar

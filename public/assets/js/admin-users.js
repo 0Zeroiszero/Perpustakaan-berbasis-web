@@ -1,6 +1,5 @@
-/* Halaman admin/users.php. Status akun dikirim ke server lewat form POST. */
+/* Halaman admin/users.php: konfirmasi status dan salin password sementara. */
 
-// Nonaktifkan/aktifkan akun lewat modal konfirmasi, lalu kirim form ke server.
 function toggleUser(tombol) {
     const form = tombol.closest("form");
     const nonaktif = tombol.dataset.ke === "0";
@@ -18,20 +17,21 @@ function toggleUser(tombol) {
     });
 }
 
-// Cari pengguna di tabel yang sudah dirender PHP (tanpa reload)
-function cariUserAdmin() {
-    const kata = document.getElementById("cariUserAdmin").value.toLowerCase();
-    const baris = document.querySelectorAll("#tabelUserAdmin .baris-user");
+function salinPassword(tombol) {
+    const input = document.getElementById("passwordBaru");
+    if (!input) return;
 
-    let tampil = 0;
-    baris.forEach(function (b) {
-        if (b.textContent.toLowerCase().includes(kata)) {
-            b.classList.remove("d-none");
-            tampil++;
-        } else {
-            b.classList.add("d-none");
-        }
-    });
+    const selesai = function () {
+        const teks = tombol.textContent;
+        tombol.textContent = "Tersalin";
+        setTimeout(function () { tombol.textContent = teks; }, 1500);
+    };
 
-    document.getElementById("jumlahUserAdmin").textContent = tampil + " Pengguna";
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value).then(selesai);
+    } else {
+        input.select();
+        document.execCommand("copy");
+        selesai();
+    }
 }
