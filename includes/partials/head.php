@@ -21,4 +21,4 @@
     <?php endforeach; ?>
 </head>
 
-<body>
+<body<?= isset($bodyClass) ? ' class="' . e($bodyClass) . '"' : '' ?>>

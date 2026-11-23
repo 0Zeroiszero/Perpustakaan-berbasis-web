@@ -137,15 +137,20 @@ cek('storage di luar public', !file_exists("$root/public/storage") && is_dir("$r
 // ---------- HTTP: halaman publik ----------
 const SMOKE_BASE = 'http://localhost/Perpustakaan-berbasis-web/public';
 
-function http(string $path, array $curl = []): array
+function http(string $path, array $curl = [], ?string $jar = null): array
 {
     $ch = curl_init(SMOKE_BASE . $path);
-    curl_setopt_array($ch, [
+    $opsi = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER => true,
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_TIMEOUT => 20,
-    ] + $curl);
+    ] + $curl;
+    if ($jar !== null) {
+        $opsi[CURLOPT_COOKIEFILE] = $jar;
+        $opsi[CURLOPT_COOKIEJAR] = $jar;
+    }
+    curl_setopt_array($ch, $opsi);
     $res = (string) curl_exec($ch);
     $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $ukuranHeader = (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -186,6 +191,80 @@ cek('author 200', $s === 200, "status $s");
 cek('author bio & karya', $s === 200 && str_contains($b, 'Pramoedya Ananta Toer') && str_contains($b, 'Dasar-Dasar Basis Data'));
 [$s] = http('/author.php?slug=tidak-ada');
 cek('author slug salah 404', $s === 404);
+
+// ---------- SPEC-03: autentikasi (alur sesi nyata via cookie jar) ----------
+function csrf_dari(string $body): string
+{
+    preg_match('/name="csrf" value="([^"]+)"/', $body, $m);
+    return $m[1] ?? '';
+}
+
+function lokasi(string $headers): string
+{
+    preg_match('/^Location: (.*)$/mi', $headers, $m);
+    return trim($m[1] ?? '');
+}
+
+$jar = sys_get_temp_dir() . '/smoke-optl-cookies.txt';
+@unlink($jar);
+$post = fn(array $fields): array => [CURLOPT_POST => true, CURLOPT_POSTFIELDS => http_build_query($fields)];
+
+[$s, $b, $h] = http('/login.php', [], $jar);
+cek('login 200 + akun demo', $s === 200 && str_contains($b, 'Akun demo') && str_contains($b, 'Selamat Datang'));
+$token = csrf_dari($b);
+
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'salah']), $jar);
+cek('login salah -> gagal=1', $s === 302 && str_contains(lokasi($h), 'gagal=1'));
+
+[$s, , $h] = http('/login.php', $post(['csrf' => '', 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar);
+cek('POST tanpa CSRF -> 419', $s === 419);
+
+[$s, , $h] = http('/login.php', [], $jar);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php?next=' . urlencode('http://evil.test/x'), $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar);
+cek('login admin -> dashboard-admin', $s === 302 && str_contains(lokasi($h), 'dashboard-admin.php'));
+cek('next eksternal ditolak', !str_contains(lokasi($h), 'evil.test'));
+cek('cookie sesi HttpOnly + Lax', str_contains($h, 'HttpOnly') && str_contains($h, 'SameSite=Lax'));
+
+[$s, , $h] = http('/login.php', [], $jar);
+cek('login saat sesi valid -> dashboard', $s === 302 && str_contains(lokasi($h), 'dashboard-admin.php'));
+
+[$s, , $h] = http('/logout.php', [], $jar);
+cek('logout -> index', $s === 302 && str_contains(lokasi($h), 'index.php'));
+[$s] = http('/login.php', [], $jar);
+cek('sesi habis setelah logout', $s === 200);
+
+// Registrasi akun uji, lalu pakai untuk uji next valid + nonaktif
+[$s, $b, $h] = http('/register.php', [], $jar);
+cek('register 200', $s === 200, "status $s");
+$token = csrf_dari($b);
+$uji = 'smoke-' . substr(md5((string) mt_rand()), 0, 6) . '@uji.test';
+[$s, , $h] = http('/register.php', $post(['csrf' => $token, 'display_name' => 'Akun Uji', 'email' => $uji, 'password' => 'rahasia123']), $jar);
+cek('register sukses -> login', $s === 302 && str_contains(lokasi($h), 'login.php'));
+[$s, $b, $h] = http('/register.php', [], $jar);
+$token = csrf_dari($b);
+[$s, , $h] = http('/register.php', $post(['csrf' => $token, 'display_name' => 'Duplikat', 'email' => $uji, 'password' => 'rahasia123']), $jar);
+cek('register email duplikat ditolak', $s === 302 && str_contains(lokasi($h), 'gagal=email'));
+[$s, $b, $h] = http('/register.php', [], $jar);
+$token = csrf_dari($b);
+[$s, , $h] = http('/register.php', $post(['csrf' => $token, 'display_name' => 'Pendek', 'email' => 'pendek-' . $uji, 'password' => '123']), $jar);
+cek('register password <6 ditolak', $s === 302 && str_contains(lokasi($h), 'gagal=password'));
+
+[$s, $b, $h] = http('/login.php', [], $jar);
+$token = csrf_dari($b);
+$next = BASE_URL . '/book-detail.php?slug=laskar-pelangi';
+[$s, , $h] = http('/login.php?next=' . urlencode($next), $post(['csrf' => $token, 'email' => $uji, 'password' => 'rahasia123', 'next' => $next]), $jar);
+cek('login member + next valid kembali ke buku', $s === 302 && lokasi($h) === $next);
+
+// Nonaktifkan akun uji lewat DB, login harus ditolak dengan pesan jelas
+http('/logout.php', [], $jar);
+$db->query("UPDATE users SET is_active = 0 WHERE email = '" . $db->real_escape_string($uji) . "'");
+[$s, $b, $h] = http('/login.php', [], $jar);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => $uji, 'password' => 'rahasia123']), $jar);
+cek('akun nonaktif ditolak saat login', $s === 302 && str_contains(lokasi($h), 'nonaktif=1'));
+$db->query("DELETE FROM users WHERE email = '" . $db->real_escape_string($uji) . "'");
+@unlink($jar);
 
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);

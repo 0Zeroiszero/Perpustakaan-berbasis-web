@@ -117,6 +117,15 @@ function dashboard_url(): string
     return url((akun()['role'] ?? '') === 'admin' ? 'dashboard-admin.php' : 'dashboard-user.php');
 }
 
+// Target ?next= hanya boleh path lokal di bawah BASE_URL dan bukan halaman auth
+// (mencegah open redirect ke situs luar dan loop login).
+function next_valid(string $next): bool
+{
+    return str_starts_with($next, BASE_URL . '/')
+        && !preg_match('/[\r\n]/', $next)
+        && !preg_match('#/(login|register)\.php#', $next);
+}
+
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf'])) {
