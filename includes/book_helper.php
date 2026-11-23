@@ -19,12 +19,12 @@ const STATUS_BTN = [
 
 function status_label(?string $status): string
 {
-    return STATUS_LABEL[$status] ?? 'Tambah ke rak';
+    return STATUS_LABEL[$status ?? ''] ?? 'Tambah ke rak';
 }
 
 function status_btn(?string $status): string
 {
-    return STATUS_BTN[$status] ?? 'btn-rak-netral';
+    return STATUS_BTN[$status ?? ''] ?? 'btn-rak-netral';
 }
 
 // Status rak satu buku milik akun yang sedang login (null bila tamu/belum ada).

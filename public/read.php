@@ -51,7 +51,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
             <label class="visually-hidden" for="pageNum">Halaman</label>
             <input id="pageNum" type="number" min="1" max="<?= (int) $buku['page_count'] ?>" value="<?= $awal ?>"
                 class="form-control reader-halaman" aria-label="Nomor halaman">
-            <span class="text-secondary small">/ <?= (int) $buku['page_count'] ?></span>
+            <span class="text-secondary small">/ <span id="totalPages"><?= (int) $buku['page_count'] ?></span></span>
             <button type="button" id="nextPage" class="btn btn-rak-netral" aria-label="Halaman berikutnya">
                 <i class="bi bi-chevron-right" aria-hidden="true"></i>
             </button>
@@ -73,6 +73,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
             <?= csrf_field() ?>
             <input type="hidden" name="book_id" value="<?= (int) $buku['book_id'] ?>">
             <input type="hidden" name="last_page" id="lastPage" value="<?= $awal ?>">
+            <input type="hidden" name="total_pages" id="totalPagesInput" value="<?= (int) $buku['page_count'] ?>">
         </form>
         <iframe name="progressFrame" title="Penyimpan progres baca" style="display:none"></iframe>
 
@@ -82,7 +83,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
             pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
 
             const streamUrl = <?= json_encode(url('stream.php?slug=' . urlencode($buku['slug']))) ?>;
-            const totalHalaman = <?= (int) $buku['page_count'] ?>;
+            let totalHalaman = <?= (int) $buku['page_count'] ?>;
             let pdfDoc = null;
             let halamanIni = <?= $awal ?>;
             let skala = 1;
@@ -106,6 +107,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
             // Kirim form ke iframe tersembunyi: tersimpan tanpa reload, tanpa AJAX.
             function simpanProgres(nomor) {
                 document.getElementById("lastPage").value = nomor;
+                document.getElementById("totalPagesInput").value = totalHalaman;
                 document.getElementById("progressForm").submit();
             }
 
@@ -129,6 +131,12 @@ require __DIR__ . '/../includes/partials/navbar.php';
 
             pdfjsLib.getDocument(streamUrl).promise.then(function (doc) {
                 pdfDoc = doc;
+                // PDF ber-object-stream: page_count DB 0, pakai jumlah halaman nyata dari PDF.js.
+                if (totalHalaman < 1) {
+                    totalHalaman = doc.numPages;
+                    document.getElementById("pageNum").max = totalHalaman;
+                    document.getElementById("totalPages").textContent = totalHalaman;
+                }
                 renderPage(halamanIni);
             }).catch(function () {
                 document.querySelector(".reader-stage").innerHTML =

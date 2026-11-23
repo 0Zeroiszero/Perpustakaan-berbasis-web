@@ -18,8 +18,13 @@ if (!$buku) {
     exit('Buku tidak ditemukan.');
 }
 
-// Clamp ke rentang berkas nyata: tidak mungkin melebihi jumlah halaman.
-$last_page = max(1, min($last_page, (int) $buku['page_count']));
+// Clamp ke rentang berkas nyata. page_count 0 (PDF ber-object-stream yang tak terhitung
+// regex) memakai total_pages dari PDF.js sebagai batas sanity, bukan batas keamanan.
+$batas = (int) $buku['page_count'];
+if ($batas < 1) {
+    $batas = max(1, min(100000, (int) ($_POST['total_pages'] ?? 1)));
+}
+$last_page = max(1, min($last_page, $batas));
 
 q(
     'INSERT INTO reading_progress (user_id, book_id, last_page) VALUES (?, ?, ?) AS baru
