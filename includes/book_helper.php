@@ -55,14 +55,15 @@ function rak_semua(): array
 }
 
 // Dropdown Bootstrap: memilih opsi langsung POST ke actions/collection-save.php.
-function dropdown_status(int $book_id, ?string $status): string
+// $kelasBtn/$kelasMenu menyesuaikan varian kartu katalog vs halaman detail.
+function dropdown_status(int $book_id, ?string $status, string $kelasBtn = 'w-100', string $kelasMenu = 'w-100'): string
 {
     $html = '<form method="post" action="' . url('actions/collection-save.php') . '" class="dropdown">'
         . csrf_field()
         . '<input type="hidden" name="book_id" value="' . $book_id . '">'
-        . '<button type="button" class="btn ' . status_btn($status) . ' w-100 dropdown-toggle"'
+        . '<button type="button" class="btn ' . status_btn($status) . ' ' . $kelasBtn . ' dropdown-toggle"'
         . ' data-bs-toggle="dropdown" aria-expanded="false"><span>' . e(status_label($status)) . '</span></button>'
-        . '<ul class="dropdown-menu w-100">';
+        . '<ul class="dropdown-menu ' . $kelasMenu . '">';
 
     foreach (STATUS_LABEL as $nilai => $label) {
         $html .= '<li><button type="submit" class="dropdown-item" name="status" value="' . $nilai . '">'

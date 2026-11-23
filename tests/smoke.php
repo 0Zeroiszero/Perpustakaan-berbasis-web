@@ -170,5 +170,22 @@ cek('root.css byte-identik dengan kontrak lama', $b === file_get_contents("$root
 [$s] = http('/uploads/covers/1.jpg');
 cek('sampul publik 200', $s === 200);
 
+// SPEC-02: detail buku & profil penulis
+[$s, $b] = http('/book-detail.php?slug=laskar-pelangi');
+cek('detail buku 200', $s === 200, "status $s");
+cek('detail judul & info', $s === 200 && str_contains($b, 'Laskar Pelangi') && str_contains($b, 'Informasi Buku') && str_contains($b, 'ISBN'));
+cek('detail satu h1', $s === 200 && substr_count($b, '<h1') === 1);
+cek('detail tombol baca ke read.php', $s === 200 && str_contains($b, 'read.php?slug=laskar-pelangi'));
+cek('detail dropdown 4 status', $s === 200 && str_contains($b, 'value="to_read"') && str_contains($b, 'value="not_interested"') && str_contains($b, 'Tidak Tertarik'));
+[$s] = http('/book-detail.php?slug=tidak-ada');
+cek('detail slug salah 404', $s === 404);
+[$s] = http('/book-detail.php?slug=../../etc');
+cek('detail slug traversal 404', $s === 404);
+[$s, $b] = http('/author.php?slug=pramoedya-ananta-toer');
+cek('author 200', $s === 200, "status $s");
+cek('author bio & karya', $s === 200 && str_contains($b, 'Pramoedya Ananta Toer') && str_contains($b, 'Dasar-Dasar Basis Data'));
+[$s] = http('/author.php?slug=tidak-ada');
+cek('author slug salah 404', $s === 404);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
