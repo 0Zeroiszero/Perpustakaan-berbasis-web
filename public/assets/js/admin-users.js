@@ -1,32 +1,27 @@
-/* Halaman kelola-pengguna.php. Data disimpan ke database lewat form POST. */
+/* Halaman admin/users.php. Status akun dikirim ke server lewat form POST. */
 
-// Buka form kosong untuk pengguna baru
-function bukaTambah() {
-    const form = document.getElementById("formPengguna");
-    form.reset();
-    // Halaman edit menyimpan nilai lama sebagai default form; kosongkan lagi untuk mode tambah.
-    form.querySelectorAll("input:not([type=hidden]), textarea").forEach(function (el) { el.value = ""; });
-    form.querySelectorAll("select").forEach(function (el) { el.selectedIndex = 0; });
-    document.getElementById("inputId").value = "";
-    document.getElementById("inputPassword").required = true;
-    document.getElementById("modalTitle").textContent = "Tambah Pengguna";
-
-    new bootstrap.Modal(document.getElementById("modalPengguna")).show();
-}
-
-// Hapus pengguna lewat modal konfirmasi, lalu kirim form ke server
-function hapusPengguna(tombol) {
+// Nonaktifkan/aktifkan akun lewat modal konfirmasi, lalu kirim form ke server.
+function toggleUser(tombol) {
     const form = tombol.closest("form");
+    const nonaktif = tombol.dataset.ke === "0";
 
-    konfirmasiHapus(tombol.dataset.nama, "pengguna").then(function (ya) {
+    konfirmasiHapus(tombol.dataset.nama, "akun", nonaktif ? {
+        judul: "Nonaktifkan akun?",
+        pesan: "Akun akan ditolak saat login. Koleksi & progres bacanya tetap utuh:",
+        tombol: "Ya, Nonaktifkan"
+    } : {
+        judul: "Aktifkan akun?",
+        pesan: "Akun akan bisa login kembali:",
+        tombol: "Ya, Aktifkan"
+    }).then(function (ya) {
         if (ya) form.submit();
     });
 }
 
 // Cari pengguna di tabel yang sudah dirender PHP (tanpa reload)
-function cariPengguna() {
-    const kata = document.getElementById("cariPengguna").value.toLowerCase();
-    const baris = document.querySelectorAll("#tabelPengguna .baris-pengguna");
+function cariUserAdmin() {
+    const kata = document.getElementById("cariUserAdmin").value.toLowerCase();
+    const baris = document.querySelectorAll("#tabelUserAdmin .baris-user");
 
     let tampil = 0;
     baris.forEach(function (b) {
@@ -38,6 +33,5 @@ function cariPengguna() {
         }
     });
 
-    document.getElementById("jumlahPengguna").textContent = tampil + " Pengguna";
-    document.getElementById("penggunaKosong").classList.toggle("d-none", tampil !== 0);
+    document.getElementById("jumlahUserAdmin").textContent = tampil + " Pengguna";
 }

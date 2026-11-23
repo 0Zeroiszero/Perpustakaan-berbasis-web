@@ -565,5 +565,60 @@ if ($idB) {
 cek('dashboard admin 200 + statistik', $s === 200 && str_contains($b, 'Total Buku') && str_contains($b, 'Total Pengguna'));
 @unlink($jar7);
 
+// ---------- SPEC-10: status pengguna (admin) ----------
+$jar8 = sys_get_temp_dir() . '/smoke-optl-cookies8.txt';
+@unlink($jar8);
+[$s, $b] = http('/login.php', [], $jar8);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar8);
+[$s, , $h] = http('/admin/users.php', [], $jar8);
+cek('users member -> dashboard-user', $s === 302 && str_contains(lokasi($h), 'dashboard-user.php'));
+http('/logout.php', [], $jar8);
+[$s, $b] = http('/login.php', [], $jar8);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar8);
+
+[$s, $b] = http('/admin/users.php', [], $jar8);
+cek('users 200 + 10 baris', $s === 200 && substr_count($b, 'baris-user') === 10);
+cek('users tanpa hapus keras', $s === 200 && !str_contains($b, '>Hapus<'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/users.php', $post(['csrf' => $token, 'id' => 1, 'ke' => 0]), $jar8);
+cek('admin tidak bisa nonaktifkan diri', $s === 302 && (int) $db->query('SELECT is_active FROM users WHERE user_id=1')->fetch_row()[0] === 1);
+[$s, , $h] = http('/admin/users.php', $post(['csrf' => $token, 'id' => 2, 'ke' => 0]), $jar8);
+cek('nonaktifkan member sukses', $s === 302 && (int) $db->query('SELECT is_active FROM users WHERE user_id=2')->fetch_row()[0] === 0);
+
+// akun nonaktif: sesi berjalan berakhir & login ditolak
+[$s, , $h] = http('/login.php', [], $jar8);
+$token = csrf_dari($b);
+http('/logout.php', [], $jar8);
+[$s, $b] = http('/login.php', [], $jar8);
+$token = csrf_dari($b);
+[$s, , $h] = http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar8);
+cek('login akun nonaktif ditolak', $s === 302 && str_contains(lokasi($h), 'nonaktif=1'));
+
+// aktifkan kembali lewat admin
+[$s, $b] = http('/login.php', [], $jar8);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar8);
+[$s, $b] = http('/admin/users.php', [], $jar8);
+$token = csrf_dari($b);
+http('/admin/users.php', $post(['csrf' => $token, 'id' => 2, 'ke' => 1]), $jar8);
+cek('aktifkan member kembali', (int) $db->query('SELECT is_active FROM users WHERE user_id=2')->fetch_row()[0] === 1);
+
+// guard admin terakhir: dengan dua admin, menonaktifkan admin lain boleh; diri sendiri tetap tidak
+$db->query("UPDATE users SET role='admin' WHERE user_id=3");
+[$s, $b] = http('/admin/users.php', [], $jar8);
+$token = csrf_dari($b);
+http('/admin/users.php', $post(['csrf' => $token, 'id' => 3, 'ke' => 0]), $jar8);
+cek('nonaktifkan admin lain selama masih ada admin aktif', (int) $db->query('SELECT is_active FROM users WHERE user_id=3')->fetch_row()[0] === 0);
+[$s, $b] = http('/admin/users.php', [], $jar8);
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/users.php', $post(['csrf' => $token, 'id' => 1, 'ke' => 0]), $jar8);
+cek('admin aktif terakhir (diri) tetap dilindungi', (int) $db->query('SELECT is_active FROM users WHERE user_id=1')->fetch_row()[0] === 1);
+[$s] = http('/admin/users.php', $post(['csrf' => '', 'id' => 2, 'ke' => 0]), $jar8);
+cek('users tanpa CSRF 419', $s === 419);
+$db->query("UPDATE users SET role='member', is_active=1 WHERE user_id=3");
+@unlink($jar8);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
