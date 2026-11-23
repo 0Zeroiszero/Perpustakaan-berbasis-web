@@ -25,3 +25,12 @@
 .rak-toolbar .form-select {
     min-height: 44px;
 }
+
+/* Modal filter: form adalah .modal-content supaya flex scrollable Bootstrap bekerja. */
+#modalFilterRak .modal-content {
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
+}
+#modalFilterRak .modal-body {
+    overflow-y: auto;
+}

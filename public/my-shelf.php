@@ -221,9 +221,8 @@ require __DIR__ . '/../includes/partials/sidebar.php';
 <!-- MODAL URUTKAN & FILTER: form GET, diproses PHP. -->
 <div class="modal fade" id="modalFilterRak" tabindex="-1" aria-labelledby="modalFilterRakJudul" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="border-radius:var(--radius-lg)">
-            <form method="get" action="<?= url('my-shelf.php') ?>">
-                <input type="hidden" name="q" value="<?= e($q) ?>">
+        <form class="modal-content" method="get" action="<?= url('my-shelf.php') ?>" style="border-radius:var(--radius-lg)">
+            <input type="hidden" name="q" value="<?= e($q) ?>">
                 <div class="modal-header border-0 pb-0">
                     <h2 class="modal-title h5 fw-bold" id="modalFilterRakJudul">
                         <i class="bi bi-funnel me-2" aria-hidden="true"></i>
@@ -263,8 +262,7 @@ require __DIR__ . '/../includes/partials/sidebar.php';
                 <div class="modal-footer border-0 pt-0">
                     <button type="submit" class="btn btn-ungu w-100">Terapkan</button>
                 </div>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
 

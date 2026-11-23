@@ -244,6 +244,26 @@ try:
     ))
     cek("topbar katalog sticky saat scroll", d["y"] > 100 and abs(d["top"]) <= 1, d)
 
+    # Modal filter Rak Saya harus bisa discroll di 320x687 (viewport dari laporan).
+    send("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 687, "deviceScaleFactor": 2, "mobile": True})
+    kunjungi("my-shelf.php")
+    send("Runtime.evaluate", {"expression": 'document.querySelector(\'[data-bs-target="#modalFilterRak"]\').click()'})
+    time.sleep(0.4)
+    d = json.loads(evaluasi(
+        'JSON.stringify({show:!!document.querySelector("#modalFilterRak.show"),'
+        'scroll:document.querySelector("#modalFilterRak .modal-body").scrollHeight,'
+        'client:document.querySelector("#modalFilterRak .modal-body").clientHeight,'
+        'footer:document.querySelector("#modalFilterRak .modal-footer").getBoundingClientRect().bottom,'
+        'tinggi:window.innerWidth,tinggiViewport:window.innerHeight})'
+    ))
+    cek("modal filter Rak Saya terbuka", d["show"], d)
+    cek("modal filter body bisa discroll", d["scroll"] > d["client"], d)
+    cek("footer modal filter terlihat", d["footer"] <= d["tinggiViewport"] + 1, d)
+    send("Runtime.evaluate", {"expression": 'document.querySelector("#modalFilterRak .modal-body").scrollTop = 9999'})
+    time.sleep(0.2)
+    d = evaluasi('document.querySelector("#modalFilterRak .modal-body").scrollTop')
+    cek("scrollTop modal filter bergerak", d > 0, d)
+
     # Modal admin auto-terbuka dan tidak overflow di 320px.
     send("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 800, "deviceScaleFactor": 1, "mobile": True})
     kunjungi("admin/users.php?edit=2")
