@@ -1,0 +1,155 @@
+/* Landing tamu: koleksi ringkas + registrasi. Footer sengaja baru muncul setelah scroll. */
+@import "root.css";
+
+.landing {
+    min-height: calc(100vh - 81px);
+    padding: 28px 0 36px;
+    background: #fff;
+}
+
+.landing-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr);
+    grid-template-areas:
+        "copy register"
+        "books register";
+    gap: 16px 32px;
+    align-items: start;
+}
+.landing-copy { grid-area: copy; min-width: 0; }
+.landing-register { grid-area: register; min-width: 0; }
+.landing-books-wrap { grid-area: books; min-width: 0; }
+
+.landing h1 {
+    font-size: clamp(1.75rem, 1.2rem + 2.1vw, 3rem);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    text-wrap: balance;
+}
+
+.landing h1 span { color: var(--ungu); }
+.landing p { font-size: .98rem; line-height: 1.6; }
+
+/* BADGE SOFT */
+.badge-soft {
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    padding: 7px 13px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: .88rem;
+}
+
+/* SEARCH BOX */
+.search-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    padding: 6px;
+    box-shadow: var(--shadow);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.search-box:focus-within {
+    border-color: var(--ungu);
+    box-shadow: var(--ring);
+}
+.search-box input {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* KOLEKSI RINGKAS */
+.landing-books {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+@media (min-width: 992px) {
+    .landing-books {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 600px;
+    }
+}
+
+/* Desktop pendek (mis. 1366x768): rapatkan agar informasi utama muat satu layar. */
+@media (min-width: 992px) and (max-height: 820px) {
+    .landing { padding: 12px 0 18px; }
+    .landing h1 { font-size: 2.35rem; }
+    .landing .badge-soft { font-size: .8rem; padding: 5px 11px; }
+    .landing h1.mt-3 { margin-top: .6rem !important; }
+    .landing p { font-size: .92rem; line-height: 1.5; margin-bottom: .55rem !important; }
+    .landing .search-box { margin-bottom: .55rem !important; }
+    .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .landing-title { font-size: .68rem; }
+    .register-card { padding: 20px; }
+}
+.landing-book {
+    display: block;
+    color: var(--gelap);
+    min-width: 0;
+}
+.landing-cover {
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--ungu-muda);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.landing-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.landing-title {
+    display: block;
+    margin-top: 4px;
+    font-size: .72rem;
+    font-weight: 600;
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+@media (hover: hover) {
+    .landing-book:hover .landing-cover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+    }
+}
+
+/* KARTU REGISTRASI */
+.register-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 24px;
+}
+
+@media (max-width: 991.98px) {
+    .landing { padding: 20px 0 30px; }
+    .landing-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "copy"
+            "register"
+            "books";
+        gap: 14px;
+    }
+    .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 575.98px) {
+    .landing { min-height: 0; }
+    .landing h1 { font-size: 1.85rem; }
+    .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .register-card { padding: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-book:hover .landing-cover { transform: none; }
+}
