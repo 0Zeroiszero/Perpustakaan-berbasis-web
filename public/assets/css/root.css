@@ -1,0 +1,886 @@
+/* root.css — bagian bersama, diimpor tiap halaman */
+
+/* ROOT VARIABLES */
+:root {
+    --ungu: #7C3AED;
+    --ungu-muda: #EDE9FE;
+    --merah: #EF4444;
+    --biru: #0EA5E9;
+    --gelap: #1E1B4B;
+    --abu: #6B7280;
+    --bg: #FBFAFF;
+    --biru-muda: #E0F2FE;
+    --merah-muda: #FEE2E2;
+    /* Versi gelap dari --biru/--merah khusus teks & tombol: menjaga kontras ≥4.5:1 */
+    --biru-tua: #0369A1;
+    --merah-tua: #DC2626;
+    /* Versi gelap dari hijau aksi "Baca Buku": 5.02:1 di atas teks putih (lolos WCAG AA) */
+    --hijau-tua: #15803D;
+    /* Latar kartu buku "belum tersedia": lebih redup dari kartu tersedia, tapi teks tetap terbaca */
+    --surface-mati: #EAEAF0;
+    /* Teks sekunder bawaan Bootstrap (#6C757D) hanya ~4.5:1 di latar berwarna; digelapkan agar lolos WCAG AA */
+    --bs-secondary-rgb: 90, 98, 112;
+
+    /* Skala bentuk & bayangan — biar radius/shadow konsisten di semua komponen */
+    --radius-sm: 10px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 2px 10px rgba(30, 27, 75, .05);
+    --shadow: 0 8px 24px rgba(30, 27, 75, .08);
+    --shadow-lg: 0 16px 40px rgba(30, 27, 75, .13);
+    --ring: 0 0 0 3px rgba(124, 58, 237, .16);
+    --transition: .2s ease;
+}
+
+/* BASE */
+* { box-sizing: border-box; }
+
+/* sticky navbar tidak menutupi target anchor / elemen yang difokus */
+html { scroll-padding-top: 84px; }
+
+body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--gelap);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -.02em;
+    line-height: 1.25;
+}
+
+h1, h2, h3 {
+    text-wrap: balance;
+}
+
+a { text-decoration: none; }
+
+/* Fokus keyboard selalu terlihat (WCAG 2.4.7) */
+:focus-visible {
+    outline: 3px solid var(--ungu);
+    outline-offset: 2px;
+}
+
+/* NAVBAR */
+.navbar {
+    background: #fff;
+    padding: .5rem 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    color: var(--gelap) !important;
+    font-size: 1.15rem;
+}
+
+.navbar-brand .logo {
+    width: 40px;
+    height: 40px;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    background: var(--ungu);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.navbar .nav-link {
+    color: var(--gelap);
+    font-weight: 600;
+    padding: .55rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.navbar .nav-link:hover {
+    color: var(--ungu);
+    background: var(--ungu-muda);
+}
+
+.navbar .nav-link.active {
+    color: var(--ungu) !important;
+    background: var(--ungu-muda);
+}
+
+.navbar .btn-ungu {
+    padding: .55rem 1.4rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+
+/* Akun yang sedang login menggantikan tombol Masuk */
+.navbar .btn-akun {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .25rem .9rem .25rem .3rem;
+    border: 1px solid #E5E5EC;
+    border-radius: var(--radius-pill);
+    background: #fff;
+    color: var(--gelap);
+    font-weight: 600;
+}
+.navbar .btn-akun:hover,
+.navbar .btn-akun.show {
+    background: var(--ungu-muda);
+    border-color: var(--ungu);
+    color: var(--ungu);
+}
+.navbar .btn-akun .avatar {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    font-size: .85rem;
+}
+.navbar .btn-akun .nama-akun {
+    max-width: 9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition), border-color var(--transition),
+        color var(--transition), box-shadow var(--transition), transform .1s ease;
+}
+
+.btn-ungu {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+.btn-ungu:hover {
+    background: #6D28D9;
+    border-color: #6D28D9;
+    color: #fff;
+}
+
+.btn-ungu:active {
+    background: #5B21B6;
+    border-color: #5B21B6;
+    transform: translateY(1px);
+}
+
+/* Aksi sekunder brand (mis. "Cari" di index.html & katalog.html): outline ungu */
+.btn-ungu-outline {
+    background: transparent;
+    border: 1px solid var(--ungu);
+    color: var(--ungu);
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+.btn-ungu-outline:hover,
+.btn-ungu-outline:active {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+}
+
+/* Aksi merusak (konfirmasi hapus) */
+.btn-hapus {
+    background: var(--merah-tua);
+    border-color: var(--merah-tua);
+    color: #fff;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+.btn-hapus:hover,
+.btn-hapus:active {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #fff;
+}
+
+/* AKSI BUKU — dipakai di katalog & detail supaya warnanya tidak berbeda antar halaman */
+.btn-pinjam {          /* "Simpan ke Rak" */
+    background: var(--biru-tua);
+    border-color: var(--biru-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-pinjam:hover {
+    background: #075985;
+    border-color: #075985;
+    color: #fff;
+}
+.btn-baca {            /* "Baca Buku" / "Lanjut Baca" — beda dari aksi simpan */
+    background: var(--hijau-tua);
+    border-color: var(--hijau-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-baca:hover {
+    background: #166534;
+    border-color: #166534;
+    color: #fff;
+}
+/* Warna tombol status rak di katalog/detail mengikuti status_baca tersimpan */
+.btn-rak-netral {
+    background: #fff;
+    border: 1px solid var(--abu);
+    color: var(--gelap);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-netral:hover {
+    background: #F3F4F6;
+    border-color: #4B5563;
+    color: var(--gelap);
+}
+.btn-rak-sedang {
+    background: var(--ungu);
+    border-color: var(--ungu);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-sedang:hover {
+    background: #6D28D9;
+    border-color: #6D28D9;
+    color: #fff;
+}
+.btn-rak-selesai {
+    background: var(--hijau-tua);
+    border-color: var(--hijau-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-selesai:hover {
+    background: #166534;
+    border-color: #166534;
+    color: #fff;
+}
+.btn-rak-gagal {
+    background: var(--merah-tua);
+    border-color: var(--merah-tua);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+.btn-rak-gagal:hover {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #fff;
+}
+.btn-pinjam:active,
+.btn-baca:active,
+.btn-rak-netral:active,
+.btn-rak-sedang:active,
+.btn-rak-selesai:active,
+.btn-rak-gagal:active {
+    transform: translateY(1px);
+}
+
+/* Bootstrap meng-hardcode warna tombol outline (#6C757D, hanya 4.67:1); ikuti secondary
+   yang sudah digelapkan di :root biar konsisten dengan teks secondary lain (6.15:1) */
+.btn-outline-secondary {
+    --bs-btn-color: rgb(var(--bs-secondary-rgb));
+    --bs-btn-border-color: rgb(var(--bs-secondary-rgb));
+    --bs-btn-hover-bg: rgb(var(--bs-secondary-rgb));
+    --bs-btn-hover-border-color: rgb(var(--bs-secondary-rgb));
+}
+
+/* UTILITIES */
+.text-ungu { color: var(--ungu) !important; }
+.text-biru { color: var(--biru-tua) !important; }
+.bg-ungu-muda { background: var(--ungu-muda) !important; }
+.bg-biru-muda { background: var(--biru-muda) !important; }
+.page-title { font-weight: 800; color: var(--gelap); }
+/* Judul halaman menyusut proporsional; di desktop tetap sebesar semula */
+h1.page-title { font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.5rem); }
+h2.page-title { font-size: clamp(1.35rem, 1.12rem + .98vw, 2rem); }
+/* Halaman dashboard: tag naik ke <h1> demi struktur heading, ukuran visualnya tetap seperti versi h2 */
+h1.page-title-sm { font-size: clamp(1.35rem, 1.12rem + .98vw, 2rem); }
+/* Bintang rating pakai amber lebih gelap: 4.84:1 di latar kartu (sebelumnya #F59E0B = 2.15:1) */
+.rating { color: #B45309; }
+
+/* FORMS */
+.form-control,
+.form-select {
+    border-radius: var(--radius-sm);
+    padding: .7rem .9rem;
+}
+.form-control::placeholder {
+    color: #9CA3AF;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ungu);
+    box-shadow: var(--ring);
+}
+.form-control:disabled,
+.form-select:disabled {
+    background: #F3F4F6;
+}
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--merah);
+}
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, .16);
+}
+.form-check-input {
+    transition: background-color var(--transition), border-color var(--transition);
+}
+.form-check-input:checked {
+    background-color: var(--ungu);
+    border-color: var(--ungu);
+}
+.form-check-input:focus {
+    border-color: var(--ungu);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, .16);
+}
+.form-label {
+    margin-bottom: .4rem;
+}
+
+/* CARD CLEAN */
+.card-clean {
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+}
+/* Kartu yang bisa diklik (beranda) */
+a.card-clean {
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+@media (hover: hover) {
+    a.card-clean:hover {
+        border-color: var(--ungu-muda);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-4px);
+    }
+}
+
+/* BOOK CARD */
+.book-card {
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+/* Hanya di perangkat dengan kursor, biar tidak ada hover "nyangkut" di layar sentuh */
+@media (hover: hover) {
+    .book-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+.book-cover {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--ungu-muda);
+}
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.book-card .card-body { padding: 18px; }
+
+/* PIL FILTER/KATEGORI — dipakai katalog.html & modal filter di rak-saya.html.
+   Tidak aktif: putih polos (netral). Aktif: ungu muda + teks ungu.
+   Dipasangkan dengan .btn-check Bootstrap supaya berubah tanpa JS */
+.category-btn {
+    border: 1px solid #E5E5EC;
+    color: var(--gelap);
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 7px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition), transform .1s ease;
+}
+.category-btn:hover {
+    border-color: var(--ungu);
+}
+.category-btn.active,
+.btn-check:checked + .category-btn {
+    background: var(--ungu-muda);
+    border-color: var(--ungu);
+    color: var(--ungu);
+}
+.category-btn:active {
+    transform: translateY(1px);
+}
+/* Input .btn-check disembunyikan Bootstrap, jadi ring fokus dipindah ke pilnya */
+.btn-check:focus-visible + .category-btn {
+    outline: 3px solid var(--ungu);
+    outline-offset: 2px;
+}
+
+/* GRID BUKU — dipakai katalog.html & rak-saya.html supaya tinggi & rasio sampunya sama.
+   Tcolumnwidth selalu col-6 col-lg-3 (2 di ponsel, 4 di laptop) */
+.grid-buku .book-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+/* Sampul ikut rasio buku dan menyesuaikan lebar kolom, bukan tinggi tetap */
+.grid-buku .book-cover {
+    height: auto;
+    aspect-ratio: 3 / 4;
+    /* jadi anchor lapisan peneduh sampul di buku yang belum tersedia */
+    position: relative;
+}
+/* Isi kartu setinggi mungkin */
+.grid-buku .book-card > .p-3 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+/* Badge jadi anak flex langsung di rak-saya.html, jadi harus dikecilkan sendiri
+   supaya tidak melebar penuh (di katalog.html badge dibungkus div.badges) */
+.grid-buku .book-card > .p-3 > .badge {
+    align-self: flex-start;
+}
+/* Tombol rata bawah */
+.grid-buku .book-card .d-grid {
+    margin-top: auto;
+    padding-top: .75rem;
+}
+/* Judul & penulis 1 baris */
+.grid-buku .book-card h5,
+.grid-buku .book-card .p-3 > p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Teks 1 baris di atas tidak boleh melebarkan kolom (min-width default flex item = auto),
+   kalau tidak gridnya turun dari 4 ke 3 kolom di laptop */
+.grid-buku > [class*="col-"] {
+    min-width: 0;
+}
+/* Dikurangi 1px supaya 4 kolom tidak pernah turun baris hanya karena pembulatan pecahan
+   (mis. row 1126px / 4 = 281.5px, Chrome bulatkan ke 282 -> 4x282 = 1128 > 1126) */
+@media (min-width: 992px) {
+    .grid-buku > [class*="col-"] {
+        width: calc(25% - 1px);
+    }
+}
+
+/* Di ponsel label "Tambah ke rak" lebih panjang dari kartu: kecilkan padding/font
+   dan biarkan teks membungkus di layar sangat sempit supaya tidak terpotong. */
+@media (max-width: 575.98px) {
+    .grid-buku .book-card .d-grid > * {
+        min-width: 0;
+    }
+    .grid-buku .book-card .d-grid .btn {
+        padding-left: .5rem;
+        padding-right: .5rem;
+        font-size: .875rem;
+    }
+    .grid-buku .book-card .d-grid .dropdown-toggle {
+        white-space: normal;
+    }
+}
+
+/* LOGIN */
+.login-page {
+    min-height: 100vh;
+    background: linear-gradient(
+        135deg,
+        var(--ungu-muda),
+        #fff 55%,
+        var(--merah-muda)
+    );
+}
+.login-card {
+    max-width: 440px;
+    margin: auto;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 34px;
+    box-shadow: var(--shadow-lg);
+}
+@media (max-width: 575.98px) {
+    .login-card {
+        padding: 26px 22px;
+    }
+}
+
+/* SIDEBAR & DASHBOARD */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    border-right: 1px solid #eee;
+    padding: 22px 14px;
+    overflow-y: auto;
+    z-index: 1030;
+}
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    color: var(--abu);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 11px 13px;
+    margin: 3px 0;
+    transition: background-color var(--transition), color var(--transition);
+}
+.sidebar .nav-link i {
+    flex: 0 0 auto;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background: var(--ungu-muda);
+    color: var(--ungu);
+}
+.sidebar .nav-link.active {
+    box-shadow: inset 3px 0 0 var(--ungu);
+}
+/* Keluar dipisah dari menu utama supaya tidak terklik tanpa sengaja */
+.sidebar .nav-link.logout {
+    margin-top: 14px;
+}
+.sidebar .nav-link.logout:hover {
+    background: var(--merah-muda);
+    color: #B91C1C; /* merah lebih gelap: di latar merah-muda butuh ≥4.5:1 */
+}
+.main-with-sidebar { margin-left: 250px; }
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    box-shadow: var(--shadow-sm);
+}
+.stat {
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    padding: 20px;
+}
+.stat-icon i {
+    font-size: 1.05rem;
+}
+
+/* Avatar pengguna — ukuran tetap, tidak ikut menyusut saat kolom tabel sempit */
+.avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: var(--radius-pill);
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sampul kecil di daftar "Sedang Dibaca" */
+.thumb {
+    width: 65px;
+    height: 80px;
+    flex: 0 0 auto;
+}
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    flex: 0 0 45px;
+    border-radius: 12px;
+    background: var(--ungu-muda);
+    color: var(--ungu);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-number {
+    font-size: clamp(1.45rem, 1.33rem + .53vw, 1.8rem);
+    font-weight: 800;
+}
+.table-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+
+/* TABEL — baris lebih lega dan mudah dipindai */
+.table {
+    margin-bottom: 0;
+}
+.table > :not(caption) > * > * {
+    padding: .85rem .75rem;
+}
+.table thead th {
+    color: var(--abu);
+    font-size: .8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    border-bottom: 1px solid #eee;
+}
+.table tbody td {
+    border-bottom-color: #F1F1F4;
+}
+.table > tbody > tr > * {
+    transition: background-color var(--transition);
+}
+.table > tbody > tr:hover > * {
+    background-color: #F7F6FE;
+}
+.table > tbody > tr:last-child > * {
+    border-bottom: 0;
+}
+/* Tombol aksi di tabel: tidak dipencet jadi lonjong, dan minimal 44px supaya nyaman disentuh jari */
+.table .btn {
+    flex: 0 0 auto;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* BADGE & PROGRESS */
+.badge {
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: .42em .7em;
+}
+/* Teks badge subtle bawaan Bootstrap cuma ~3.4:1; pakai warna emphasis-nya agar lolos WCAG AA */
+.badge.bg-success-subtle { color: #0F5132 !important; }
+.badge.bg-danger-subtle { color: #58151C !important; }
+.progress,
+.progress-bar {
+    border-radius: var(--radius-pill);
+}
+
+/* Backdrop sidebar mobile */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 27, 75, .5);
+    backdrop-filter: blur(2px);
+    z-index: 1025;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+.sidebar-backdrop.show {
+    display: block;
+    opacity: 1;
+}
+
+/* SITE FOOTER */
+.site-footer {
+    margin-top: 70px;
+    padding: 48px 0 0;
+    background: var(--gelap);
+    color: #fff;
+}
+.footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+.footer-brand:hover { color: #fff; }
+.footer-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: var(--ungu);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+.footer-description {
+    max-width: 430px;
+    color: #C7C9D4;
+    line-height: 1.7;
+}
+.footer-title {
+    margin-bottom: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+.footer-link,
+.footer-info {
+    display: block;
+    color: #C7C9D4;
+    margin-bottom: 9px;
+    font-size: .94rem;
+    text-decoration: none;
+}
+.footer-link { transition: color var(--transition); }
+.footer-link:hover { color: #fff; }
+.footer-info { line-height: 1.5; overflow-wrap: anywhere; }
+.footer-social { display: flex; gap: 9px; }
+.footer-social a {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
+    text-decoration: none;
+    transition: .2s;
+}
+.footer-social a:hover {
+    background: var(--ungu);
+    color: #fff;
+}
+.footer-bottom {
+    margin-top: 36px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: #AEB2C0;
+    font-size: .85rem;
+}
+
+/* RESPONSIVE */
+.mobile-menu { display: none; }
+
+/* Tablet & mobile (≤991px) */
+@media (max-width: 991px) {
+    .sidebar {
+        transform: translateX(-100%);
+        /* sidebar tersembunyi jangan bisa dijangkau tombol Tab */
+        visibility: hidden;
+        transition: transform .2s, visibility .2s;
+    }
+    .sidebar.show {
+        transform: translateX(0);
+        visibility: visible;
+    }
+    .main-with-sidebar { margin-left: 0; }
+    /* Tombol menu muncul hanya di mobile: minimal 44px supaya nyaman disentuh jari */
+    .mobile-menu { display: inline-flex; min-width: 44px; min-height: 44px; }
+}
+
+/* Navbar (≤991.98px) */
+@media (max-width: 991.98px) {
+    .navbar .navbar-collapse {
+        background: #fff;
+        border-radius: var(--radius-lg);
+        margin-top: .75rem;
+        padding: .75rem;
+        box-shadow: 0 10px 30px rgba(30, 27, 75, .08);
+        border: 1px solid #eee;
+    }
+    .navbar .nav-link {
+        padding: .7rem 1rem;
+        margin-bottom: 2px;
+    }
+    .navbar .nav-item:last-child {
+        margin-top: .5rem;
+    }
+    .navbar .btn-ungu {
+        width: 100%;
+        padding: .7rem;
+    }
+    .navbar .btn-akun {
+        width: 100%;
+    }
+    .navbar .navbar-toggler {
+        border: none;
+        padding: .35rem .5rem;
+    }
+    .navbar .navbar-toggler:focus-visible {
+        outline: 3px solid var(--ungu);
+        outline-offset: 2px;
+        box-shadow: none;
+    }
+}
+
+/* Desktop (≥992px) */
+@media (min-width: 992px) {
+    .sidebar-backdrop { display: none !important; }
+}
+
+/* Extra small (≤576px) */
+@media (max-width: 576px) {
+    .site-footer {
+        margin-top: 50px;
+        padding-top: 38px;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+}
+
+/* Ruang dan ukuran teks ikut menyesuaikan saat layar mengecil */
+@media (max-width: 767.98px) {
+    .stat { padding: 16px; }
+    .table-card { padding: 16px; }
+    .table { font-size: .9rem; }
+    .table > :not(caption) > * > * { padding: .7rem .55rem; }
+    .site-footer { padding-top: 42px; }
+    .footer-bottom { margin-top: 26px; }
+}
+
+/* Bootstrap mematikan outline pada kontrolnya sendiri, jadi ring fokus perlu
+   dikembalikan di sini dan box-shadow dimatikan supaya indikatornya tidak ganda */
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible,
+.form-check-input:focus-visible,
+.btn-close:focus-visible,
+.nav-link:focus-visible {
+    outline: 3px solid var(--ungu);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Di atas latar gelap, ring ungu kurang kontras */
+.site-footer :focus-visible,
+.toast :focus-visible {
+    outline-color: #fff;
+}
+
+/* Hormati preferensi pengguna yang mengurangi gerakan */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .book-card:hover,
+    a.card-clean:hover {
+        transform: none;
+    }
+}
