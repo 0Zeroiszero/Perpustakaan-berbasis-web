@@ -20,18 +20,11 @@ require __DIR__ . '/../includes/partials/sidebar.php';
 ?>
 
 <div class="main-with-sidebar">
-    <header class="topbar p-3">
-        <div class="d-flex align-items-center gap-3">
-            <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                <i class="bi bi-list" aria-hidden="true"></i>
-            </button>
-            <div>
-                <b>Dashboard Admin</b>
-                <div class="small text-secondary">Selamat datang kembali, <?= e(akun()['nama']) ?>.</div>
-            </div>
-            <div class="ms-auto"><span class="badge bg-ungu-muda text-ungu">Admin</span></div>
-        </div>
-    </header>
+    <?php
+    $judulTopbar = 'Dashboard Admin';
+    $subTopbar = 'Selamat datang kembali, ' . akun()['nama'] . '.';
+    require __DIR__ . '/../includes/partials/app_topbar.php';
+    ?>
     <main class="container-fluid p-3 p-lg-4">
         <div class="mb-4">
             <h1 class="page-title page-title-sm">Ringkasan Sistem</h1>

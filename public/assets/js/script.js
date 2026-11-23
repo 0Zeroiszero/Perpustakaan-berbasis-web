@@ -73,7 +73,9 @@ function konfirmasiHapus(nama, jenis, opsi) {
     elKonfirmasi.querySelector(".konfirmasi-nama").textContent = nama;
     elKonfirmasi.querySelector(".konfirmasi-pesan").innerHTML = opsi.pesan ||
         "Item berikut akan dihapus dan <b>tidak bisa dibatalkan</b>:";
-    elKonfirmasi.querySelector(".konfirmasi-ya").textContent = opsi.tombol || "Ya, Hapus";
+    const tombolYa = elKonfirmasi.querySelector(".konfirmasi-ya");
+    tombolYa.className = "konfirmasi-ya " + (opsi.kelas || "btn btn-hapus");
+    tombolYa.textContent = opsi.tombol || "Ya, Hapus";
     modalKonfirmasi.show();
 
     return new Promise(function (resolve) { jawabKonfirmasi = resolve; });
@@ -121,4 +123,18 @@ function tutupKonfirmasi(jawab) {
     const fn = jawabKonfirmasi;
     jawabKonfirmasi = null;
     if (fn) fn(jawab);
+}
+
+// Baca Ulang: konfirmasi dulu karena progres akan direset ke halaman 1.
+function bacaUlang(tombol) {
+    const form = tombol.closest("form");
+
+    konfirmasiHapus(tombol.dataset.judul, "bacaan", {
+        judul: "Baca ulang buku?",
+        pesan: "Progres bacaan akan direset ke halaman 1 dan status menjadi <b>Sedang dibaca</b>:",
+        tombol: "Ya, Baca Ulang",
+        kelas: "btn-ungu"
+    }).then(function (ya) {
+        if (ya) form.submit();
+    });
 }

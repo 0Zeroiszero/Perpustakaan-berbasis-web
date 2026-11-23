@@ -34,13 +34,11 @@
             <i class="bi bi-book me-2" aria-hidden="true"></i>
             Katalog
         </a>
-        <?php if (empty($admin)): ?>
-            <a class="nav-link <?= ($aktif ?? '') === 'rak' ? 'active' : '' ?>" href="<?= url('my-shelf.php') ?>"
-                <?= ($aktif ?? '') === 'rak' ? 'aria-current="page"' : '' ?>>
-                <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
-                Rak Saya
-            </a>
-        <?php endif; ?>
+        <a class="nav-link <?= ($aktif ?? '') === 'rak' ? 'active' : '' ?>" href="<?= url('my-shelf.php') ?>"
+            <?= ($aktif ?? '') === 'rak' ? 'aria-current="page"' : '' ?>>
+            <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
+            Rak Saya
+        </a>
         <a class="nav-link logout" href="<?= url('logout.php') ?>">
             <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
             Keluar

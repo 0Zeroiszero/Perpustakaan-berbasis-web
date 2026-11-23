@@ -1,5 +1,7 @@
 <?php
 // Kelola Publisher: daftar + modal tambah/edit + pencarian PHP. Tanpa hapus master.
+require __DIR__ . '/../../includes/data_helper.php';
+require __DIR__ . '/../../includes/slug_helper.php';
 require __DIR__ . '/../../includes/auth_guard.php';
 wajib_admin();
 header('Cache-Control: no-store');
@@ -18,11 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    $slug = generate_unique_slug($name, 'publishers', $id ?: null);
+
     if ($id > 0) {
-        q('UPDATE publishers SET name = ?, city = ? WHERE publisher_id = ?', [$name, $city, $id]);
+        q('UPDATE publishers SET name = ?, slug = ?, city = ? WHERE publisher_id = ?', [$name, $slug, $city, $id]);
         flash('Penerbit "' . $name . '" diperbarui.');
     } else {
-        q('INSERT INTO publishers (name, city) VALUES (?, ?)', [$name, $city]);
+        q('INSERT INTO publishers (name, slug, city) VALUES (?, ?, ?)', [$name, $slug, $city]);
         flash('Penerbit "' . $name . '" ditambahkan.');
     }
     header('Location: ' . url('admin/publishers.php'));
@@ -49,18 +53,11 @@ require __DIR__ . '/../../includes/partials/sidebar.php';
 ?>
 
 <div class="main-with-sidebar">
-    <header class="topbar p-3">
-        <div class="d-flex align-items-center gap-3">
-            <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                <i class="bi bi-list" aria-hidden="true"></i>
-            </button>
-            <div>
-                <b>Kelola Publisher</b>
-                <div class="small text-secondary">Master penerbit untuk data buku.</div>
-            </div>
-            <div class="ms-auto"><span class="badge bg-ungu-muda text-ungu">Admin</span></div>
-        </div>
-    </header>
+    <?php
+    $judulTopbar = 'Kelola Publisher';
+    $subTopbar = 'Master penerbit untuk data buku.';
+    require __DIR__ . '/../../includes/partials/app_topbar.php';
+    ?>
     <main class="container-fluid p-3 p-lg-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
             <div>
@@ -138,8 +135,13 @@ require __DIR__ . '/../../includes/partials/sidebar.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="city">Kota</label>
-                        <input id="city" name="city" type="text" class="form-control" maxlength="100"
+                        <input id="city" name="city" type="text" class="form-control" maxlength="100" list="daftarKota"
                             value="<?= e($edit['city'] ?? '') ?>">
+                        <datalist id="daftarKota">
+                            <?php foreach (KOTA as $kota): ?>
+                                <option value="<?= e($kota) ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
                     </div>
                 </div>
                 <div class="modal-footer border-0">

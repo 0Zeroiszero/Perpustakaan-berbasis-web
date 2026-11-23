@@ -8,6 +8,14 @@ $status = (string) ($_GET['status'] ?? '');
 if (!isset(STATUS_LABEL[$status])) {
     $status = '';
 }
+$q = trim(is_string($_GET['q'] ?? null) ? $_GET['q'] : '');
+$sort = in_array($_GET['sort'] ?? '', ['terbaru', 'judul-az', 'progres'], true) ? $_GET['sort'] : 'terbaru';
+$raw_kategori = $_GET['kategori'] ?? [];
+$raw_kategori = is_array($raw_kategori) ? $raw_kategori : [$raw_kategori];
+$kategori = array_values(array_filter(
+    $raw_kategori,
+    fn($x) => is_string($x) && $x !== ''
+));
 
 $sql = 'SELECT c.status, c.created_at, v.*, rp.last_page
         FROM collections c
@@ -19,10 +27,46 @@ if ($status !== '') {
     $sql .= ' AND c.status = ?';
     $params[] = $status;
 }
-$sql .= ' ORDER BY c.created_at DESC, v.book_id DESC';
+if ($q !== '') {
+    $sql .= ' AND (v.title LIKE ? OR v.author_name LIKE ?)';
+    $params[] = '%' . $q . '%';
+    $params[] = '%' . $q . '%';
+}
+if ($kategori !== []) {
+    $sql .= ' AND v.genre_name IN (' . implode(',', array_fill(0, count($kategori), '?')) . ')';
+    $params = array_merge($params, $kategori);
+}
+$sql .= $sort === 'judul-az' ? ' ORDER BY v.title ASC' : ' ORDER BY c.created_at DESC, v.book_id DESC';
 $rak = rows($sql, $params);
+foreach ($rak as &$b) {
+    $b['persen'] = persen_baca($b);
+}
+unset($b);
+if ($sort === 'progres') {
+    usort($rak, fn($a, $b) => [$b['persen'], $a['title']] <=> [$a['persen'], $b['title']]);
+}
 
 $genre_list = rows('SELECT name FROM genres ORDER BY name');
+$kategori_cek = $kategori === [] ? array_column($genre_list, 'name') : $kategori;
+
+// URL tab status tetap membawa pencarian/filter/sort yang aktif.
+function rak_url(string $status, string $q, string $sort, array $kategori): string
+{
+    $p = [];
+    if ($status !== '') {
+        $p['status'] = $status;
+    }
+    if ($q !== '') {
+        $p['q'] = $q;
+    }
+    if ($sort !== 'terbaru') {
+        $p['sort'] = $sort;
+    }
+    if ($kategori !== []) {
+        $p['kategori'] = $kategori;
+    }
+    return url('my-shelf.php' . ($p ? '?' . http_build_query($p) : ''));
+}
 
 $judul = 'Rak Saya - PustakaDigital';
 $css = ['my-shelf.css'];
@@ -33,22 +77,11 @@ require __DIR__ . '/../includes/partials/sidebar.php';
 ?>
 
 <div class="main-with-sidebar">
-    <header class="topbar p-3">
-        <div class="d-flex align-items-center gap-3">
-            <button id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                <i class="bi bi-list" aria-hidden="true"></i>
-            </button>
-            <div>
-                <b>Rak Saya</b>
-                <div class="small text-secondary">
-                    Buku yang sudah kamu simpan.
-                </div>
-            </div>
-            <div class="ms-auto">
-                <span class="badge bg-ungu-muda text-ungu"><?= e(ucfirst(akun()['role'])) ?></span>
-            </div>
-        </div>
-    </header>
+    <?php
+    $judulTopbar = 'Rak Saya';
+    $subTopbar = 'Buku yang sudah kamu simpan.';
+    require __DIR__ . '/../includes/partials/app_topbar.php';
+    ?>
     <main class="container-fluid p-3 p-lg-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
             <div>
@@ -61,35 +94,39 @@ require __DIR__ . '/../includes/partials/sidebar.php';
 
         <?php tampilkan_flash(); ?>
 
-        <!-- TAB STATUS: filter server-side lewat ?status= -->
+        <!-- TAB STATUS: filter server-side, membawa q/kategori/sort -->
         <div class="d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Filter status rak">
-            <a class="category-btn <?= $status === '' ? 'active' : '' ?>" href="<?= url('my-shelf.php') ?>"
+            <a class="category-btn <?= $status === '' ? 'active' : '' ?>" href="<?= rak_url('', $q, $sort, $kategori) ?>"
                 <?= $status === '' ? 'aria-current="page"' : '' ?>>Semua status</a>
             <?php foreach (STATUS_LABEL as $nilai => $label): ?>
                 <a class="category-btn <?= $status === $nilai ? 'active' : '' ?>"
-                    href="<?= url('my-shelf.php?status=' . $nilai) ?>"
+                    href="<?= rak_url($nilai, $q, $sort, $kategori) ?>"
                     <?= $status === $nilai ? 'aria-current="page"' : '' ?>><?= e($label) ?></a>
             <?php endforeach; ?>
         </div>
 
-        <!-- TOOLBAR RAK — UI saja sesuai kontrak lama (belum ada logika JS). -->
-        <div class="rak-toolbar mb-3">
+        <!-- TOOLBAR RAK: pencarian/urut diproses PHP lewat GET. -->
+        <form class="rak-toolbar mb-3" method="get" action="<?= url('my-shelf.php') ?>">
+            <?php if ($status !== ''): ?>
+                <input type="hidden" name="status" value="<?= e($status) ?>">
+            <?php endif; ?>
             <div class="row g-2">
                 <div class="col">
                     <label class="visually-hidden" for="cariRak">Cari buku di rak</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0"><i
                                 class="bi bi-search text-secondary" aria-hidden="true"></i></span>
-                        <input id="cariRak" type="search" class="form-control border-start-0"
-                            placeholder="Cari di rak">
+                        <input id="cariRak" name="q" type="search" class="form-control border-start-0"
+                            value="<?= e($q) ?>" placeholder="Cari di rak">
+                        <button class="btn btn-ungu" type="submit">Cari</button>
                     </div>
                 </div>
                 <div class="col-auto d-none d-md-block">
                     <label class="visually-hidden" for="urutRak">Urutkan buku</label>
-                    <select id="urutRak" class="form-select">
-                        <option value="terbaru">Terbaru</option>
-                        <option value="az">Judul A-Z</option>
-                        <option value="progres">Progres Baca</option>
+                    <select id="urutRak" name="sort" class="form-select">
+                        <option value="terbaru" <?= $sort === 'terbaru' ? 'selected' : '' ?>>Terbaru</option>
+                        <option value="judul-az" <?= $sort === 'judul-az' ? 'selected' : '' ?>>Judul A-Z</option>
+                        <option value="progres" <?= $sort === 'progres' ? 'selected' : '' ?>>Progres Baca</option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -99,18 +136,11 @@ require __DIR__ . '/../includes/partials/sidebar.php';
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
 
         <div class="row g-4 grid-buku" id="rakGrid">
             <?php foreach ($rak as $b):
-                // Persentase diturunkan saat render dari last_page/page_count (bukan kolom tersimpan).
-                $progres = match ($b['status']) {
-                    'finished' => 100,
-                    'to_read' => 0,
-                    default => (int) $b['page_count'] > 0
-                        ? max(1, min(99, (int) round(((int) $b['last_page'] / (int) $b['page_count']) * 100)))
-                        : 0,
-                };
+                $progres = $b['persen'];
                 $selesai = $b['status'] === 'finished';
                 $badgeStatus = match ($b['status']) {
                     'finished' => 'bg-success-subtle text-success',
@@ -147,7 +177,14 @@ require __DIR__ . '/../includes/partials/sidebar.php';
                             <div class="d-grid gap-2">
                                 <?php if ($selesai): ?>
                                     <a href="<?= url('catalog.php') ?>" class="btn btn-ungu"><i class="bi bi-compass me-1" aria-hidden="true"></i>Buku Selanjutnya</a>
-                                    <a href="<?= url('read.php?slug=' . urlencode($b['slug'])) ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang</a>
+                                    <form method="post" action="<?= url('actions/progress-reset.php') ?>">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="book_id" value="<?= (int) $b['book_id'] ?>">
+                                        <button type="button" class="btn btn-outline-secondary w-100"
+                                            data-judul="<?= e($b['title']) ?>" onclick="bacaUlang(this)">
+                                            <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Baca Ulang
+                                        </button>
+                                    </form>
                                 <?php else: ?>
                                     <a href="<?= url('read.php?slug=' . urlencode($b['slug'])) ?>" class="btn btn-baca"><i class="bi bi-book-half me-1" aria-hidden="true"></i><?= $b['status'] === 'reading' ? 'Lanjut Baca' : 'Baca Buku' ?></a>
                                 <?php endif; ?>
@@ -169,57 +206,64 @@ require __DIR__ . '/../includes/partials/sidebar.php';
         <div id="rakKosong" class="text-center py-5 <?= $rak ? 'd-none' : '' ?>" role="status">
             <div class="card-clean p-5">
                 <i class="bi bi-bookmark" style="font-size:3rem;color:var(--abu)" aria-hidden="true"></i>
-                <h2 class="h5 mt-3">Rak kamu masih kosong</h2>
-                <p class="text-secondary"><?= $status !== '' ? 'Tidak ada buku dengan status ini.' : 'Simpan buku dari katalog untuk mulai membaca.' ?></p>
-                <a href="<?= url('catalog.php') ?>" class="btn btn-ungu mt-2">
-                    <i class="bi bi-grid me-1" aria-hidden="true"></i>Jelajahi Katalog
+                <h2 class="h5 mt-3">Tidak ada buku yang cocok</h2>
+                <p class="text-secondary">
+                    <?= ($q !== '' || $kategori !== [] || $status !== '') ? 'Coba kata kunci, kategori, atau status lain.' : 'Rak kamu masih kosong. Simpan buku dari katalog untuk mulai membaca.' ?>
+                </p>
+                <a href="<?= url('my-shelf.php') ?>" class="btn btn-ungu mt-2">
+                    <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset Pencarian
                 </a>
             </div>
         </div>
     </main>
 </div>
 
-<!-- MODAL URUTKAN & FILTER — UI saja; opsi .btn-check berubah tanpa JS (kontrak lama). -->
+<!-- MODAL URUTKAN & FILTER: form GET, diproses PHP. -->
 <div class="modal fade" id="modalFilterRak" tabindex="-1" aria-labelledby="modalFilterRakJudul" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" style="border-radius:var(--radius-lg)">
-            <div class="modal-header border-0 pb-0">
-                <h2 class="modal-title h5 fw-bold" id="modalFilterRakJudul">
-                    <i class="bi bi-funnel me-2" aria-hidden="true"></i>
-                    Urutkan & filter rak
-                </h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <p class="info-label mb-2 d-md-none" id="labelUrutRak">Urutkan</p>
-                <div class="d-flex flex-wrap gap-2 mb-4 d-md-none" role="group" aria-labelledby="labelUrutRak">
-                    <input type="radio" class="btn-check" name="urutRakOpsi" id="urutTerbaru" checked>
-                    <label class="category-btn" for="urutTerbaru">Terbaru</label>
-                    <input type="radio" class="btn-check" name="urutRakOpsi" id="urutAZ">
-                    <label class="category-btn" for="urutAZ">Judul A-Z</label>
-                    <input type="radio" class="btn-check" name="urutRakOpsi" id="urutProgres">
-                    <label class="category-btn" for="urutProgres">Progres Baca</label>
+            <form method="get" action="<?= url('my-shelf.php') ?>">
+                <input type="hidden" name="q" value="<?= e($q) ?>">
+                <div class="modal-header border-0 pb-0">
+                    <h2 class="modal-title h5 fw-bold" id="modalFilterRakJudul">
+                        <i class="bi bi-funnel me-2" aria-hidden="true"></i>
+                        Urutkan & filter rak
+                    </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
-                <p class="info-label mb-2" id="labelStatusRak">Status</p>
-                <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-labelledby="labelStatusRak">
-                    <input type="radio" class="btn-check" name="statusRak" id="statusSemua" checked>
-                    <label class="category-btn" for="statusSemua">Semua status</label>
-                    <?php foreach (STATUS_LABEL as $nilai => $label): ?>
-                        <input type="radio" class="btn-check" name="statusRak" id="status<?= e(ucfirst($nilai)) ?>">
-                        <label class="category-btn" for="status<?= e(ucfirst($nilai)) ?>"><?= e($label) ?></label>
-                    <?php endforeach; ?>
+                <div class="modal-body">
+                    <p class="info-label mb-2 d-md-none" id="labelUrutRak">Urutkan</p>
+                    <div class="d-flex flex-wrap gap-2 mb-4 d-md-none" role="group" aria-labelledby="labelUrutRak">
+                        <?php foreach (['terbaru' => 'Terbaru', 'judul-az' => 'Judul A-Z', 'progres' => 'Progres Baca'] as $nilai => $label): ?>
+                            <input type="radio" class="btn-check" name="sort" id="urut<?= e($nilai) ?>" value="<?= e($nilai) ?>"
+                                <?= $sort === $nilai ? 'checked' : '' ?>>
+                            <label class="category-btn" for="urut<?= e($nilai) ?>"><?= e($label) ?></label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="info-label mb-2" id="labelStatusRak">Status</p>
+                    <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-labelledby="labelStatusRak">
+                        <input type="radio" class="btn-check" name="status" id="statusSemua" value=""
+                            <?= $status === '' ? 'checked' : '' ?>>
+                        <label class="category-btn" for="statusSemua">Semua status</label>
+                        <?php foreach (STATUS_LABEL as $nilai => $label): ?>
+                            <input type="radio" class="btn-check" name="status" id="status<?= e(ucfirst($nilai)) ?>"
+                                value="<?= e($nilai) ?>" <?= $status === $nilai ? 'checked' : '' ?>>
+                            <label class="category-btn" for="status<?= e(ucfirst($nilai)) ?>"><?= e($label) ?></label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="info-label mb-2" id="labelKategoriRak">Kategori</p>
+                    <div class="d-flex flex-wrap gap-2" role="group" aria-labelledby="labelKategoriRak">
+                        <?php foreach ($genre_list as $i => $g): ?>
+                            <input type="checkbox" class="btn-check" name="kategori[]" id="kat<?= (int) $i ?>"
+                                value="<?= e($g['name']) ?>" <?= in_array($g['name'], $kategori_cek, true) ? 'checked' : '' ?>>
+                            <label class="category-btn" for="kat<?= (int) $i ?>"><?= e($g['name']) ?></label>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <p class="info-label mb-2" id="labelKategoriRak">Kategori</p>
-                <div class="d-flex flex-wrap gap-2" role="group" aria-labelledby="labelKategoriRak">
-                    <?php foreach ($genre_list as $i => $g): ?>
-                        <input type="checkbox" class="btn-check" name="kategoriRak" id="kat<?= (int) $i ?>" checked>
-                        <label class="category-btn" for="kat<?= (int) $i ?>"><?= e($g['name']) ?></label>
-                    <?php endforeach; ?>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-ungu w-100">Terapkan</button>
                 </div>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-ungu w-100" data-bs-dismiss="modal">Terapkan</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>

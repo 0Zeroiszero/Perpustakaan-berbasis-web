@@ -49,12 +49,13 @@
 /* KOLEKSI RINGKAS */
 .landing-books {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
 }
 @media (min-width: 992px) {
     .landing-books {
-        grid-template-columns: repeat(5, 115px);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 600px;
     }
 }
 
@@ -66,7 +67,7 @@
     .landing h1.mt-3 { margin-top: .6rem !important; }
     .landing p { font-size: .92rem; line-height: 1.5; margin-bottom: .55rem !important; }
     .landing .search-box { margin-bottom: .55rem !important; }
-    .landing-books { grid-template-columns: repeat(5, 105px); gap: 8px; }
+    .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .landing-title { font-size: .68rem; }
     .register-card { padding: 20px; }
 }
@@ -118,7 +119,7 @@
 
 @media (max-width: 991.98px) {
     .landing { padding: 20px 0 30px; }
-    .landing-books { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .landing-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .landing-register { order: -1; }
 }
 

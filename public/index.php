@@ -10,7 +10,7 @@ if (akun()) {
 
 $buku = rows(
     'SELECT title, slug, cover_path, author_name FROM v_books_catalog
-     WHERE is_active = 1 ORDER BY book_id DESC LIMIT 10'
+     WHERE is_active = 1 ORDER BY book_id DESC LIMIT 3'
 );
 
 $judul = 'PustakaDigital';

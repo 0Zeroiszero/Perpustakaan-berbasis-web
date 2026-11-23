@@ -45,11 +45,16 @@ $gagal = (string) ($_GET['gagal'] ?? '');
 $judul = 'Profil Saya - PustakaDigital';
 $css = ['login.css'];
 $aktif = '';
+$admin = $user['role'] === 'admin';
 require __DIR__ . '/../includes/partials/head.php';
-require __DIR__ . '/../includes/partials/navbar.php';
+require __DIR__ . '/../includes/partials/sidebar.php';
+echo '<div class="main-with-sidebar">';
+$judulTopbar = 'Profil Saya';
+$subTopbar = 'Ubah nama tampilan, email, atau kata sandi.';
+require __DIR__ . '/../includes/partials/app_topbar.php';
 ?>
 
-<main class="container py-5">
+<main class="container py-4 py-lg-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8">
             <h1 class="page-title page-title-sm mb-3">Profil Saya</h1>
@@ -90,8 +95,7 @@ require __DIR__ . '/../includes/partials/navbar.php';
         </div>
     </div>
 </main>
-
-<?php require __DIR__ . '/../includes/partials/footer.php'; ?>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= asset('js/script.js') ?>"></script>

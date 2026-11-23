@@ -43,11 +43,6 @@ $user = akun();
                             <i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard
                         </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="<?= url('my-shelf.php') ?>">
-                            <i class="bi bi-bookmark me-2" aria-hidden="true"></i>Rak Saya
-                        </a>
-                    </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item logout" href="<?= url('logout.php') ?>">

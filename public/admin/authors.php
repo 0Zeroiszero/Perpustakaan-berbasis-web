@@ -1,5 +1,6 @@
 <?php
 // Kelola Penulis: daftar + modal tambah/edit + pencarian PHP; slug otomatis.
+require __DIR__ . '/../../includes/data_helper.php';
 require __DIR__ . '/../../includes/slug_helper.php';
 require __DIR__ . '/../../includes/auth_guard.php';
 wajib_admin();
@@ -52,18 +53,11 @@ require __DIR__ . '/../../includes/partials/sidebar.php';
 ?>
 
 <div class="main-with-sidebar">
-    <header class="topbar p-3">
-        <div class="d-flex align-items-center gap-3">
-            <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                <i class="bi bi-list" aria-hidden="true"></i>
-            </button>
-            <div>
-                <b>Kelola Penulis</b>
-                <div class="small text-secondary">Master penulis untuk data buku.</div>
-            </div>
-            <div class="ms-auto"><span class="badge bg-ungu-muda text-ungu">Admin</span></div>
-        </div>
-    </header>
+    <?php
+    $judulTopbar = 'Kelola Penulis';
+    $subTopbar = 'Master penulis untuk data buku.';
+    require __DIR__ . '/../../includes/partials/app_topbar.php';
+    ?>
     <main class="container-fluid p-3 p-lg-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
             <div>
@@ -143,8 +137,13 @@ require __DIR__ . '/../../includes/partials/sidebar.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="country">Negara asal</label>
-                        <input id="country" name="country" type="text" class="form-control" maxlength="60"
+                        <input id="country" name="country" type="text" class="form-control" maxlength="60" list="daftarNegara"
                             value="<?= e($edit['country'] ?? '') ?>">
+                        <datalist id="daftarNegara">
+                            <?php foreach (NEGARA as $negara): ?>
+                                <option value="<?= e($negara) ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="bio">Bio</label>

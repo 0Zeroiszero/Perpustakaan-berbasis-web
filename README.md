@@ -47,7 +47,7 @@ PustakaDigital hadir sebagai solusi dengan menyediakan katalog buku, pencarian, 
 
 ### 🏠 Beranda (Landing)
 Halaman tamu sebagai pintu masuk koleksi:
-- Sepuluh sampul koleksi terbaru (grid 5×2 di desktop) dan form registrasi singkat di sampingnya
+- **Tiga sampul koleksi terbaru** (grid 3 kolom) dan form registrasi singkat di sampingnya
 - Informasi utama muat satu layar desktop; footer tetap ada dan muncul setelah scroll
 - Pencarian langsung ke katalog (`catalog.php?q=...`)
 - User yang sudah login diarahkan langsung ke katalog
@@ -60,10 +60,10 @@ Halaman tamu sebagai pintu masuk koleksi:
 
 ### 📖 Detail Buku & Profil Penulis
 - Sampul, judul, penulis (tautan ke profil penulis), sinopsis
-- Informasi kategori, **penerbit (nama + kota)**, tahun terbit, jumlah halaman, ISBN, dan format (PDF)
+- Informasi kategori, **penerbit (nama + kota, tautan ke profil penerbit)**, tahun terbit, jumlah halaman, ISBN, dan format (PDF)
 - Dropdown status rak (Akan dibaca / Sedang dibaca / Telah dibaca / Tidak Tertarik) yang langsung menyimpan
-- **Baca Buku** membuka pembaca inline; pengguna belum login diarahkan ke login lalu kembali ke buku tersebut
-- Profil penulis publik (`author.php?slug=...`) menampilkan bio, negara asal, dan daftar karyanya
+- **Baca Buku** membuka pembaca inline; jika status buku sudah **Telah dibaca**, tombol berubah menjadi **Baca Ulang** dan meminta konfirmasi reset progres
+- Profil penulis publik (`author.php?slug=...`) dan profil penerbit (`publisher.php?slug=...`) menampilkan identitas serta daftar buku
 
 ### 📖 Pembaca PDF Inline
 - PDF.js merender buku langsung di browser (`read.php?slug=...`)
@@ -74,10 +74,11 @@ Halaman tamu sebagai pintu masuk koleksi:
 - Berkas PDF dialirkan lewat `stream.php` yang menolak akses tanpa login (403)
 
 ### 🗂️ Rak Saya
-- Tab empat status bacaan; menyimpan buku dari katalog/detail/profil penulis
+- Tab empat status bacaan; menyimpan buku dari katalog/detail/profil penulis/penerbit
+- **Pencarian judul/penulis, filter kategori, status, dan urutan (Terbaru, A–Z, Progres Baca) diproses server-side PHP**
 - Progres bacaan tiap buku diturunkan dari halaman terakhir
-- Lanjut baca, baca ulang, atau hapus buku dari rak (dengan konfirmasi)
-- Tampilan kosong yang mengarahkan pengguna ke katalog
+- **Baca Ulang** pada buku selesai menampilkan konfirmasi; setelah disetujui progres direset ke halaman 1 dan status menjadi “Sedang dibaca”
+- Hapus buku dari rak dengan konfirmasi; tampilan kosong mengarahkan pengguna ke katalog
 
 ### 👤 Akun & Profil
 - Registrasi terbuka, login email + password (hash Bcrypt), logout
@@ -91,7 +92,7 @@ Ringkasan aktivitas membaca: jumlah rak, sedang dibaca, selesai dibaca, total ko
 - Statistik buku/pengguna/penerbit/penulis serta buku terbaru
 - **Kelola Buku** — daftar + modal tambah/edit (upload PDF, sampul kustom atau sampul otomatis GD), nonaktifkan/aktifkan buku
 - **Kelola Pengguna** — daftar + modal tambah/edit akun, reset password acak sekali-tampil dengan tombol Salin, aktif/nonaktif akun
-- **Kelola Publisher** dan **Kelola Penulis** — master data lewat modal tambah/edit; pencarian server-side
+- **Kelola Publisher** dan **Kelola Penulis** — master data lewat modal tambah/edit; pencarian server-side; saran negara/kota dari `includes/data_helper.php` (datalist, tetap bisa diketik bebas)
 - Admin tidak dapat menonaktifkan dirinya sendiri, menurunkan role sendiri, atau menghilangkan admin aktif terakhir
 
 ### 🔐 Hak Akses
@@ -116,7 +117,7 @@ Publik: beranda, katalog, detail buku, profil penulis, login, registrasi. Wajib 
 Aplikasi memakai database MySQL **`optl_pustaka`** dengan tujuh tabel 3NF + satu VIEW:
 
 - `users` — akun (email unik, hash Bcrypt, role admin/member, is_active)
-- `publishers` — master penerbit (nama, kota)
+- `publishers` — master penerbit (nama, slug unik, kota)
 - `genres` — master kategori/genre buku
 - `authors` — master penulis (nama, slug unik, negara, bio)
 - `books` — katalog buku (slug unik, ISBN, berkas PDF + metadata, is_active)
@@ -124,7 +125,7 @@ Aplikasi memakai database MySQL **`optl_pustaka`** dengan tujuh tabel 3NF + satu
 - `reading_progress` — halaman terakhir per (user, book)
 - `v_books_catalog` — VIEW gabungan katalog sehingga halaman publik cukup `SELECT *` (0 JOIN)
 
-Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`. Untuk database lama yang sudah ada sebelum revisi status lifecycle, jalankan `database/migrasi_status_source.sql` sekali. Berkas PDF dan sampul dummy sudah ikut di repo (`storage/ebooks/`, `public/uploads/covers/`), jadi tidak ada langkah migrasi tambahan pada clone baru. Skrip `database/migrasi_berkas.py` hanya dokumentasi historis: ia butuh folder lama `ebook/`+`cover/` dan `pypdf`, dan hanya dipakai sekali saat mengevaluasi skema awal. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
+Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database/optl_pustaka.sql`. Untuk database lama yang sudah ada sebelum revisi status lifecycle/publisher slug, jalankan `database/migrasi_status_source.sql` dan `database/migrasi_publisher_slug.sql` sekali. Berkas PDF dan sampul dummy sudah ikut di repo (`storage/ebooks/`, `public/uploads/covers/`), jadi tidak ada langkah migrasi tambahan pada clone baru. Skrip `database/migrasi_berkas.py` hanya dokumentasi historis: ia butuh folder lama `ebook/`+`cover/` dan `pypdf`, dan hanya dipakai sekali saat mengevaluasi skema awal. Koneksi default `root` tanpa password di `127.0.0.1` (lihat `includes/config.php`).
 
 ---
 
@@ -140,6 +141,5 @@ Impor `database/optl_pustaka.sql` lewat phpMyAdmin atau `mysql -uroot < database
 ## Future Release
 
 Fitur-fitur yang direncanakan untuk rilis mendatang:
-- Pagination dan filter lanjutan pada tabel admin
+- Pagination pada tabel admin
 - Reset password dan verifikasi email
-- Logika penyaringan untuk toolbar/modal filter Rak Saya (sa ini UI saja)

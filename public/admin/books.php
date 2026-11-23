@@ -230,18 +230,11 @@ require __DIR__ . '/../../includes/partials/sidebar.php';
 ?>
 
 <div class="main-with-sidebar">
-    <header class="topbar p-3">
-        <div class="d-flex align-items-center gap-3">
-            <button type="button" id="mobileMenu" class="btn btn-light mobile-menu" aria-label="Buka menu">
-                <i class="bi bi-list" aria-hidden="true"></i>
-            </button>
-            <div>
-                <b>Kelola Buku</b>
-                <div class="small text-secondary">Tambah, ubah, dan nonaktifkan data buku.</div>
-            </div>
-            <div class="ms-auto"><span class="badge bg-ungu-muda text-ungu">Admin</span></div>
-        </div>
-    </header>
+    <?php
+    $judulTopbar = 'Kelola Buku';
+    $subTopbar = 'Tambah, ubah, dan nonaktifkan data buku.';
+    require __DIR__ . '/../../includes/partials/app_topbar.php';
+    ?>
 
     <main class="container-fluid p-3 p-lg-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">

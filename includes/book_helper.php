@@ -27,6 +27,20 @@ function status_btn(?string $status): string
     return STATUS_BTN[$status ?? ''] ?? 'btn-rak-netral';
 }
 
+// Persentase tampilan diturunkan, bukan kolom tersimpan.
+function persen_baca(array $b): int
+{
+    if (($b['status'] ?? '') === 'finished') {
+        return 100;
+    }
+    if (($b['status'] ?? '') === 'to_read') {
+        return 0;
+    }
+    $halaman = (int) ($b['page_count'] ?? 0);
+    $terakhir = (int) ($b['last_page'] ?? 1);
+    return $halaman > 0 ? max(1, min(99, (int) round(($terakhir / $halaman) * 100))) : 0;
+}
+
 // Status rak satu buku milik akun yang sedang login (null bila tamu/belum ada).
 function rak_status(int $book_id): ?string
 {

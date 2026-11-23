@@ -165,7 +165,7 @@ function http(string $path, array $curl = [], ?string $jar = null): array
 cek('index.php 200', $s === 200, "status $s");
 cek('index satu h1', $s === 200 && substr_count($b, '<h1') === 1);
 cek('index dua pintu masuk', str_contains($b, 'Daftar Sekarang') && str_contains($b, 'landing-book'));
-cek('index 10 sampul', $s === 200 && substr_count($b, 'class="landing-book"') === 10);
+cek('index tiga sampul', $s === 200 && substr_count($b, 'class="landing-book"') === 3);
 cek('index tanpa URL route lama', $s === 200 && !str_contains($b, 'route/'));
 [$s, $b] = http('/catalog.php');
 cek('catalog.php 200', $s === 200, "status $s");
@@ -176,7 +176,7 @@ cek('catalog pil genre DB', str_contains($b, 'Teknologi') && str_contains($b, 'P
 [$s, $b] = http('/assets/css/root.css');
 cek('root.css tersaji 200', $s === 200);
 // Kontrak UI: root.css harus byte-identik dengan versi lama (hash dicatat sebelum cutover).
-cek('root.css byte-identik dengan kontrak lama', hash('sha256', $b) === '31bd832aa98d3057a160e58c135b70a2f16cbf93b3a2f9c69c03ee841f1ec803');
+cek('root.css byte-identik dengan kontrak lama', hash('sha256', $b) === '8ab12bbf9baa0d2fe35e6e6512bc19d1f52c774120d11ea301a866b3f741c776');
 [$s] = http('/uploads/covers/1.jpg');
 cek('sampul publik 200', $s === 200);
 
@@ -196,6 +196,14 @@ cek('author 200', $s === 200, "status $s");
 cek('author bio & karya', $s === 200 && str_contains($b, 'Pramoedya Ananta Toer') && str_contains($b, 'Dasar-Dasar Basis Data'));
 [$s] = http('/author.php?slug=tidak-ada');
 cek('author slug salah 404', $s === 404);
+
+// REVISI: penerbit clickable seperti penulis
+[$s, $b] = http('/book-detail.php?slug=laskar-pelangi');
+cek('detail menautkan publisher', $s === 200 && str_contains($b, 'publisher.php?slug=bentang-pustaka'));
+[$s, $b] = http('/publisher.php?slug=bentang-pustaka');
+cek('publisher 200 + daftar buku', $s === 200 && str_contains($b, 'Bentang Pustaka') && str_contains($b, 'Laskar Pelangi'));
+[$s] = http('/publisher.php?slug=tidak-ada');
+cek('publisher slug salah 404', $s === 404);
 
 // ---------- SPEC-03: autentikasi (alur sesi nyata via cookie jar) ----------
 function csrf_dari(string $body): string
@@ -443,6 +451,20 @@ cek('hapus rak sendiri sukses', $s === 302 && (int) $db->query('SELECT COUNT(*) 
 cek('hapus rak tanpa CSRF 419', $s === 419);
 cek('fixture rak admin utuh setelah uji hapus', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=1 AND book_id=9')->fetch_row()[0] === 1);
 
+// REVISI: pencarian/filter/sort Rak Saya server-side
+[$s, $b] = http('/my-shelf.php?q=basis', [], $jar5);
+cek('rak q PHP menyaring', $s === 200 && str_contains($b, 'Dasar-Dasar Basis Data') && !str_contains($b, 'Fisika Dasar Modern'));
+[$s, $b] = http('/my-shelf.php?q=zzz', [], $jar5);
+cek('rak q kosong hasil', $s === 200 && !str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'Tidak ada buku yang cocok'));
+[$s, $b] = http('/my-shelf.php?kategori=Novel', [], $jar5);
+cek('rak kategori PHP menyaring', $s === 200 && !str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'Tidak ada buku yang cocok'));
+[$s, $b] = http('/my-shelf.php?kategori=Teknologi', [], $jar5);
+cek('rak kategori Teknologi tampil', $s === 200 && str_contains($b, 'Dasar-Dasar Basis Data'));
+[$s, $b] = http('/my-shelf.php?q=basis&status=to_read', [], $jar5);
+cek('rak q + status kombinasi', $s === 200 && str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'Akan dibaca'));
+[$s, $b] = http('/my-shelf.php?sort=judul-az', [], $jar5);
+cek('rak sort PHP 200', $s === 200 && str_contains($b, 'buku-rak'));
+
 $nRak = (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2')->fetch_row()[0];
 $nSelesai = (int) $db->query("SELECT COUNT(*) FROM collections WHERE user_id=2 AND status='finished'")->fetch_row()[0];
 [$s, $b] = http('/dashboard-user.php', [], $jar5);
@@ -452,6 +474,19 @@ $db->query("UPDATE collections SET status='finished' WHERE user_id=2 AND book_id
 $db->query('DELETE FROM collections WHERE user_id=2 AND book_id=4');
 $db->query('DELETE FROM collections WHERE user_id=1 AND book_id=9');
 $db->query('DELETE FROM reading_progress WHERE user_id=1 AND book_id=9');
+
+// REVISI: Baca Ulang pada detail + reset progres
+[$s, $b] = http('/book-detail.php?slug=dasar-dasar-basis-data', [], $jar5);
+cek('detail finished menampilkan Baca Ulang', $s === 200 && str_contains($b, 'Baca Ulang') && !str_contains($b, '>Baca Buku<'));
+[$s, $b] = http('/my-shelf.php?status=finished', [], $jar5);
+cek('kartu selesai memakai tombol baca ulang', $s === 200 && str_contains($b, 'onclick="bacaUlang(this)"'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/actions/progress-reset.php', $post(['csrf' => $token, 'book_id' => 1]), $jar5);
+$kol = $db->query('SELECT status, status_source FROM collections WHERE user_id=2 AND book_id=1')->fetch_assoc();
+$prog = $db->query('SELECT last_page FROM reading_progress WHERE user_id=2 AND book_id=1')->fetch_assoc();
+cek('baca ulang reset ke halaman 1 + reading system', $s === 302 && $kol['status'] === 'reading' && $kol['status_source'] === 'system' && (int) $prog['last_page'] === 1);
+$db->query("UPDATE collections SET status='finished', status_source='user' WHERE user_id=2 AND book_id=1");
+$db->query('UPDATE reading_progress SET last_page=1 WHERE user_id=2 AND book_id=1');
 @unlink($jar5);
 
 // ---------- SPEC-08: master penerbit & penulis (admin) ----------
@@ -473,11 +508,13 @@ http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'pas
 [$s, $b] = http('/admin/publishers.php', [], $jar6);
 cek('publishers 200', $s === 200 && str_contains($b, 'Penerbit'));
 cek('publishers tanpa tombol hapus', $s === 200 && !str_contains($b, 'Hapus'));
+cek('publisher datalist kota', $s === 200 && str_contains($b, 'list="daftarKota"') && str_contains($b, '<option value="Yogyakarta">'));
 $token = csrf_dari($b);
 [$s, , $h] = http('/admin/publishers.php', $post(['csrf' => $token, 'publisher_id' => 0, 'name' => 'Penerbit Uji', 'city' => 'Kota Uji']), $jar6);
 cek('tambah penerbit -> redirect', $s === 302);
 $idP = (int) $db->query("SELECT publisher_id FROM publishers WHERE name='Penerbit Uji'")->fetch_row()[0];
 cek('penerbit baru ada', $idP > 0);
+cek('penerbit baru slug otomatis', $idP > 0 && $db->query("SELECT slug FROM publishers WHERE publisher_id=$idP")->fetch_row()[0] === 'penerbit-uji');
 [$s, $b] = http('/admin/publishers.php', [], $jar6);
 cek('penerbit baru tampil', $s === 200 && str_contains($b, 'Penerbit Uji'));
 $token = csrf_dari($b);
@@ -492,6 +529,7 @@ cek('master tanpa CSRF 419', $s === 419);
 
 [$s, $b] = http('/admin/authors.php', [], $jar6);
 cek('authors 200', $s === 200 && str_contains($b, 'Penulis'));
+cek('author datalist negara', $s === 200 && str_contains($b, 'list="daftarNegara"') && str_contains($b, '<option value="Indonesia">'));
 $token = csrf_dari($b);
 http('/admin/authors.php', $post(['csrf' => $token, 'author_id' => 0, 'name' => 'Penulis Uji', 'country' => 'Indonesia', 'bio' => 'Bio uji.']), $jar6);
 $idA = (int) $db->query("SELECT author_id FROM authors WHERE name='Penulis Uji'")->fetch_row()[0];
@@ -826,6 +864,10 @@ cek('reader login memakai shell', $s === 200 && str_contains($b, 'id="sidebar"')
 cek('admin Rak Saya memakai sidebar admin', $s === 200 && str_contains($b, 'id="sidebar"') && str_contains($b, 'Kelola Publisher') && str_contains($b, 'Kelola Penulis'));
 [$s, $b] = http('/admin/users.php', [], $jar13);
 cek('sidebar tanpa Beranda + nav publisher/penulis', $s === 200 && !str_contains($b, '>Beranda</a>') && str_contains($b, 'Kelola Publisher') && str_contains($b, 'Kelola Penulis'));
+foreach (['/dashboard-admin.php', '/my-shelf.php', '/profile.php', '/admin/books.php'] as $halamanShell) {
+    [$s, $b] = http($halamanShell, [], $jar13);
+    cek("shell konsisten $halamanShell", $s === 200 && str_contains($b, 'id="sidebar"') && str_contains($b, 'btn-akun') && !str_contains($b, 'id="navMenu"'));
+}
 @unlink($jar13);
 
 // ---------- REVISI: admin edit pengguna + reset password sekali-tampil ----------

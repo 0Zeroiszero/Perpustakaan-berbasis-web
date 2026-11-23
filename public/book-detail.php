@@ -92,11 +92,22 @@ if ($shell) {
                     <?= e($buku['description'] ?: 'Belum ada sinopsis untuk buku ini.') ?>
                 </p>
                 <div class="d-grid gap-2 d-sm-flex mt-4">
-                    <!-- Baca online: gerbang login terjadi di read.php (?next= kembali ke buku ini) -->
-                    <a href="<?= url('read.php?slug=' . urlencode($buku['slug'])) ?>" class="btn btn-baca px-4">
-                        <i class="bi bi-book-half me-1" aria-hidden="true"></i>
-                        Baca Buku
-                    </a>
+                    <?php if ($status_rak === 'finished'): ?>
+                        <form method="post" action="<?= url('actions/progress-reset.php') ?>">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="book_id" value="<?= (int) $buku['book_id'] ?>">
+                            <button type="button" class="btn btn-baca px-4" data-judul="<?= e($buku['title']) ?>"
+                                onclick="bacaUlang(this)">
+                                <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>
+                                Baca Ulang
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <a href="<?= url('read.php?slug=' . urlencode($buku['slug'])) ?>" class="btn btn-baca px-4">
+                            <i class="bi bi-book-half me-1" aria-hidden="true"></i>
+                            Baca Buku
+                        </a>
+                    <?php endif; ?>
                     <?= dropdown_status((int) $buku['book_id'], $status_rak, 'px-4 w-100', '') ?>
                 </div>
             </div>
@@ -118,8 +129,14 @@ if ($shell) {
                     </div>
                     <div class="col">
                         <dt class="info-label">Penerbit</dt>
-                        <dd class="mb-0 fw-semibold"><?= e($buku['publisher_name'] ?: '-') ?><?php if ($buku['publisher_city']): ?><span
-                                    class="d-block small text-secondary fw-normal"><?= e($buku['publisher_city']) ?></span><?php endif; ?></dd>
+                        <dd class="mb-0 fw-semibold">
+                            <a href="<?= url('publisher.php?slug=' . urlencode($buku['publisher_slug'])) ?>" class="text-ungu">
+                                <?= e($buku['publisher_name'] ?: '-') ?>
+                            </a>
+                            <?php if ($buku['publisher_city']): ?>
+                                <span class="d-block small text-secondary fw-normal"><?= e($buku['publisher_city']) ?></span>
+                            <?php endif; ?>
+                        </dd>
                     </div>
                     <div class="col">
                         <dt class="info-label">Tahun</dt>

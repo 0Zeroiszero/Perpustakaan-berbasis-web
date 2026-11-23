@@ -20,6 +20,7 @@ TAMU = [
     "catalog.php",
     "book-detail.php?slug=laskar-pelangi",
     "author.php?slug=pramoedya-ananta-toer",
+    "publisher.php?slug=bentang-pustaka",
     "login.php",
     "register.php",
 ]
@@ -27,6 +28,7 @@ LOGIN = [
     "catalog.php",
     "book-detail.php?slug=laskar-pelangi",
     "author.php?slug=pramoedya-ananta-toer",
+    "publisher.php?slug=bentang-pustaka",
     "my-shelf.php",
     "read.php?slug=laskar-pelangi",
     "profile.php",
@@ -154,10 +156,12 @@ try:
         'JSON.stringify({lantai:document.querySelector(".landing").getBoundingClientRect().bottom,'
         'kaki:document.querySelector(".site-footer").getBoundingClientRect().top,'
         'tinggi:window.innerHeight,'
+        'grid:getComputedStyle(document.querySelector(".landing-books")).gridTemplateColumns.split(" ").length,'
         'navbar:!!document.querySelector("#navMenu"),sidebar:!!document.querySelector("#sidebar")})'
     ))
     cek("landing 1366x768 muat tanpa scroll konten", d["lantai"] <= d["tinggi"] + 2, d)
     cek("landing footer hanya muncul setelah scroll", d["kaki"] >= d["tinggi"] - 2, d)
+    cek("landing grid 3 kolom", d["grid"] == 3, d["grid"])
     cek("landing tamu memakai navbar publik", d["navbar"] and not d["sidebar"])
 
     # Login admin via HTTP, lalu pasang cookie di CDP.
@@ -186,12 +190,13 @@ try:
         'JSON.stringify({sidebar:!!document.querySelector("#sidebar"),nav:!!document.querySelector("#navMenu"),'
         'beranda:Array.from(document.querySelectorAll("#sidebar a")).some(function(a){return a.textContent.trim()==="Beranda"}),'
         'logout:getComputedStyle(document.querySelector(".dropdown-item.logout")).color,'
-        'rak:!!document.querySelector(\'.dropdown-menu a[href*="my-shelf.php"]\')})'
+        'dropRak:Array.from(document.querySelectorAll(".dropdown-menu a")).some(function(a){return a.textContent.trim()==="Rak Saya"}),'
+        'sideRak:Array.from(document.querySelectorAll("#sidebar a")).some(function(a){return a.textContent.trim()==="Rak Saya"})})'
     ))
     cek("catalog login memakai shell sidebar", d["sidebar"] and not d["nav"])
     cek("sidebar tanpa menu Beranda", not d["beranda"])
     cek("dropdown profil keluar merah", d["logout"] == "rgb(220, 38, 38)", d["logout"])
-    cek("dropdown profil punya Rak Saya (admin)", d["rak"])
+    cek("Rak Saya ada di sidebar, bukan dropdown", d["sideRak"] and not d["dropRak"], d)
 
     # Modal admin auto-terbuka dan tidak overflow di 320px.
     send("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 800, "deviceScaleFactor": 1, "mobile": True})
@@ -201,6 +206,20 @@ try:
     ))
     cek("modal pengguna terbuka di 320px", d["modal"], d)
     cek("modal pengguna tidak overflow 320px", d["sw"] <= d["iw"], d)
+
+    # Modal Buku: footer harus terlihat; body form yang discroll, bukan halaman.
+    send("Emulation.setDeviceMetricsOverride", {"width": 1366, "height": 900, "deviceScaleFactor": 1, "mobile": False})
+    kunjungi("admin/books.php?edit=10")
+    d = json.loads(evaluasi(
+        'JSON.stringify({show:!!document.querySelector("#modalBuku.show"),'
+        'footer:document.querySelector("#modalBuku .modal-footer").getBoundingClientRect().bottom,'
+        'tinggi:window.innerHeight,sw:document.documentElement.scrollWidth,iw:window.innerWidth,'
+        'akun:!!document.querySelector(".topbar .btn-akun")})'
+    ))
+    cek("modal buku terbuka di desktop", d["show"], d)
+    cek("footer modal buku terlihat", d["footer"] <= d["tinggi"] + 1, d)
+    cek("modal buku tidak overflow horizontal", d["sw"] <= d["iw"], d)
+    cek("topbar admin punya dropdown profil", d["akun"], d)
 
     # Reader: kanvas benar-benar berisi, fit halaman/lebar, iframe auto-save.
     send("Emulation.setDeviceMetricsOverride", {"width": 1200, "height": 900, "deviceScaleFactor": 1, "mobile": False})

@@ -24,9 +24,11 @@ CREATE TABLE users (
 CREATE TABLE publishers (
     publisher_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
+    slug VARCHAR(120) NOT NULL,
     city VARCHAR(100) NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (publisher_id)
+    PRIMARY KEY (publisher_id),
+    UNIQUE KEY uq_publishers_slug (slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE genres (
@@ -109,7 +111,7 @@ SELECT b.book_id, b.title, b.slug, b.description, b.published_year, b.isbn,
        b.is_active, b.created_at,
        a.name AS author_name, a.slug AS author_slug, a.country AS author_country, a.bio AS author_bio,
        g.genre_id, g.name AS genre_name,
-       p.name AS publisher_name, p.city AS publisher_city
+       p.name AS publisher_name, p.slug AS publisher_slug, p.city AS publisher_city
 FROM books b
 JOIN authors a ON a.author_id = b.author_id
 JOIN genres g ON g.genre_id = b.genre_id
@@ -129,12 +131,12 @@ INSERT INTO users (user_id, email, password_hash, display_name, role, is_active)
 (9, 'nadia@email.com', '$2y$12$9bWAJouCy1BztcN0LCocF.zy1UGtOR9RT4uZzFpMI2RTUGCBjf2Lm', 'Nadia Permata', 'member', 1),
 (10, 'dimas@email.com', '$2y$12$Z7Y4bSL6IjauudX.jjai9.h2aRglmDo.M..KSwWRq90cL3kxJ3od2', 'Dimas Firmansyah', 'member', 1);
 
-INSERT INTO publishers (publisher_id, name, city) VALUES
-(1, 'Gramedia Pustaka Utama', 'Jakarta'),
-(2, 'Bentang Pustaka', 'Yogyakarta'),
-(3, 'Mizan Publishing', 'Bandung'),
-(4, 'Erlangga', 'Jakarta'),
-(5, 'Pustaka Digital Press', 'Pekanbaru');
+INSERT INTO publishers (publisher_id, name, slug, city) VALUES
+(1, 'Gramedia Pustaka Utama', 'gramedia-pustaka-utama', 'Jakarta'),
+(2, 'Bentang Pustaka', 'bentang-pustaka', 'Yogyakarta'),
+(3, 'Mizan Publishing', 'mizan-publishing', 'Bandung'),
+(4, 'Erlangga', 'erlangga', 'Jakarta'),
+(5, 'Pustaka Digital Press', 'pustaka-digital-press', 'Pekanbaru');
 
 INSERT INTO genres (genre_id, name, description) VALUES
 (1, 'Teknologi', 'Buku seputar IT, komputer, dan pemrograman.'),

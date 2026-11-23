@@ -635,7 +635,16 @@ a.card-clean {
     padding: 20px;
 }
 
-/* TABEL — baris lebih lega dan mudah dipindai */
+.modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 40px);
+}
+.modal-dialog-scrollable .modal-body {
+    overflow-y: auto;
+}
+/* Form buku panjang: yang discroll body modal, footer tetap terlihat. */
+#modalBuku .modal-body {
+    max-height: calc(100vh - 230px);
+}
 .table {
     margin-bottom: 0;
 }
