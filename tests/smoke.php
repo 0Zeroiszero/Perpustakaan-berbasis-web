@@ -352,5 +352,31 @@ foreach (['/database/optl_pustaka.sql', '/includes/config.php', '/tests/smoke.ph
 }
 @unlink($jar3);
 
+// ---------- SPEC-06: auto-save last_page ----------
+$jar4 = sys_get_temp_dir() . '/smoke-optl-cookies4.txt';
+@unlink($jar4);
+[$s, $b] = http('/login.php', [], $jar4);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar4);
+[$s, $b] = http('/read.php?slug=laskar-pelangi', [], $jar4);
+$token = csrf_dari($b);
+
+[$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 3, 'last_page' => 999]), $jar4);
+cek('progress clamp atas', $s === 200 && (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=2 AND book_id=3')->fetch_row()[0] === 12);
+[$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 3, 'last_page' => 0]), $jar4);
+cek('progress clamp bawah', $s === 200 && (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=2 AND book_id=3')->fetch_row()[0] === 1);
+[$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 3, 'last_page' => 5]), $jar4);
+cek('progress upsert satu baris', $s === 200 && (int) $db->query('SELECT COUNT(*) FROM reading_progress WHERE user_id=2 AND book_id=3')->fetch_row()[0] === 1 && (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=2 AND book_id=3')->fetch_row()[0] === 5);
+[$s] = http('/actions/progress-save.php', $post(['csrf' => '', 'book_id' => 3, 'last_page' => 5]), $jar4);
+cek('progress tanpa CSRF 419', $s === 419);
+[$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 999, 'last_page' => 5]), $jar4);
+cek('progress buku tak dikenal 404', $s === 404);
+[$s] = http('/actions/progress-save.php', $post(['csrf' => $token, 'book_id' => 3, 'last_page' => 5]));
+cek('progress tamu ditolak', $s === 302 || $s === 403);
+cek('progress milik orang lain tak tersentuh', (int) $db->query('SELECT last_page FROM reading_progress WHERE user_id=1 AND book_id=8')->fetch_row()[0] === 12);
+// bersihkan baris uji (seed tidak punya progres andi buku 3)
+$db->query('DELETE FROM reading_progress WHERE user_id=2 AND book_id=3');
+@unlink($jar4);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
