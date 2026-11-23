@@ -135,14 +135,18 @@ let modalKonfirmasi = null;
 let elKonfirmasi = null;
 let jawabKonfirmasi = null;
 
-function konfirmasiHapus(nama, jenis) {
+function konfirmasiHapus(nama, jenis, opsi) {
+    opsi = opsi || {};
     if (!modalKonfirmasi) {
         elKonfirmasi = buatModalKonfirmasi();
         modalKonfirmasi = new bootstrap.Modal(elKonfirmasi);
     }
 
-    elKonfirmasi.querySelector(".konfirmasi-judul").textContent = "Hapus " + jenis + "?";
+    elKonfirmasi.querySelector(".konfirmasi-judul").textContent = opsi.judul || ("Hapus " + jenis + "?");
     elKonfirmasi.querySelector(".konfirmasi-nama").textContent = nama;
+    elKonfirmasi.querySelector(".konfirmasi-pesan").innerHTML = opsi.pesan ||
+        "Item berikut akan dihapus dan <b>tidak bisa dibatalkan</b>:";
+    elKonfirmasi.querySelector(".konfirmasi-ya").textContent = opsi.tombol || "Ya, Hapus";
     modalKonfirmasi.show();
 
     return new Promise(function (resolve) { jawabKonfirmasi = resolve; });
@@ -166,7 +170,7 @@ function buatModalKonfirmasi() {
                     '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>' +
                 '</div>' +
                 '<div class="modal-body">' +
-                    '<p class="mb-1">Item berikut akan dihapus dan <b>tidak bisa dibatalkan</b>:</p>' +
+                    '<p class="mb-1 konfirmasi-pesan">Item berikut akan dihapus dan <b>tidak bisa dibatalkan</b>:</p>' +
                     '<p class="mb-0 fw-semibold konfirmasi-nama"></p>' +
                 '</div>' +
                 '<div class="modal-footer border-0 pt-0">' +

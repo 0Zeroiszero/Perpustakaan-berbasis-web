@@ -1,23 +1,20 @@
-/* Halaman kelola-buku.php. Data disimpan ke database lewat form POST. */
+/* Halaman admin/books.php. Data disimpan ke database lewat form POST. */
 
-// Buka form kosong untuk buku baru
-function bukaModalTambah() {
-    const form = document.getElementById("formBuku");
-    form.reset();
-    // Halaman edit menyimpan nilai lama sebagai default form; kosongkan lagi untuk mode tambah.
-    form.querySelectorAll("input:not([type=hidden]), textarea").forEach(function (el) { el.value = ""; });
-    form.querySelectorAll("select").forEach(function (el) { el.selectedIndex = 0; });
-    document.getElementById("inputId").value = "";
-    document.getElementById("modalBukuTitle").textContent = "Tambah Buku";
-
-    new bootstrap.Modal(document.getElementById("modalBuku")).show();
-}
-
-// Hapus buku lewat modal konfirmasi, lalu kirim form ke server
-function hapusBuku(tombol) {
+// Nonaktifkan/aktifkan buku lewat modal konfirmasi, lalu kirim form ke server.
+// Soft-delete: buku tidak dihapus keras, hanya is_active (koleksi & progres tetap utuh).
+function toggleBuku(tombol) {
     const form = tombol.closest("form");
+    const nonaktif = tombol.dataset.ke === "0";
 
-    konfirmasiHapus(tombol.dataset.judul, "buku").then(function (ya) {
+    konfirmasiHapus(tombol.dataset.judul, "buku", nonaktif ? {
+        judul: "Nonaktifkan buku?",
+        pesan: "Buku akan disembunyikan dari katalog dan streaming. Koleksi & progres pembaca tetap utuh:",
+        tombol: "Ya, Nonaktifkan"
+    } : {
+        judul: "Aktifkan buku?",
+        pesan: "Buku akan tampil kembali di katalog dan bisa dibaca:",
+        tombol: "Ya, Aktifkan"
+    }).then(function (ya) {
         if (ya) form.submit();
     });
 }

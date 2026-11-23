@@ -425,5 +425,145 @@ cek('seed rak andi utuh', (int) $db->query('SELECT COUNT(*) FROM collections WHE
 cek('dashboard user 200 + statistik nyata', $s === 200 && str_contains($b, 'id="statRakSaya">1<') && str_contains($b, 'id="statSelesaiDibaca">1<') && str_contains($b, 'Total Koleksi'));
 @unlink($jar5);
 
+// ---------- SPEC-08: master penerbit & penulis (admin) ----------
+[$s, , $h] = http('/admin/publishers.php');
+cek('master tamu -> login', $s === 302 && str_contains(lokasi($h), 'login.php'));
+
+$jar6 = sys_get_temp_dir() . '/smoke-optl-cookies6.txt';
+@unlink($jar6);
+[$s, $b] = http('/login.php', [], $jar6);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar6);
+[$s, , $h] = http('/admin/publishers.php', [], $jar6);
+cek('master member -> dashboard-user', $s === 302 && str_contains(lokasi($h), 'dashboard-user.php'));
+http('/logout.php', [], $jar6);
+[$s, $b] = http('/login.php', [], $jar6);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar6);
+
+[$s, $b] = http('/admin/publishers.php', [], $jar6);
+cek('publishers 200', $s === 200 && str_contains($b, 'Penerbit'));
+cek('publishers tanpa tombol hapus', $s === 200 && !str_contains($b, 'Hapus'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/publishers.php', $post(['csrf' => $token, 'publisher_id' => 0, 'name' => 'Penerbit Uji', 'city' => 'Kota Uji']), $jar6);
+cek('tambah penerbit -> redirect', $s === 302);
+$idP = (int) $db->query("SELECT publisher_id FROM publishers WHERE name='Penerbit Uji'")->fetch_row()[0];
+cek('penerbit baru ada', $idP > 0);
+[$s, $b] = http('/admin/publishers.php', [], $jar6);
+cek('penerbit baru tampil', $s === 200 && str_contains($b, 'Penerbit Uji'));
+$token = csrf_dari($b);
+http('/admin/publishers.php', $post(['csrf' => $token, 'publisher_id' => $idP, 'name' => 'Penerbit Uji Edit', 'city' => 'Kota Baru']), $jar6);
+cek('edit penerbit tersimpan', $db->query("SELECT name FROM publishers WHERE publisher_id=$idP")->fetch_row()[0] === 'Penerbit Uji Edit');
+[$s, $b] = http('/admin/publishers.php', [], $jar6);
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/publishers.php', $post(['csrf' => $token, 'publisher_id' => 0, 'name' => '', 'city' => 'x']), $jar6);
+cek('penerbit nama kosong ditolak', $s === 302 && (int) $db->query("SELECT COUNT(*) FROM publishers WHERE name=''")->fetch_row()[0] === 0);
+[$s] = http('/admin/publishers.php', $post(['csrf' => '', 'publisher_id' => 0, 'name' => 'X', 'city' => 'x']), $jar6);
+cek('master tanpa CSRF 419', $s === 419);
+
+[$s, $b] = http('/admin/authors.php', [], $jar6);
+cek('authors 200', $s === 200 && str_contains($b, 'Penulis'));
+$token = csrf_dari($b);
+http('/admin/authors.php', $post(['csrf' => $token, 'author_id' => 0, 'name' => 'Penulis Uji', 'country' => 'Indonesia', 'bio' => 'Bio uji.']), $jar6);
+$idA = (int) $db->query("SELECT author_id FROM authors WHERE name='Penulis Uji'")->fetch_row()[0];
+cek('penulis baru slug otomatis', $idA > 0 && $db->query("SELECT slug FROM authors WHERE author_id=$idA")->fetch_row()[0] === 'penulis-uji');
+[$s, $b] = http('/admin/authors.php', [], $jar6);
+$token = csrf_dari($b);
+http('/admin/authors.php', $post(['csrf' => $token, 'author_id' => 0, 'name' => 'Penulis Uji', 'country' => 'Indonesia', 'bio' => '']), $jar6);
+cek('slug bentrok berakhiran angka', $db->query("SELECT slug FROM authors WHERE name='Penulis Uji' ORDER BY author_id DESC LIMIT 1")->fetch_row()[0] === 'penulis-uji-2');
+[$s, $b] = http('/admin/authors.php', [], $jar6);
+$token = csrf_dari($b);
+http('/admin/authors.php', $post(['csrf' => $token, 'author_id' => $idA, 'name' => 'Penulis Uji Nama', 'country' => 'Indonesia', 'bio' => 'Bio uji.']), $jar6);
+cek('edit penulis slug diperbarui', $db->query("SELECT slug FROM authors WHERE author_id=$idA")->fetch_row()[0] === 'penulis-uji-nama');
+$db->query("DELETE FROM authors WHERE name LIKE 'Penulis Uji%'");
+$db->query("DELETE FROM publishers WHERE name LIKE 'Penerbit Uji%'");
+@unlink($jar6);
+
+// ---------- SPEC-09: admin buku, sampul GD, dashboard admin ----------
+[$s, , $h] = http('/admin/books.php');
+cek('admin buku tamu -> login', $s === 302 && str_contains(lokasi($h), 'login.php'));
+
+$jar7 = sys_get_temp_dir() . '/smoke-optl-cookies7.txt';
+@unlink($jar7);
+[$s, $b] = http('/login.php', [], $jar7);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar7);
+[$s, , $h] = http('/admin/books.php', [], $jar7);
+cek('admin buku member -> dashboard-user', $s === 302 && str_contains(lokasi($h), 'dashboard-user.php'));
+http('/logout.php', [], $jar7);
+[$s, $b] = http('/login.php', [], $jar7);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'admin@pustaka.com', 'password' => 'admin123']), $jar7);
+
+[$s, $b] = http('/admin/books.php', [], $jar7);
+cek('admin buku 200 + 10 baris', $s === 200 && substr_count($b, 'baris-buku') === 10);
+cek('admin buku tombol nonaktifkan', $s === 200 && str_contains($b, 'Nonaktifkan'));
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/books.php', $post(['csrf' => $token, 'aksi' => 'status', 'id' => 10, 'ke' => 0]), $jar7);
+cek('nonaktifkan buku via POST', $s === 302 && (int) $db->query('SELECT is_active FROM books WHERE book_id=10')->fetch_row()[0] === 0);
+[$s, $b] = http('/admin/books.php', [], $jar7);
+$token = csrf_dari($b);
+http('/admin/books.php', $post(['csrf' => $token, 'aksi' => 'status', 'id' => 10, 'ke' => 1]), $jar7);
+cek('aktifkan kembali', (int) $db->query('SELECT is_active FROM books WHERE book_id=10')->fetch_row()[0] === 1);
+[$s] = http('/admin/books.php', $post(['csrf' => '', 'aksi' => 'status', 'id' => 10, 'ke' => 0]), $jar7);
+cek('status buku tanpa CSRF 419', $s === 419);
+
+[$s, $b] = http('/admin/book-form.php', [], $jar7);
+cek('book-form 200 + select master', $s === 200 && str_contains($b, 'Tambah Buku') && str_contains($b, 'name="author_id"') && str_contains($b, 'name="publisher_id"') && str_contains($b, 'name="genre_id"'));
+$token = csrf_dari($b);
+
+// buku baru tanpa PDF ditolak
+[$s, , $h] = http('/admin/book-form.php', $post(['csrf' => $token, 'book_id' => 0, 'title' => 'Buku Uji Admin', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1, 'published_year' => 2024, 'isbn' => '', 'description' => 'Uji.']), $jar7);
+cek('buku baru tanpa PDF ditolak', $s === 302 && (int) $db->query("SELECT COUNT(*) FROM books WHERE title='Buku Uji Admin'")->fetch_row()[0] === 0);
+
+// PDF palsu (isi teks) ditolak
+[$s, $b] = http('/admin/book-form.php', [], $jar7);
+$token = csrf_dari($b);
+$palsu = sys_get_temp_dir() . '/palsu.pdf';
+file_put_contents($palsu, 'ini bukan pdf');
+[$s, , $h] = http('/admin/book-form.php', [CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+    'csrf' => $token, 'book_id' => 0, 'title' => 'Buku Uji Admin', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1,
+    'published_year' => 2024, 'isbn' => '', 'description' => 'Uji.', 'file_book' => new CURLFile($palsu, 'application/pdf', 'palsu.pdf'),
+]], $jar7);
+cek('PDF palsu ditolak', $s === 302 && (int) $db->query("SELECT COUNT(*) FROM books WHERE title='Buku Uji Admin'")->fetch_row()[0] === 0);
+
+// PDF asli diterima + sampul GD otomatis
+[$s, $b] = http('/admin/book-form.php', [], $jar7);
+$token = csrf_dari($b);
+[$s, , $h] = http('/admin/book-form.php', [CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+    'csrf' => $token, 'book_id' => 0, 'title' => 'Buku Uji Admin', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1,
+    'published_year' => 2024, 'isbn' => '978-000-0000-00-0', 'description' => 'Uji.', 'file_book' => new CURLFile("$root/storage/ebooks/3.pdf", 'application/pdf', 'uji.pdf'),
+]], $jar7);
+$idB = (int) $db->query("SELECT book_id FROM books WHERE title='Buku Uji Admin'")->fetch_row()[0];
+cek('buku baru dengan PDF terbuat', $s === 302 && $idB > 0);
+if ($idB) {
+    $rowB = $db->query("SELECT * FROM books WHERE book_id=$idB")->fetch_assoc();
+    cek('berkas baru di storage', file_exists("$root/storage/ebooks/$idB.pdf"));
+    cek('checksum baru cocok', hash_file('sha256', "$root/storage/ebooks/$idB.pdf") === $rowB['checksum_sha256']);
+    cek('page_count dari berkas', (int) $rowB['page_count'] === 12);
+    cek('sampul GD otomatis', file_exists("$root/public/uploads/covers/$idB-default.jpg"));
+    cek('slug otomatis', $rowB['slug'] === 'buku-uji-admin');
+    // edit tanpa upload mempertahankan berkas
+    [$s, $b] = http('/admin/book-form.php?edit=' . $idB, [], $jar7);
+    $token = csrf_dari($b);
+    http('/admin/book-form.php', $post(['csrf' => $token, 'book_id' => $idB, 'title' => 'Buku Uji Admin Edit', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1, 'published_year' => 2024, 'isbn' => '978-000-0000-00-0', 'description' => 'Uji.']), $jar7);
+    $rowB2 = $db->query("SELECT * FROM books WHERE book_id=$idB")->fetch_assoc();
+    cek('edit tanpa upload berkas tetap', $rowB2['storage_path'] === $rowB['storage_path'] && $rowB2['cover_path'] === $rowB['cover_path'] && $rowB2['title'] === 'Buku Uji Admin Edit');
+    // ISBN duplikat ditolak
+    [$s, $b] = http('/admin/book-form.php', [], $jar7);
+    $token = csrf_dari($b);
+    [$s, , $h] = http('/admin/book-form.php', $post(['csrf' => $token, 'book_id' => 0, 'title' => 'Buku ISBN Duplikat', 'author_id' => 1, 'publisher_id' => 1, 'genre_id' => 1, 'published_year' => 2024, 'isbn' => '978-602-0001-01-1', 'description' => '']), $jar7);
+    cek('ISBN duplikat ditolak', $s === 302 && (int) $db->query("SELECT COUNT(*) FROM books WHERE title='Buku ISBN Duplikat'")->fetch_row()[0] === 0);
+    // bersih-bersih fixture
+    $db->query("DELETE FROM books WHERE book_id=$idB");
+    @unlink("$root/storage/ebooks/$idB.pdf");
+    @unlink("$root/public/uploads/covers/$idB-default.jpg");
+}
+@unlink($palsu);
+
+[$s, $b] = http('/dashboard-admin.php', [], $jar7);
+cek('dashboard admin 200 + statistik', $s === 200 && str_contains($b, 'Total Buku') && str_contains($b, 'Total Pengguna'));
+@unlink($jar7);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
