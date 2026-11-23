@@ -141,3 +141,16 @@ Sesi: cookie HttpOnly, SameSite=Lax, Secure saat HTTPS, `use_strict_mode`. Navba
 - Penyimpangan dari PDF yang WAJIB bisa dijelaskan saat tanya jawab: mysqli (bukan PDO), query-string slug (bukan rewrite .htaccess), ISBN dipertahankan, beranda+dashboard dipertahankan, label "Tidak Tertarik", tanpa redirect URL lama.
 - Placeholder PDF = konten dummy legal; koleksi produksi nanti harus sumber legal (PDF 8.1 #8).
 - Filesystem tulis (upload) hanya persisten di lokal/Laragon — sesuai batasan proyek, tanpa object storage.
+
+## 8. Revisi setelah review UI (status final)
+
+Permintaan lanjutan yang sudah dieksekusi dan menggantikan sebagian poin di atas:
+
+- Reader memakai **Fit Halaman / Fit Lebar**, bukan persentase; bug kanvas putih (guard render pertama) diperbaiki.
+- `collections.status_source` (`system`/`user`): sistem hanya mengisi `reading` saat belum ada status, auto-`finished` hanya untuk baris `system`; pilihan user tidak pernah diubah sistem.
+- Pencarian/filter/urut katalog & admin **server-side PHP** (form GET), bukan JS.
+- User login memakai **shell sidebar dashboard** di katalog/detail/author/reader/Rak Saya; navbar publik hanya untuk tamu. Beranda dihapus dari sidebar, bukan dari navbar tamu.
+- Landing tamu: 10 sampul + form registrasi; informasi utama muat 1366×768, footer setelah scroll.
+- Admin memakai modal CRUD untuk Buku, Pengguna, Publisher, Penulis. Edit pengguna punya reset password acak 12 karakter, tampil sekali + tombol Salin.
+- Navigasi admin: Kelola Publisher dan Kelola Penulis terpisah; detail buku menampilkan penerbit; logout merah.
+- Verifikasi final: `php tests/smoke.php` 261/261; `uv run --with websockets tests/viewport.py` 284/284 (320–1366px).
