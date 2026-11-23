@@ -126,6 +126,18 @@ function next_valid(string $next): bool
         && !preg_match('#/(login|register)\.php#', $next);
 }
 
+// URL kembali setelah POST: referer bila lokal, else fallback.
+function url_kembali(string $fallback): string
+{
+    $ref = $_SERVER['HTTP_REFERER'] ?? '';
+    $path = (string) (parse_url($ref, PHP_URL_PATH) ?? '');
+    $query = parse_url($ref, PHP_URL_QUERY);
+    if ($query) {
+        $path .= '?' . $query;
+    }
+    return next_valid($path) ? $path : $fallback;
+}
+
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf'])) {

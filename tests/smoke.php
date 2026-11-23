@@ -378,5 +378,52 @@ cek('progress milik orang lain tak tersentuh', (int) $db->query('SELECT last_pag
 $db->query('DELETE FROM reading_progress WHERE user_id=2 AND book_id=3');
 @unlink($jar4);
 
+// ---------- SPEC-07: Rak Saya, aksi koleksi, dashboard user ----------
+[$s, , $h] = http('/my-shelf.php');
+cek('rak tamu -> login', $s === 302 && str_contains(lokasi($h), 'login.php'));
+
+$jar5 = sys_get_temp_dir() . '/smoke-optl-cookies5.txt';
+@unlink($jar5);
+[$s, $b] = http('/login.php', [], $jar5);
+$token = csrf_dari($b);
+http('/login.php', $post(['csrf' => $token, 'email' => 'andi@email.com', 'password' => 'andi123']), $jar5);
+
+[$s, $b] = http('/my-shelf.php', [], $jar5);
+cek('rak 200 + isi seed', $s === 200 && str_contains($b, 'Rak Saya') && str_contains($b, 'Dasar-Dasar Basis Data'));
+cek('rak tab 4 status', $s === 200 && str_contains($b, 'status=to_read') && str_contains($b, 'status=reading') && str_contains($b, 'status=finished') && str_contains($b, 'status=not_interested'));
+[$s, $b] = http('/my-shelf.php?status=reading', [], $jar5);
+cek('rak tab reading kosong untuk andi', $s === 200 && !str_contains($b, 'Dasar-Dasar Basis Data') && str_contains($b, 'masih kosong'));
+[$s, $b] = http('/my-shelf.php', [], $jar5);
+$token = csrf_dari($b);
+
+[$s, , $h] = http('/actions/collection-save.php', $post(['csrf' => $token, 'book_id' => 2, 'status' => 'to_read']), $jar5);
+cek('simpan rak -> redirect', $s === 302);
+cek('simpan rak tersimpan', $db->query("SELECT status FROM collections WHERE user_id=2 AND book_id=2")->fetch_row()[0] === 'to_read');
+[$s, $b] = http('/my-shelf.php?status=to_read', [], $jar5);
+cek('rak tab to_read berisi buku baru', $s === 200 && str_contains($b, 'Belajar Java OOP'));
+$token = csrf_dari($b);
+http('/actions/collection-save.php', $post(['csrf' => $token, 'book_id' => 2, 'status' => 'reading']), $jar5);
+cek('ubah status satu baris', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2 AND book_id=2')->fetch_row()[0] === 1 && $db->query("SELECT status FROM collections WHERE user_id=2 AND book_id=2")->fetch_row()[0] === 'reading');
+[$s, $b] = http('/my-shelf.php', [], $jar5);
+$token = csrf_dari($b);
+[$s, , $h] = http('/actions/collection-save.php', $post(['csrf' => $token, 'book_id' => 2, 'status' => 'bogus']), $jar5);
+cek('status tak valid ditolak', $s === 302 && $db->query("SELECT status FROM collections WHERE user_id=2 AND book_id=2")->fetch_row()[0] === 'reading');
+[$s] = http('/actions/collection-save.php', $post(['csrf' => '', 'book_id' => 2, 'status' => 'reading']), $jar5);
+cek('simpan rak tanpa CSRF 419', $s === 419);
+
+[$s, $b] = http('/my-shelf.php', [], $jar5);
+$token = csrf_dari($b);
+http('/actions/collection-delete.php', $post(['csrf' => $token, 'book_id' => 8]), $jar5);
+cek('hapus rak orang lain ditolak', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=1 AND book_id=8')->fetch_row()[0] === 1);
+[$s, , $h] = http('/actions/collection-delete.php', $post(['csrf' => $token, 'book_id' => 2]), $jar5);
+cek('hapus rak sendiri sukses', $s === 302 && (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2 AND book_id=2')->fetch_row()[0] === 0);
+[$s] = http('/actions/collection-delete.php', $post(['csrf' => '', 'book_id' => 1]), $jar5);
+cek('hapus rak tanpa CSRF 419', $s === 419);
+cek('seed rak andi utuh', (int) $db->query('SELECT COUNT(*) FROM collections WHERE user_id=2 AND book_id=1')->fetch_row()[0] === 1);
+
+[$s, $b] = http('/dashboard-user.php', [], $jar5);
+cek('dashboard user 200 + statistik nyata', $s === 200 && str_contains($b, 'id="statRakSaya">1<') && str_contains($b, 'id="statSelesaiDibaca">1<') && str_contains($b, 'Total Koleksi'));
+@unlink($jar5);
+
 echo "\n$lulus lulus, $gagal gagal\n";
 exit($gagal > 0 ? 1 : 0);
